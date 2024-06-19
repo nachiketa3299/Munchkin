@@ -1,0 +1,12 @@
+{
+    "name": "IA_InputActions",
+    "maps": [
+        {
+            "name": "CharacterActions",
+            "id": "83c1e36b-38fb-455b-a3a7-2715a2e2f278",
+            "actions": [],
+            "bindings": []
+        }
+    ],
+    "controlSchemes": []
+}
