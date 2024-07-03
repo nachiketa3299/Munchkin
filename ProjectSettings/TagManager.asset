@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - MC_Character
+  - MC_SceneLoadManager
   layers:
   - Default
   - TransparentFX
@@ -12,8 +13,8 @@ TagManager:
   - 
   - Water
   - UI
-  - 
-  - 
+  - MC_SceneLoadingBox
+  - MC_Character
   - 
   - 
   - 

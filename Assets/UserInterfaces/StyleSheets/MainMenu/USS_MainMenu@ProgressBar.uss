@@ -1,0 +1,19 @@
+.mc_loading_progress_bar {
+}
+
+.mc_loading_progress_bar .unity-progress-bar__background {
+    border-radius: 8px;
+    background-color: lightgrey;
+}
+
+.mc_loading_progress_bar .unity-progress-bar__progress {
+    border-radius: 6px;
+    background-color: mediumpurple;
+    margin: 2px;
+}
+
+.mc_loading_progress_bar .unity-progress-bar__title {
+    font-size: 15px;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+}

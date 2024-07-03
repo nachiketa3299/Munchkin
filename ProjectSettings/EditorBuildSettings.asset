@@ -6,6 +6,57 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SC_InitialTest.unity
+    path: Assets/Scenes/SceneLoadingTest/SC_InitialScenePast.unity
     guid: 99c9720ab356a0642a771bea13969a05
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_00.unity
+    guid: 20fdfcaf9991e2844a9bf76573c48802
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_10.unity
+    guid: 148e4900f116ae4488e7281bfdad2446
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_20.unity
+    guid: 6aa0203d96c963943a643db6a2b4f773
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_11.unity
+    guid: 299a62fc81a309e4781e1b5ec87b94eb
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_12.unity
+    guid: 6b722c46ee328404ca73c31af2bcdcbf
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_PersistentGameplay.unity
+    guid: ca54696bf5c8a894f910e4b4c59da621
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_MainMenu.unity
+    guid: a6f866e6531f3e249b3fb25cbad8fa30
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_21.unity
+    guid: af3c6fedb7621094fb300badc9f16101
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_22.unity
+    guid: 8831063348ea2c843b05176513f68c2f
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_30.unity
+    guid: 00e55d5c240ca2745b062342b9f3844d
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_31.unity
+    guid: 51ae43f27c2f5e4418ee30b52e9e5aa8
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_32.unity
+    guid: 43797034b0a580b4b8bdbb27e7d422ba
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_33.unity
+    guid: c3037537ebd434048938f7606b4be579
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_40.unity
+    guid: fa84a8b9c6951cc47975b696d7d50a3a
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_41.unity
+    guid: a1ace3977d943154a937f6d596397376
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_42.unity
+    guid: d88187dfa93f39740b245c4fe68e66ba
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_43.unity
+    guid: bdfcbdf7385203a4885bde4443991336
   m_configObjects: {}
