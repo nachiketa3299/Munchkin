@@ -10,6 +10,8 @@ namespace MC
 		{
 			_inputActions = new IA_InputActions();
 
+			// Cache & Bind MoveAction
+
 			_moveAction = GetComponent<MoveAction>();
 
 			_inputActions.CharacterActions.Move.performed += (context) =>
@@ -21,6 +23,8 @@ namespace MC
 			{
 				_moveAction.EndAction();
 			};
+
+			// Cache & Bind JumpAction
 
 			_jumpAction = GetComponent<JumpAction>();
 
@@ -44,7 +48,12 @@ namespace MC
 
 		#endregion // Unity Messages
 
+		/// <summary> 
+		/// InputActionAsset 에디터 에셋에서 Generate C# Class 옵션으로 생성된 래퍼 클래스입니다. 절대 수정하지 마세요.<br/>
+		/// 에디터를 통해 InputActionAsset을 수정한후 Save하면 자동으로 IA_InputAction.cs가 업데이트 됩니다.<br/>
+		/// </summary>
 		IA_InputActions _inputActions;
+
 		MoveAction _moveAction;
 		JumpAction _jumpAction;
 	}
