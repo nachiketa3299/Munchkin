@@ -17,6 +17,7 @@ GameObject:
   - component: {fileID: 8659322001051897222}
   - component: {fileID: 2392624450790882300}
   - component: {fileID: 8428375837134010128}
+  - component: {fileID: 6348100591888285890}
   m_Layer: 0
   m_Name: P_TestChicken
   m_TagString: MC_Character
@@ -193,6 +194,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 58f5f00a6e8a92d4ca69bb5682f5251f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _maxJumpChargeTime: 1
+  _maxJumpChargeSeconds: 1
   _minJumpForce: 5
   _maxJumpForce: 10
+--- !u!114 &6348100591888285890
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334351684667443968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 30a9af9229de09043b2b13b0682935b0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _cameraLookAction: {fileID: 0}

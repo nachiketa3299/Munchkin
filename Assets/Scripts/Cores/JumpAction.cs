@@ -85,4 +85,4 @@ namespace MC
 		[SerializeField] float _minJumpForce = 5.0f;
 		[SerializeField] float _maxJumpForce = 10.0f;
 	}
-} // namespace 
+} // namespace
