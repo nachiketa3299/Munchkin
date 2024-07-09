@@ -18,6 +18,7 @@ GameObject:
   - component: {fileID: 6348100591888285890}
   - component: {fileID: 7669265829548699004}
   - component: {fileID: 6989088779861184092}
+  - component: {fileID: 7218347548848475905}
   m_Layer: 0
   m_Name: P_TestChicken
   m_TagString: MC_Character
@@ -190,3 +191,17 @@ MonoBehaviour:
   _maxLifespan: 5
   _mutationThreshold: 3
   _logOnLifespanEvent: 0
+--- !u!114 &7218347548848475905
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334351684667443968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 553ae757d8e031542a8920ba0425d681, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _linelength: 2
+  _lineColor: {r: 1, g: 0, b: 0, a: 1}

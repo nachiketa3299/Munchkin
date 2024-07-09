@@ -11,7 +11,6 @@ GameObject:
   - component: {fileID: 239187904932199936}
   - component: {fileID: 4360345578402664963}
   - component: {fileID: 2260662679189535983}
-  - component: {fileID: 778353666049158425}
   m_Layer: 0
   m_Name: cm
   m_TagString: Untagged
@@ -60,8 +59,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   m_TrackedObjectOffset: {x: 0, y: 0, z: 0}
   m_LookaheadTime: 0.4
-  m_LookaheadSmoothing: 1.6
-  m_LookaheadIgnoreY: 0
+  m_LookaheadSmoothing: 0
+  m_LookaheadIgnoreY: 1
   m_XDamping: 1
   m_YDamping: 1
   m_ZDamping: 1
@@ -89,19 +88,6 @@ MonoBehaviour:
   m_MaximumFOV: 60
   m_MinimumOrthoSize: 1
   m_MaximumOrthoSize: 5000
---- !u!114 &778353666049158425
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 850463957639560693}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: a4c41ac9245b87c4192012080077d830, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  m_Damping: 0
 --- !u!1 &1007615480634692808
 GameObject:
   m_ObjectHideFlags: 0
@@ -128,14 +114,14 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1007615480634692808}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.16788924, y: 0.4181003, z: 0.07893901, w: 0.8892548}
+  m_LocalRotation: {x: -0.16788977, y: 0.41810083, z: 0.07893673, w: 0.8892546}
   m_LocalPosition: {x: -5, y: -8.5, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 239187904932199936}
   m_Father: {fileID: 0}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -21.383, y: 50.363, z: 0}
 --- !u!114 &1875648577769865197
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -155,8 +141,7 @@ MonoBehaviour:
   m_Priority: 10
   m_StandbyUpdate: 2
   m_LookAt: {fileID: 0}
-  m_Follow: {fileID: 8901260133182799471, guid: 430e86359e4ec1b408f9473b4f10c10e,
-    type: 3}
+  m_Follow: {fileID: 0}
   m_Lens:
     FieldOfView: 68.29296
     OrthographicSize: 5
