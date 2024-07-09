@@ -51,8 +51,6 @@ namespace MC
 			RefreshAgingColors(ECharacterType.Chick);
 			_currentVisualInstance.SetActive(true);
 			_currentCharacterType = ECharacterType.Chick;
-
-			_isMutated = false;
 		}
 
 		void OnLifespanReachedMutationThreshold()
@@ -73,7 +71,6 @@ namespace MC
 			}
 
 			_currentVisualInstance.SetActive(true);
-			_isMutated = true;
 		}
 
 		void OnLifespanChanged(float totalSpanRatio, float agingRatio)
@@ -102,8 +99,6 @@ namespace MC
 		Color _currentAgingStartColor;
 		Color _currentAgingColor;
 		Color _currentAgingEndColor;
-
-		bool _isMutated;
 
 		[SerializeField] AllCharactersData _allCharacterData;
 		[SerializeField][Range(0f, 1f)] float _roosterMutationChance = 0.05f;

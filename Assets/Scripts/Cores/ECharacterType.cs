@@ -1,8 +1,6 @@
 namespace MC
 {
-	/// <summary>
-	/// 게임에서 사용될 캐릭터의 종류에 대응하는 열거형
-	/// </summary>
+	/// <summary> 게임에서 사용될 캐릭터의 종류에 대응하는 열거형 </summary>
 	public enum ECharacterType
 	{
 		/// <summary> 병아리 </summary>

@@ -9,7 +9,7 @@ namespace MC
 	/// 캐릭터에게 최대 수명을 부여하고, 각 수명의 단계에 맞게 이벤트를 트리거시키는 컴포넌트.
 	/// </summary>
 	[DisallowMultipleComponent]
-	public class LifespanHandler : MonoBehaviour
+	public partial class LifespanHandler : MonoBehaviour
 	{
 		#region Public Static Events
 
@@ -30,14 +30,14 @@ namespace MC
 
 		#region Unity Messages
 
-		void Awake()
-		{
+		// void Awake() {}
 
+		void OnEnable()
+		{
 #if UNITY_EDITOR
 			if (_logOnLifespanEvent)
 			{
 				LifespanStarted += () => { Debug.Log("<color='yellow'>Lifespan Started!</color>"); };
-				// SpanChanged += (ratio) => { Debug.Log($"{ratio} 로 수명 변화"); };
 				LifespanEnded += () => { Debug.Log("<color='red'>Lifespan Ended!</color>"); };
 				LifespanReachedMutationThreshold += () => { Debug.Log("<color='pink'>Lifespan reached mutation threshold!</color>"); };
 			}
@@ -49,10 +49,23 @@ namespace MC
 			StartCoroutine(LifespanRoutine());
 		}
 
-		#endregion
+		void OnDisable()
+		{
+
+#if UNITY_EDITOR
+			if (_logOnLifespanEvent)
+			{
+				LifespanStarted = null;
+				LifespanEnded = null;
+				LifespanReachedMutationThreshold = null;
+			}
+#endif
+		}
+
+		#endregion // Unity Messages
 
 		/// <summary>
-		/// 수명 타이머.
+		/// 수명 타이머, 각 시점에 맞게 이벤트를 호출해준다.
 		/// </summary>
 		IEnumerator LifespanRoutine()
 		{
@@ -90,20 +103,16 @@ namespace MC
 
 		bool IsOverMutationThreshold => _currentLifespan > _mutationThreshold;
 		bool _isAlreadyMutated = false;
-
 		float _currentLifespan = 0.0f;
 
-		// TODO 이름들 정리해야함 (너무 헷갈림)
 		public float LifespanRatio => _currentLifespan / _maxLifespan;
-		public float MutationRatio => MutationThreshold / MaxLifespan;
-		public float MaxLifespan => _maxLifespan;
-		public float CurrentLifespan => _currentLifespan;
-		public float MutationThreshold => _mutationThreshold;
 
 		/// <summary> 변이를 하지 않았다면 다음 변이까지, 변이를 이미 하였다면 수명 종료까지 얼마나 진행되었는지를 반환함. </summary>
 		/// <remarks> 병아리의 생이 얼마나 진행되었는가, 닭으로서의 생이 얼마나 진행되었는가 라고 생각하면 쉬움. </remarks>
 		public float AgingRatio =>
-			!_isAlreadyMutated ? _currentLifespan / _mutationThreshold : (_currentLifespan - _mutationThreshold) / (_maxLifespan - _mutationThreshold);
+			!_isAlreadyMutated
+				? _currentLifespan / _mutationThreshold
+				: (_currentLifespan - _mutationThreshold) / (_maxLifespan - _mutationThreshold);
 
 		[Header("수명은 모두 초 단위로 계산합니다.")]
 

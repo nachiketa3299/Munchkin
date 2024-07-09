@@ -3,45 +3,51 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace MC.EditorOnly
+namespace MC
 {
-	/// <summary>
-	/// <see cref="LifespanHandler"/> 컴포넌트 커스텀 인스펙터 (단순 게이지 표시용)
-	/// </summary>
-	[CustomEditor(typeof(LifespanHandler))]
-	public class LifespanHandlerEditor : Editor
+	public partial class LifespanHandler : MonoBehaviour
 	{
-		public override void OnInspectorGUI()
+		/// <summary>
+		/// <see cref="LifespanHandler"/> 컴포넌트 커스텀 인스펙터 (단순 게이지 표시용)
+		/// </summary>
+		[CustomEditor(typeof(LifespanHandler))]
+		private class LifespanHandlerEditor : Editor
 		{
-			base.OnInspectorGUI();
-
-			var lifespan = target as LifespanHandler;
-
-			if (lifespan != null)
+			public override void OnInspectorGUI()
 			{
-				EditorGUILayout.Space(10);
+				base.OnInspectorGUI();
 
-				EditorGUILayout.LabelField("수명 진행 상황");
+				var lifespan = target as LifespanHandler;
 
-				var rect = GUILayoutUtility.GetRect(18, 18);
-				EditorGUI.ProgressBar(rect, lifespan.LifespanRatio, $"{lifespan.CurrentLifespan:F0}/{lifespan.MaxLifespan:F0} ({lifespan.LifespanRatio:P2})");
-
-				var thresholdXPos = rect.x + rect.width * lifespan.MutationRatio;
-
-				var color = Color.magenta;
-				color.a = 0.7f;
-
-				EditorGUI.DrawRect(new Rect(thresholdXPos, rect.y, 2, rect.height), _mutationThresholdColor);
-
-				if (Application.isPlaying)
+				if (lifespan != null)
 				{
-					Repaint();
+					EditorGUILayout.Space(10);
+
+					EditorGUILayout.LabelField("수명 진행 상황");
+
+					var rect = GUILayoutUtility.GetRect(18, 18);
+
+					EditorGUI.ProgressBar
+					(
+						rect,
+						lifespan.LifespanRatio,
+						$"{lifespan._currentLifespan:F2}s/{lifespan._maxLifespan:F2}s ({lifespan.LifespanRatio:P2})"
+					);
+
+					var thresholdXPos = rect.x + rect.width * (lifespan._mutationThreshold / lifespan._maxLifespan);
+
+					EditorGUI.DrawRect(new Rect(thresholdXPos, rect.y, 1, rect.height), _mutationThresholdColor);
+
+					if (Application.isPlaying)
+					{
+						Repaint();
+					}
 				}
 			}
-		}
 
-		readonly Color _mutationThresholdColor = new(1.0f, 0.0f, 0.0f, 0.7f);
-	}
-}
+			readonly Color _mutationThresholdColor = new(1.0f, 0.0f, 0.0f, 0.7f);
+		} // inner class
+	} // class
+} // namespace
 
 #endif
