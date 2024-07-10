@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace MC
 {
@@ -77,6 +78,22 @@ namespace MC
 				Debug.LogWarning($"캐릭터에 {typeof(LookAction).Name} 컴포넌트가 없습니다.");
 			}
 #endif
+
+			// Cache & Bind RotateAction
+			if (_rotateAction = GetComponent<RotateAction>())
+			{
+				_inputActions.CharacterActions.Move.performed += (context) =>
+				{
+					_rotateAction.BeginAction(context.ReadValue<float>());
+				};
+			}
+
+#if UNITY_EDITOR
+			else
+			{
+				Debug.LogWarning($"캐릭터에 {typeof(RotateAction).Name} 컴포넌트가 없습니다.");
+			}
+#endif
 		}
 
 
@@ -101,5 +118,6 @@ namespace MC
 		MoveAction _moveAction;
 		JumpAction _jumpAction;
 		LookAction _lookAction;
+		RotateAction _rotateAction;
 	}
 }
