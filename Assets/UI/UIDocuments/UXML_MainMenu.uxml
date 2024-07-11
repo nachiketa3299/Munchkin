@@ -1,0 +1,17 @@
+<ui:UXML xmlns:ui="UnityEngine.UIElements" xmlns:uie="UnityEditor.UIElements" xsi="http://www.w3.org/2001/XMLSchema-instance" engine="UnityEngine.UIElements" editor="UnityEditor.UIElements" noNamespaceSchemaLocation="../../../UIElementsSchema/UIElements.xsd" editor-extension-mode="False">
+    <Style src="project://database/Assets/UI/StyleSheets/USS_Root.uss?fileID=7433441132597879392&amp;guid=0bc12074fe0fb2440840e20deb9add61&amp;type=3#USS_Root" />
+    <Style src="project://database/Assets/UI/StyleSheets/MainMenu/USS_MainMenu@Buttons.uss?fileID=7433441132597879392&amp;guid=a4734e3eee34f714bae207769de38eac&amp;type=3#USS_MainMenu@Buttons" />
+    <Style src="project://database/Assets/UI/StyleSheets/MainMenu/USS_MainMenu@ProgressBar.uss?fileID=7433441132597879392&amp;guid=46ebd4be5d6a43d41a1200bf913d678e&amp;type=3#USS_MainMenu@ProgressBar" />
+    <Style src="project://database/Assets/UI/StyleSheets/MainMenu/USS_MainMenu@Title.uss?fileID=7433441132597879392&amp;guid=25f6fb1f10b4dca4abbbfc5ab075eb48&amp;type=3#USS_MainMenu@Title" />
+    <ui:VisualElement name="Background" style="flex-grow: 1; flex-basis: auto; justify-content: center; flex-direction: column; background-color: rgb(61, 78, 130); align-items: auto; align-self: auto;">
+        <ui:VisualElement name="MainInteraction" style="flex-grow: 0; align-items: center; align-self: center; justify-content: center; display: flex; width: 50%; height: 50%;">
+            <ui:Label tabindex="-1" text="Munchkin" parse-escape-sequences="true" display-tooltip-when-elided="true" name="Title" class="mc_title" />
+            <ui:VisualElement name="Buttons" style="align-items: center; justify-content: space-between; align-self: center; background-color: rgb(73, 82, 106); opacity: 1; visibility: visible; overflow: visible; flex-direction: column; top: auto; width: 25%; height: 45%; margin-top: 10%;">
+                <ui:Button text="게임 시작" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GameStartButton" class="mc_button" style="width: 80%;" />
+                <ui:Button text="설정" parse-escape-sequences="true" display-tooltip-when-elided="true" name="OptionButton" class="mc_button" />
+                <ui:Button text="종료" parse-escape-sequences="true" display-tooltip-when-elided="true" name="GameEndButton" enable-rich-text="false" class="mc_button" />
+            </ui:VisualElement>
+        </ui:VisualElement>
+        <ui:ProgressBar value="0.22" title="Loading..." name="ProgressBar" high-value="1" class="mc_loading_progress_bar" style="display: none; align-self: center; width: 80%; -unity-font: url(&quot;project://database/Assets/ThirdParties/TextMesh%20Pro/Fonts/LiberationSans.ttf?fileID=12800000&amp;guid=e3265ab4bf004d28a9537516768c1c75&amp;type=3#LiberationSans&quot;); -unity-font-style: normal; font-size: 35%; -unity-text-align: middle-center; align-items: stretch; visibility: visible;" />
+    </ui:VisualElement>
+</ui:UXML>
