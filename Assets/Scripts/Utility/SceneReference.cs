@@ -35,7 +35,7 @@ namespace MC.Utility
 		[SerializeField] string _scenePath = string.Empty; //
 
 		/// <summary>
-		/// <see cref="UnityEngine.SceneManagement.SceneManager"/> API 에서 사용되는 씬 경로를 반환. 
+		/// <see cref="UnityEngine.SceneManagement.SceneManager"/> API 에서 사용되는 씬 경로를 반환.
 		/// 에디터에서 작업하는 경우, 이 경로는 애셋이 이동되거나 재명명되어도 항상 최신임이 보장됨.
 		/// 만일 참조된 씬 애셋이 삭제된경우, 경로는 남음.
 		/// </summary>
@@ -182,6 +182,6 @@ namespace MC.Utility
 				}
 			}
 		}
-	} // class SceneReference
 #endif
+	} // class SceneReference
 } // namespace MC.Utility
