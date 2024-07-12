@@ -19,29 +19,31 @@ namespace MC
 
 				var lifespan = target as LifespanHandler;
 
-				if (lifespan != null)
+				if (lifespan == null)
 				{
-					EditorGUILayout.Space(10);
+					return;
+				}
 
-					EditorGUILayout.LabelField("수명 진행 상황");
+				EditorGUILayout.Space(10.0f);
 
-					var rect = GUILayoutUtility.GetRect(18, 18);
+				EditorGUILayout.LabelField("수명 진행 상황");
 
-					EditorGUI.ProgressBar
-					(
-						rect,
-						lifespan.LifespanRatio,
-						$"{lifespan._currentLifespan:F2}s/{lifespan._maxLifespan:F2}s ({lifespan.LifespanRatio:P2})"
-					);
+				var rect = GUILayoutUtility.GetRect(18.0f, 18.0f);
 
-					var thresholdXPos = rect.x + rect.width * (lifespan._mutationThreshold / lifespan._maxLifespan);
+				EditorGUI.ProgressBar
+				(
+					rect,
+					lifespan.LifespanRatio,
+					$"{lifespan._currentLifespan:F2}s/{lifespan._maxLifespan:F2}s ({lifespan.LifespanRatio:P2})"
+				);
 
-					EditorGUI.DrawRect(new Rect(thresholdXPos, rect.y, 1, rect.height), _mutationThresholdColor);
+				var thresholdXPos = rect.x + rect.width * (lifespan._mutationThreshold / lifespan._maxLifespan);
 
-					if (Application.isPlaying)
-					{
-						Repaint();
-					}
+				EditorGUI.DrawRect(new Rect(thresholdXPos, rect.y, 1, rect.height), _mutationThresholdColor);
+
+				if (Application.isPlaying)
+				{
+					Repaint();
 				}
 			}
 

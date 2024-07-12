@@ -61,40 +61,48 @@ namespace MC
 
 		#endregion // Unity Message
 
+		/// <summary>
+		//  (왼쪽 -> 오른쪽) 일때 반시계방향, (오른쪽 -> 왼쪽)일때 시계방향으로 돌리기 위해, 타겟 앵글을 미세하게 조정해준다.
+		/// </summary>
+		float CalibrateAngle(EDirection to, float angle)
+		{
+			switch (to)
+			{
+				case EDirection.Left:
+					angle -= 0.2f;
+					break;
+				case EDirection.Right:
+					angle += 0.2f;
+					break;
+			}
+
+			return angle;
+		}
+
 		IEnumerator RotateRoutine(EDirection to)
 		{
 			var elapsedTime = 0.0f;
-			var startRot = _rigidbody.rotation;
+			var initialRotation = transform.rotation;
 
-			var targetAngle = _directionToEulerAngleY[to];
+			var targetYAngle = _directionToEulerAngleY[to];
+			var calibratedTargetYAngle = CalibrateAngle(to, targetYAngle);
 
-			// 왼 -> 오 일때 반시계방향, 오 -> 왼일때 시계방향으로 돌리기 위해서 타겟 앵글을 미세 조정
-			var calibratedTargetAngle = targetAngle;
-
-			if (to == EDirection.Left)
-			{
-				calibratedTargetAngle -= 0.2f;
-			}
-			else
-			{
-				calibratedTargetAngle += 0.2f;
-			}
+			var targetRotation = Quaternion.Euler(0.0f, targetYAngle, 0.0f);
+			var calibratedTargetRotation = Quaternion.Euler(0.0f, calibratedTargetYAngle, 0.0f);
 
 			while (elapsedTime < _rotationTime)
 			{
-				var progress = elapsedTime / _rotationTime;
-				var curveValue = _rotationCurve.Evaluate(progress);
+				var curveValue = _rotationCurve.Evaluate(elapsedTime / _rotationTime);
+				var currentRot = Quaternion.Lerp(initialRotation, calibratedTargetRotation, curveValue);
 
-				var currentRot = Quaternion.Lerp(startRot, Quaternion.Euler(0.0f, calibratedTargetAngle, 0.0f), curveValue);
+				transform.rotation = currentRot;
 
-				_rigidbody.MoveRotation(currentRot);
+				elapsedTime += Time.deltaTime;
 
-				elapsedTime += Time.fixedDeltaTime;
-
-				yield return new WaitForFixedUpdate();
+				yield return null;
 			}
 
-			_rigidbody.MoveRotation(Quaternion.Euler(0f, targetAngle, 0f));
+			transform.rotation = targetRotation;
 		}
 
 		float HorizontalVelocity => _rigidbody.velocity.x;

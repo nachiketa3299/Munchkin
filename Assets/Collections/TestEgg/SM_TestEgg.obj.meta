@@ -1,5 +1,5 @@
 fileFormatVersion: 2
-guid: fc75a04ea811aef44ba2b359cc77a957
+guid: f8ee8999f60c1af4aa85fb58707d2e8d
 ModelImporter:
   serializedVersion: 22200
   internalIDToNameTable: []
@@ -7,8 +7,8 @@ ModelImporter:
   - first:
       type: UnityEngine:Material
       assembly: UnityEngine.CoreModule
-      name: unnamed
-    second: {fileID: 2100000, guid: ae7e8aae362967745a16e3af5e891498, type: 2}
+      name: EggSurface
+    second: {fileID: 2100000, guid: deb82b2e70da71246abafa17bac9404a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0
@@ -40,7 +40,7 @@ ModelImporter:
     isReadable: 0
   meshes:
     lODScreenPercentages: []
-    globalScale: 30
+    globalScale: 1
     meshCompression: 0
     addColliders: 0
     useSRGBMaterialColor: 1
@@ -95,7 +95,7 @@ ModelImporter:
     armStretch: 0.05
     legStretch: 0.05
     feetSpacing: 0
-    globalScale: 30
+    globalScale: 1
     rootMotionBoneName: 
     hasTranslationDoF: 0
     hasExtraRoot: 0

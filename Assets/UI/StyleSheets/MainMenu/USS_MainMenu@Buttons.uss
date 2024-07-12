@@ -20,7 +20,7 @@
     -unity-text-align: middle-center;
     -unity-font-style: bold;
     -unity-font: url("project://database/Assets/Fonts/LINESeedKR_Regular.ttf?fileID=12800000&guid=69e6bc8bc4871334796458b3712c14e0&type=3#LINESeedKR_Regular");
-    font-size: 200%;
+    font-size: 100%;
     transition-property: scale;
     transition-duration: 100ms;
     -unity-font-definition: url("project://database/Assets/Fonts/LINESeedKR_Regular%20SDF.asset?fileID=11400000&guid=4d7db546e40d38d439f3d758cfa46486&type=2#LINESeedKR_Regular SDF");
@@ -37,7 +37,7 @@
 
 .mc_title {
     -unity-font: url("project://database/Assets/ThirdParties/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=c340eae9f1a3de54a956bc5a7df1b665&type=3#NotInter-Regular");
-    font-size: 1200%;
+    font-size: 800%;
     -unity-font-style: bold;
     -unity-text-align: middle-center;
     color: rgb(255, 183, 73);
