@@ -7,25 +7,8 @@ namespace MC
 {
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(Rigidbody))]
-	public class MoveAction : MonoBehaviour
+	public class MoveAction : ActionRoutineBase
 	{
-		/// <summary> 현재 실행중인 운동 관련 코루틴을 모두 정지하고, 새로 <paramref name="directionCoeff"/> 방향으로 가속하는 코루틴을 실행한다.</summary>
-		public void BeginAction(float directionCoeff)
-		{
-			_directionCoeff = directionCoeff;
-
-			TryStopMoveCouroutine();
-
-			_currentRoutine = StartCoroutine(HorizontalAccelerationRoutine());
-		}
-
-		/// <summary> 현재 실행중인 운동 관련 코루틴을 모두 정지하고, 감속 코루틴을 시작한다. </summary>
-		public void EndAction()
-		{
-			TryStopMoveCouroutine();
-			_currentRoutine = StartCoroutine(HorizontalDecelerationRoutine());
-		}
-
 		#region Unity Messages
 
 		void Awake()
@@ -35,9 +18,25 @@ namespace MC
 
 		#endregion // Unity Messages
 
-		#region Coroutines
+		/// <summary>
+		/// <paramref name="directionCoeff"/> 방향으로 캐릭터의 가속도로 가속한다.
+		/// </summary>
+		public void BeginAction(float directionCoeff)
+		{
+			_directionCoeff = directionCoeff;
+			TryStopCurrentRoutine();
+			_currentRoutine = StartCoroutine(HorizontalAccelerationRoutine());
+		}
 
-		/// <summary> 캐릭터를 수평 방향으로 설정된 가속도로 가속하고, 최대 수평 속력에 도달하면 그 속도를 유지하는 코루틴. </summary>
+		/// <summary>
+		/// 정지할 때 까지 캐릭터의 감속도로 감속한다.
+		/// </summary>
+		public void EndAction()
+		{
+			TryStopCurrentRoutine();
+			_currentRoutine = StartCoroutine(HorizontalDecelerationRoutine());
+		}
+
 		IEnumerator HorizontalAccelerationRoutine()
 		{
 			while (true)
@@ -52,7 +51,6 @@ namespace MC
 			}
 		}
 
-		/// <summary> 이동 입력이 존재하지 않을 때 캐릭터를 설정된 감속도로 수평 속력이 0이 될 때가지 감속하는 코루틴. </summary>
 		IEnumerator HorizontalDecelerationRoutine()
 		{
 			while (Mathf.Abs(_rigidbody.velocity.x) > 0.01f)
@@ -62,26 +60,12 @@ namespace MC
 
 				yield return new WaitForFixedUpdate();
 			}
-		}
 
-		#endregion // Coroutines
-
-		/// <summary> 현재 실행중인 이동 관련 코루틴이 있다면 종료하고 null로 만든다. 없다면, 아무것도 하지 않는다. </summary>
-		void TryStopMoveCouroutine()
-		{
-			if (_currentRoutine == null)
-			{
-				return;
-			}
-
-			StopCoroutine(_currentRoutine);
-			_currentRoutine = null;
+			_rigidbody.velocity.Set(0.0f, 0.0f, 0.0f);
 		}
 
 		Rigidbody _rigidbody;
-
 		float _directionCoeff;
-		Coroutine _currentRoutine;
 
 		// TODO 지면에 있는 경우 / 체공해 있는 경우 수평 가/감속도가 달라야 함.
 		// TODO 또한, 캐릭터의 종류별로 아래 멤버의 값이 달라야 함. 캐릭터 오브젝트가 커지는 경우 각 멤버를 캐릭터별로 어떻게 저장하고 초기화할 지 고민할 것.
