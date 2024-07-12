@@ -11,26 +11,30 @@ namespace MC
 	[DisallowMultipleComponent]
 	public partial class LifespanHandler : MonoBehaviour
 	{
-		#region Public Static Events
-
-		/// <summary> 수명을 먹기 시작했을 때</summary>
+		/// <summary>
+		/// 수명을 먹기 시작했을 때
+		/// </summary>
 		public static event Action LifespanStarted;
 
-		/// <summary> 수명이 변화할 때 </summary>
-		/// <remarks> 전체 수명 비율과, 현재 노화 비율을 전달 </remarks>
+		/// <summary>
+		/// 수명이 변화할 때
+		/// </summary>
+		/// <remarks>
+		/// 전체 수명 비율과, 현재 노화 비율을 전달
+		/// </remarks>
 		public static event Action<float, float> LifespanChanged;
 
-		/// <summary> 수명이 변이 한계에 도달했을 때 </summary>
+		/// <summary>
+		/// 수명이 변이 한계에 도달했을 때
+		/// </summary>
 		public static event Action LifespanReachedMutationThreshold;
 
-		/// <summary> 수명이 최대치에 도달했을 때 </summary>
+		/// <summary>
+		/// 수명이 최대치에 도달했을 때
+		/// </summary>
 		public static event Action LifespanEnded; // 수명이 종료되어 생애주기가 끝났을 때
 
-		#endregion // Public Static Events
-
 		#region Unity Messages
-
-		// void Awake() {}
 
 		void OnEnable()
 		{
@@ -107,8 +111,12 @@ namespace MC
 
 		public float LifespanRatio => _currentLifespan / _maxLifespan;
 
-		/// <summary> 변이를 하지 않았다면 다음 변이까지, 변이를 이미 하였다면 수명 종료까지 얼마나 진행되었는지를 반환함. </summary>
-		/// <remarks> 병아리의 생이 얼마나 진행되었는가, 닭으로서의 생이 얼마나 진행되었는가 라고 생각하면 쉬움. </remarks>
+		/// <summary>
+		/// 변이를 하지 않았다면 다음 변이까지, 변이를 이미 하였다면 수명 종료까지 얼마나 진행되었는지를 반환함.
+		/// </summary>
+		/// <remarks>
+		/// 병아리의 생이 얼마나 진행되었는가, 닭으로서의 생이 얼마나 진행되었는가 라고 생각하면 쉬움.
+		/// </remarks>
 		public float AgingRatio =>
 			!_isAlreadyMutated
 				? _currentLifespan / _mutationThreshold
@@ -117,8 +125,8 @@ namespace MC
 		[Header("수명은 모두 초 단위로 계산합니다.")]
 
 		[SerializeField] float _ageEvaluationResolution = 0.1f;
-		[SerializeField] float _maxLifespan = 5.0f;
-		[SerializeField] float _mutationThreshold = 3.0f;
+		[SerializeField] float _maxLifespan = 30.0f;
+		[SerializeField] float _mutationThreshold = 15.0f;
 
 #if UNITY_EDITOR
 		[SerializeField] bool _logOnLifespanEvent = false;

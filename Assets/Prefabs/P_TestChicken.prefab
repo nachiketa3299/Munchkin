@@ -149,6 +149,30 @@ MonoBehaviour:
   _maxJumpChargeSeconds: 1
   _minJumpForce: 5
   _maxJumpForce: 10
+  _jumpChargeCurve:
+    serializedVersion: 2
+    m_Curve:
+    - serializedVersion: 3
+      time: 0
+      value: 0
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    - serializedVersion: 3
+      time: 1
+      value: 1
+      inSlope: 0
+      outSlope: 0
+      tangentMode: 0
+      weightedMode: 0
+      inWeight: 0
+      outWeight: 0
+    m_PreInfinity: 2
+    m_PostInfinity: 2
+    m_RotationOrder: 4
 --- !u!114 &6348100591888285890
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -189,8 +213,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _ageEvaluationResolution: 0.1
-  _maxLifespan: 5
-  _mutationThreshold: 3
+  _maxLifespan: 30
+  _mutationThreshold: 15
   _logOnLifespanEvent: 0
 --- !u!114 &7218347548848475905
 MonoBehaviour:
@@ -219,7 +243,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _initialDirection: 1
-  _rotateDuration: 0.5
+  _rotationTime: 0.1
   _rotationCurve:
     serializedVersion: 2
     m_Curve:
@@ -244,3 +268,4 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _directionChangeHorizontalVelocityThreshold: 0.5
