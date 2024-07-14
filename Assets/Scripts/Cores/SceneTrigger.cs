@@ -2,7 +2,6 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -16,6 +15,8 @@ namespace MC
 		/// <remarks> 한 씬 트리거를 여러번 연속해서 작동시킬 수 없음 </remarks>
 		void OnTriggerEnter(Collider other)
 		{
+			if (other.tag.Equals("MC_Pickable"))
+				return;
 			var enteredSceneName = other.gameObject.scene.name;
 
 #if UNITY_EDITOR
@@ -25,7 +26,6 @@ namespace MC
 
 			if (_lastEnteredSceneName == enteredSceneName)
 			{
-
 #if UNITY_EDITOR
 				if (_logOnEnteringNewScene)
 					Debug.Log($"씬 {enteredSceneName}에 대한 OnTriggerEnter는 바로 이전에 처리하였으므로, 무시합니다.");
@@ -94,6 +94,11 @@ namespace MC
 
 			return nameList;
 		}
+
+		/*public void MoveObejct()
+		{
+			SceneManager.MoveGameObjectsToScene();
+		}*/
 
 		[SerializeField] SceneDepenencyData _data;
 		[SerializeField] int _depthToLoad;

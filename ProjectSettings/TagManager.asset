@@ -7,6 +7,7 @@ TagManager:
   - MC_Character
   - MC_SceneLoadManager
   - MC_Nest
+  - MC_Pickable
   layers:
   - Default
   - TransparentFX

@@ -21,10 +21,7 @@ namespace MC
 					_moveAction.BeginAction(context.ReadValue<float>());
 				};
 
-				_inputActions.CharacterActions.Move.canceled += (context) =>
-				{
-					_moveAction.EndAction();
-				};
+				_inputActions.CharacterActions.Move.canceled += (context) => { _moveAction.EndAction(); };
 			}
 
 #if UNITY_EDITOR
@@ -38,16 +35,9 @@ namespace MC
 
 			if (_jumpAction = GetComponent<JumpAction>())
 			{
-				_inputActions.CharacterActions.Jump.performed += (context) =>
-				{
-					_jumpAction.BeginAction();
-				};
+				_inputActions.CharacterActions.Jump.performed += (context) => { _jumpAction.BeginAction(); };
 
-				_inputActions.CharacterActions.Jump.canceled += (context) =>
-				{
-					_jumpAction.EndAction();
-				};
-
+				_inputActions.CharacterActions.Jump.canceled += (context) => { _jumpAction.EndAction(); };
 			}
 
 #if UNITY_EDITOR
@@ -66,10 +56,7 @@ namespace MC
 					_lookAction.BeginAction(context.ReadValue<float>());
 				};
 
-				_inputActions.CharacterActions.Look.canceled += (context) =>
-				{
-					_lookAction.EndAction();
-				};
+				_inputActions.CharacterActions.Look.canceled += (context) => { _lookAction.EndAction(); };
 			}
 
 #if UNITY_EDITOR
@@ -78,6 +65,18 @@ namespace MC
 				Debug.LogWarning($"캐릭터에 {typeof(LookAction).Name} 컴포넌트가 없습니다.");
 			}
 #endif
+
+			// Cache & Bind LookAction
+
+			if (_pickAction = GetComponent<PickAction>())
+			{
+				_inputActions.CharacterActions.Pick.performed += (context) =>
+				{
+					_pickAction.BeginAction();
+				};
+
+				_inputActions.CharacterActions.Pick.canceled += (context) => { _pickAction.EndAction(); };
+			}
 		}
 
 
@@ -102,5 +101,6 @@ namespace MC
 		MoveAction _moveAction;
 		JumpAction _jumpAction;
 		LookAction _lookAction;
+		private PickAction _pickAction;
 	}
 }

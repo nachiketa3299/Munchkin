@@ -431,6 +431,37 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1bd416dfd0ef4b74993c13e062b4db31, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!1 &1773579134
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 1773579135}
+  m_Layer: 0
+  m_Name: PickObjectParent
+  m_TagString: Untagged
+  m_Icon: {fileID: 5132851093641282708, guid: 0000000000000000d000000000000000, type: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &1773579135
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1773579134}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 2.85, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 1332928542}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1001 &1985933626
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -701,9 +732,36 @@ PrefabInstance:
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
-    m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedGameObjects:
+    - targetCorrespondingSourceObject: {fileID: 8901260133182799471, guid: 430e86359e4ec1b408f9473b4f10c10e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1773579135}
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 1334351684667443968, guid: 430e86359e4ec1b408f9473b4f10c10e,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 2934440943765250765}
   m_SourcePrefab: {fileID: 100100000, guid: 430e86359e4ec1b408f9473b4f10c10e, type: 3}
+--- !u!1 &2934440943765250764 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 1334351684667443968, guid: 430e86359e4ec1b408f9473b4f10c10e,
+    type: 3}
+  m_PrefabInstance: {fileID: 2934440943765250763}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &2934440943765250765
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2934440943765250764}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 569d2806a7c04f2694b0e136c2b09fe4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _pickPosition: {fileID: 1773579135}
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0

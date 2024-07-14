@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using DefaultNamespace;
 using UnityEngine;
 
 namespace MC
@@ -8,7 +9,7 @@ namespace MC
 	// 현재는 그냥 여기서 계속 처리하는 것으로
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(Rigidbody))]
-	public partial class Egg : MonoBehaviour
+	public partial class Egg : MonoBehaviour,IPickable
 	{
 		public event Action EggCreated;
 		public event Action<float> EggDamaged;
@@ -147,6 +148,11 @@ namespace MC
 
 #if UNITY_EDITOR
 		bool _logOnEggEvent = false;
+		private IPickable _pickableImplementation;
 #endif
+		public void Pick()
+		{
+
+		}
 	}
 }
