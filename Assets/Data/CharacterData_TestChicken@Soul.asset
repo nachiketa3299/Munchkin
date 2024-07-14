@@ -1,0 +1,25 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa260f5243df0d746b05b2104465c403, type: 3}
+  m_Name: CharacterData_TestChicken@Soul
+  m_EditorClassIdentifier: 
+  visualPrefab: {fileID: 919132149155446097, guid: b5b2cac1f4909f74a88f757b19fed6ff,
+    type: 3}
+  visualInstance: {fileID: 0}
+  agingColors:
+    start: {r: 0, g: 0.6509804, b: 1, a: 0}
+    end: {r: 0, g: 0.6509804, b: 1, a: 0}
+  movementStats:
+    accelerationMagnitudeOnGround: 0
+    accelerationMagnitudeOnAir: 0
+    decelerationMagnitudeOnGround: 0
+    decelerationMagnitudeOnAir: 0

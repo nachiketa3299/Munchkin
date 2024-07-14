@@ -1,0 +1,48 @@
+.mc_button {
+    border-left-color: rgb(0, 0, 0);
+    border-right-color: rgb(0, 0, 0);
+    border-top-color: rgb(0, 0, 0);
+    border-bottom-color: rgb(0, 0, 0);
+    border-top-left-radius: 3px;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border-top-width: 2px;
+    border-right-width: 2px;
+    border-bottom-width: 2px;
+    border-left-width: 2px;
+    align-self: auto;
+    justify-content: flex-start;
+    align-items: stretch;
+    background-color: rgb(255, 243, 155);
+    width: 80%;
+    height: 25%;
+    -unity-text-align: middle-center;
+    -unity-font-style: bold;
+    -unity-font: url("project://database/Assets/Fonts/LINESeedKR_Regular.ttf?fileID=12800000&guid=69e6bc8bc4871334796458b3712c14e0&type=3#LINESeedKR_Regular");
+    font-size: 100%;
+    transition-property: scale;
+    transition-duration: 100ms;
+    -unity-font-definition: url("project://database/Assets/Fonts/LINESeedKR_Regular%20SDF.asset?fileID=11400000&guid=4d7db546e40d38d439f3d758cfa46486&type=2#LINESeedKR_Regular SDF");
+    -unity-background-image-tint-color: rgb(255, 255, 255);
+}
+
+.mc_button:hover {
+    scale: 1.1 1.1;
+}
+
+.mc_button:active {
+    background-color: lightpink;
+}
+
+.mc_title {
+    -unity-font: url("project://database/Assets/ThirdParties/UI%20Toolkit/UnityThemes/UnityDefaultRuntimeTheme.tss?fileID=2230732570650464555&guid=c340eae9f1a3de54a956bc5a7df1b665&type=3#NotInter-Regular");
+    font-size: 800%;
+    -unity-font-style: bold;
+    -unity-text-align: middle-center;
+    color: rgb(255, 183, 73);
+    -unity-text-outline-width: 1px;
+    -unity-text-outline-color: rgb(0, 0, 0);
+    width: 100%;
+    height: 30%;
+}
