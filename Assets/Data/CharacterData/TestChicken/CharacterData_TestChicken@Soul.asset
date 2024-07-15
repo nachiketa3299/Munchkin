@@ -12,9 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: aa260f5243df0d746b05b2104465c403, type: 3}
   m_Name: CharacterData_TestChicken@Soul
   m_EditorClassIdentifier: 
-  visualPrefab: {fileID: 919132149155446097, guid: b5b2cac1f4909f74a88f757b19fed6ff,
-    type: 3}
   visualInstance: {fileID: 0}
+  visualRenderer: {fileID: 0}
+  visualPrefab: {fileID: 4868319489274763145, guid: c28228d78cfc00c4b998b31103de55e0,
+    type: 3}
   agingColors:
     start: {r: 0, g: 0.6509804, b: 1, a: 0}
     end: {r: 0, g: 0.6509804, b: 1, a: 0}

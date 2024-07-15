@@ -21,7 +21,7 @@ GameObject:
   - component: {fileID: 7218347548848475905}
   - component: {fileID: 295155762174093414}
   m_Layer: 0
-  m_Name: P_TestChicken
+  m_Name: P_CharacterObject
   m_TagString: MC_Character
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -59,7 +59,7 @@ CapsuleCollider:
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
-  m_Enabled: 1
+  m_Enabled: 0
   serializedVersion: 2
   m_Radius: 0.5
   m_Height: 2
@@ -198,7 +198,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 915b92c07505f3646b62746a44185907, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _allCharacterData: {fileID: 11400000, guid: c7a44c13bec226b4cb53ee059e65ff74, type: 2}
+  _allCharacterData: {fileID: 11400000, guid: bf73124163e088f46b6a480f4327e3ee, type: 2}
   _roosterMutationChance: 0.05
 --- !u!114 &6989088779861184092
 MonoBehaviour:
