@@ -2,6 +2,7 @@ using System;
 using System.Collections;
 using DefaultNamespace;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MC
 {
@@ -9,12 +10,14 @@ namespace MC
 	// 현재는 그냥 여기서 계속 처리하는 것으로
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(Rigidbody))]
-	public partial class Egg : MonoBehaviour,IPickable
+	public partial class Egg : MonoBehaviour, IPickable
 	{
 		public event Action EggCreated;
 		public event Action<float> EggDamaged;
 		public event Action<float> EggImpacted;
 		public event Action EggDestroyed;
+
+		public bool isPicked = false;
 
 		#region Unity Messages
 
@@ -52,6 +55,16 @@ namespace MC
 		{
 			var impactForceMagnitude = (collision.impulse / Time.fixedDeltaTime).magnitude;
 			EggImpacted?.Invoke(impactForceMagnitude);
+		}
+
+		private void OnTriggerEnter(Collider other)
+		{
+			if (other.tag.Equals("MC_Scene"))
+			{
+				string sceneName = other.gameObject.scene.name;
+				Scene moveToScene = SceneManager.GetSceneByName(sceneName);
+				SceneManager.MoveGameObjectToScene(this.gameObject, moveToScene);
+			}
 		}
 
 		#endregion // Unity Messages
@@ -136,6 +149,7 @@ namespace MC
 		[SerializeField] float _maxHealth = 100.0f;
 
 		Color _currentColor;
+
 		// 아마 Scriptable Object EggData 같은걸 만들어서 관리해야 할 수도 있음
 		[SerializeField] Color _colorOnMaxHealth = Color.yellow;
 		[SerializeField] Color _colorOnZeroHealth = Color.red;
@@ -152,7 +166,12 @@ namespace MC
 #endif
 		public void Pick()
 		{
+			isPicked = true;
+		}
 
+		public void Drop()
+		{
+			isPicked = false;
 		}
 	}
 }

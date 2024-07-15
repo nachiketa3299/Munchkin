@@ -8,5 +8,7 @@ namespace DefaultNamespace
 	public interface IPickable
 	{
 		public abstract void Pick();
+
+		public abstract void Drop();
 	}
 }

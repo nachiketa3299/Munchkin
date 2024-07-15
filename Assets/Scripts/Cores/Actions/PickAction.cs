@@ -1,4 +1,5 @@
 ﻿using System;
+using DefaultNamespace;
 using UnityEngine;
 using UnityEngine.Serialization;
 
@@ -18,6 +19,7 @@ namespace MC
 				Debug.Log("Try PICK!!");
 				if (isTriggered)
 				{
+					pickObject.GetComponent<IPickable>().Pick();
 					pickObject.transform.position = _pickPosition.position;
 					pickObject.transform.parent = _pickPosition;
 
@@ -57,6 +59,7 @@ namespace MC
 		private void DropObject()
 		{
 			Debug.Log("EndPick");
+			pickObject.GetComponent<IPickable>().Drop();
 			pickObject.transform.position = _pickPosition.position;
 			pickObject.transform.parent = null;
 			Collider[] colliders = pickObject.GetComponents<Collider>();
