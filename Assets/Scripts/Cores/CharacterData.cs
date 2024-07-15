@@ -36,7 +36,7 @@ namespace MC
 		#endregion // Assign in Inspector
 
 		// 현재 테스트로 임포트한 스킨드 메쉬들의 방향과 Y 오프셋이 약간 어긋나 있어서, 아래 값들로 보정하여 인스턴스화 한다.
-		static public Vector3 PosCal => new(0.0f, -1.0f, 0.0f);
-		static public Quaternion RotCal => Quaternion.identity * Quaternion.Euler(0.0f, 180.0f, 0.0f);
+		// static public Vector3 PosCal => new(0.0f, -1.0f, 0.0f);
+		// static public Quaternion RotCal => Quaternion.identity * Quaternion.Euler(0.0f, 180.0f, 0.0f);
 	} // class
 } // namespace

@@ -19,7 +19,7 @@ namespace MC
 			if (!this[type].visualInstance)
 			{
 				this[type].visualInstance =
-					Instantiate(this[type].visualPrefab, parent.position + CharacterData.PosCal, parent.rotation * CharacterData.RotCal, parent);
+					Instantiate(this[type].visualPrefab, parent);
 				this[type].visualInstance.SetActive(false);
 				this[type].visualRenderer = this[type].visualInstance.GetComponentInChildren<Renderer>();
 			}
