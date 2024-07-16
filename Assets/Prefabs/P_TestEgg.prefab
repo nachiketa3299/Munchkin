@@ -117,6 +117,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af6339666b3ab564ab61d72690206ee7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  isPicked: 0
   _impactThreshold: 10
   _maxHealth: 100
   _colorOnMaxHealth: {r: 1, g: 0.92156863, b: 0.015686275, a: 1}
@@ -145,6 +146,7 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+  _eggDamageTimer: 5
 --- !u!1001 &317923141492936810
 PrefabInstance:
   m_ObjectHideFlags: 0

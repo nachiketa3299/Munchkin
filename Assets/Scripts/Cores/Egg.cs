@@ -1,6 +1,6 @@
 using System;
 using System.Collections;
-using DefaultNamespace;
+
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -161,8 +161,8 @@ namespace MC
 		bool _eggCanBeDamaged = true;
 
 #if UNITY_EDITOR
-		bool _logOnEggEvent = false;
-		private IPickable _pickableImplementation;
+		// bool _logOnEggEvent = false;
+		private IPickable _pickableImplementation; // why?
 #endif
 		public void Pick()
 		{

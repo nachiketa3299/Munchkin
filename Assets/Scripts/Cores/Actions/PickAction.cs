@@ -1,10 +1,8 @@
-﻿using System;
-using DefaultNamespace;
-using UnityEngine;
-using UnityEngine.Serialization;
+﻿using UnityEngine;
 
 namespace MC
 {
+	[DisallowMultipleComponent]
 	public class PickAction : MonoBehaviour
 	{
 		private bool isTriggered = false;

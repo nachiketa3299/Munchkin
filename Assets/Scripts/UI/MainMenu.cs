@@ -116,7 +116,7 @@ namespace MC.UI
 			}
 		}
 
-		[SerializeField] SceneDepenencyData _data;
+		[SerializeField] SceneDependencyData _data;
 
 		VisualElement _ui_mainInteraction;
 		ProgressBar _ui_progress;
@@ -124,7 +124,7 @@ namespace MC.UI
 		Button _ui_gameEndButton;
 		Label _ui_title;
 
-		// NOTE 시작 색을 아예 여기서 설정해주고 있는데, Custom USS Property 에 대해서 VisualEelement 클래스를 새로 상속해서
+		// NOTE 시작 색을 아예 여기서 설정해주고 있는데, Custom USS Property 에 대해서 VisualElement 클래스를 새로 상속해서
 		// Getter 를 만드는 방법이 있다고 하는데 그걸 쓰느니 이렇게 여기서 그냥 색을 정해버리는 게 빠를 거 같아서 이렇게함
 		// 참고: https://forum.unity.com/threads/is-getting-values-from-style-sheet-possible-in-c.1399723/
 		List<Color> _titleColors = new() { new Color(255f / 256f, 211f / 256f, 0f, 1f), Color.white, Color.cyan };

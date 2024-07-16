@@ -1,5 +1,4 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace MC
 {
@@ -66,7 +65,7 @@ namespace MC
 			}
 #endif
 
-			// Cache & Bind LookAction
+			// Cache & Bind PickAction
 
 			if (_pickAction = GetComponent<PickAction>())
 			{
@@ -77,8 +76,14 @@ namespace MC
 
 				_inputActions.CharacterActions.Pick.canceled += (context) => { _pickAction.EndAction(); };
 			}
-		}
 
+#if UNITY_EDITOR
+			else
+			{
+				Debug.LogWarning($"캐릭터에 {typeof(PickAction).Name} 컴포넌트가 없습니다.");
+			}
+#endif
+		}
 
 		void OnEnable()
 		{
@@ -101,6 +106,6 @@ namespace MC
 		MoveAction _moveAction;
 		JumpAction _jumpAction;
 		LookAction _lookAction;
-		private PickAction _pickAction;
+		PickAction _pickAction;
 	}
 }
