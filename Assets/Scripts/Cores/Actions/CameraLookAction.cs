@@ -17,7 +17,7 @@ namespace MC
 	[RequireComponent(typeof(CinemachineVirtualCamera))]
 	public class CameraLookAction : ActionRoutineBase
 	{
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void Awake()
 		{
@@ -30,17 +30,17 @@ namespace MC
 #endif
 		}
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		/// <summary>
 		/// 현재 실행 중인 카메라 시야 관련 코루틴을 모두 정지하고,
-		/// 새로 <paramref name="directionCoeff"/> 방향으로 카메라 Y 오프셋을 이동시키는 코루틴을 실행한다.
+		/// 새로 <paramref name="directionValue"/> 방향으로 카메라 Y 오프셋을 이동시키는 코루틴을 실행한다.
 		/// </summary>
-		public void BeginAction(float directionCoeff)
+		public void BeginAction(float directionValue)
 		{
 			TryStopCurrentRoutine();
 
-			_currentRoutine = StartCoroutine(CameraLookRoutine(directionCoeff));
+			_currentRoutine = StartCoroutine(CameraLookRoutine(directionValue));
 		}
 
 		/// <summary>
@@ -55,13 +55,13 @@ namespace MC
 
 
 		/// <summary>
-		/// 카메라의 객체 추적 Y 오프셋을 <paramref name="directionCoeff"/> 방향으로 <see cref="_maxCameraLookOffsetY"/> 까지 점진적으로 이동시키는 코루틴.
+		/// 카메라의 객체 추적 Y 오프셋을 <paramref name="directionValue"/> 방향으로 <see cref="_maxCameraLookOffsetY"/> 까지 점진적으로 이동시키는 코루틴.
 		/// </summary>
-		IEnumerator CameraLookRoutine(float directionCoeff)
+		IEnumerator CameraLookRoutine(float directionValue)
 		{
 			_currentCameraLookOffsetY = _framingTransposer.m_TrackedObjectOffset.y;
 
-			var targetCameraLookOffsetY = directionCoeff * Mathf.Abs(_maxCameraLookOffsetY);
+			var targetCameraLookOffsetY = directionValue * Mathf.Abs(_maxCameraLookOffsetY);
 
 			while (Mathf.Abs(_currentCameraLookOffsetY - targetCameraLookOffsetY) > 0.01f)
 			{

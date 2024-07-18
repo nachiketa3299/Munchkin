@@ -11,7 +11,7 @@ namespace MC
 	/// <summary> 씬들의 상호 인접 관계를 정의하는 데이터. </summary>
 	/// <remarks> 인접 관계는 그래프로 표현되며, <see cref="Node"/> 와 <see cref="Graph"/> 를 참고한다. </remarks>
 	[CreateAssetMenu(menuName = "MC/Scriptable Objects/Scene Dependency Data", fileName = "SceneDependencyData_Default")]
-	public class SceneDepenencyData : ScriptableObject
+	public class SceneDependencyData : ScriptableObject
 	{
 		[Serializable]
 		/// <summary> 어떤 씬과 인접한 씬을 정의 </summary>
@@ -123,7 +123,7 @@ namespace MC
 			public readonly Dictionary<string, Dictionary<string, int>> distances;
 		} // class Graph
 
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void Awake() => RefreshGraph();
 		void OnValidate() => RefreshGraph();
@@ -143,7 +143,7 @@ namespace MC
 		}
 
 		/// <summary><paramref name="fromName"/> 이름의 씬과 <paramref name="toName"/> 이름의 씬의 거리를 그래프에서 찾아 반환한다. </summary>
-		/// <remarks> 
+		/// <remarks>
 		/// <para>이 메서드의 반환 값에 따라서 어떤 씬의 로드/언로드 여부를 판단한다.</para>
 		/// <para>관계가 정의되지 않은 씬이라면 아무 것도 하지 않기 위해 정수의 최대값을 반환한다.</para>
 		/// </remarks>
@@ -165,11 +165,11 @@ namespace MC
 		public List<string> RetrieveNearSceneNames(string name, int depth = 1)
 		{
 			var nSceneList = new List<string>();
-			foreach (var (nname, dist) in _graph.distances[name])
+			foreach (var (nearSceneName, dist) in _graph.distances[name])
 			{
-				if (nname != name && dist <= depth)
+				if (nearSceneName != name && dist <= depth)
 				{
-					nSceneList.Add(nname);
+					nSceneList.Add(nearSceneName);
 				}
 			}
 

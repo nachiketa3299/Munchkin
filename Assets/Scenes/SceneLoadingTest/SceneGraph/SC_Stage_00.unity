@@ -418,7 +418,7 @@ PrefabInstance:
     - target: {fileID: 7674990366172167226, guid: bf3174eadcb8b7844bb62e042ce8ad51,
         type: 3}
       propertyPath: m_Name
-      value: P_RZNEGG
+      value: P_Egg
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

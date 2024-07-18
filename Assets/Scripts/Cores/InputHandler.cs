@@ -5,7 +5,7 @@ namespace MC
 {
 	public class InputHandler : MonoBehaviour
 	{
-		#region Unity Messages
+		#region Unity Callbacks
 
 		/// <summary> 입력 액션과 캐릭터 액션을 바인드. 컴포넌트가 존재하지 않아도 경고 후 실행. </summary>
 		void Awake()
@@ -91,7 +91,7 @@ namespace MC
 			_inputActions.Disable();
 		}
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		/// <summary>
 		/// InputActionAsset 에디터 에셋에서 Generate C# Class 옵션으로 생성된 래퍼 클래스입니다. 절대 수정하지 마세요.<br/>

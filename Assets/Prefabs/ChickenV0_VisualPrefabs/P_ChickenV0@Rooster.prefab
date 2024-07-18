@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 6843920953914893201}
   - component: {fileID: 1215203902287924640}
   m_Layer: 0
-  m_Name: P_ChickenV0@RoosterViisual
+  m_Name: P_ChickenV0@Rooster
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

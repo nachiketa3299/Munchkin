@@ -9,21 +9,21 @@ namespace MC
 	[RequireComponent(typeof(Rigidbody))]
 	public class MoveAction : ActionRoutineBase
 	{
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void Awake()
 		{
 			_rigidbody = GetComponent<Rigidbody>();
 		}
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		/// <summary>
-		/// <paramref name="directionCoeff"/> 방향으로 캐릭터의 가속도로 가속한다.
+		/// <paramref name="directionValue"/> 방향으로 캐릭터의 가속도로 가속한다.
 		/// </summary>
-		public void BeginAction(float directionCoeff)
+		public void BeginAction(float directionValue)
 		{
-			_directionCoeff = directionCoeff;
+			_directionValue = directionValue;
 			TryStopCurrentRoutine();
 			_currentRoutine = StartCoroutine(HorizontalAccelerationRoutine());
 		}
@@ -43,7 +43,7 @@ namespace MC
 			{
 				if (Mathf.Abs(_rigidbody.velocity.x) < _maxHorizontalSpeed)
 				{
-					var force = _directionCoeff * _accelerationMagnitude * Vector3.right;
+					var force = _directionValue * _accelerationMagnitude * Vector3.right;
 					_rigidbody.AddForce(force, ForceMode.Acceleration);
 				}
 
@@ -65,7 +65,7 @@ namespace MC
 		}
 
 		Rigidbody _rigidbody;
-		float _directionCoeff;
+		float _directionValue;
 
 		// TODO 지면에 있는 경우 / 체공해 있는 경우 수평 가/감속도가 달라야 함.
 		// TODO 또한, 캐릭터의 종류별로 아래 멤버의 값이 달라야 함. 캐릭터 오브젝트가 커지는 경우 각 멤버를 캐릭터별로 어떻게 저장하고 초기화할 지 고민할 것.

@@ -13,7 +13,7 @@ namespace MC.UI
 	[RequireComponent(typeof(UIDocument))]
 	public class MainMenu : MonoBehaviour
 	{
-		#region Unity Messages
+		#region Unity Callbacks
 
 		// UI 설정은 OnEnable에서 이루어져야 한다고 함.
 		void OnEnable()
@@ -43,7 +43,7 @@ namespace MC.UI
 
 		}
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		void OnGameStartButtonClicked()
 		{
@@ -116,7 +116,7 @@ namespace MC.UI
 			}
 		}
 
-		[SerializeField] SceneDepenencyData _data;
+		[SerializeField] SceneDependencyData _data;
 
 		VisualElement _ui_mainInteraction;
 		ProgressBar _ui_progress;

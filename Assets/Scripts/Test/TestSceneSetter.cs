@@ -7,7 +7,7 @@ namespace MC.Test
 	/// <summary> 간단하게 테스트 씬의 메쉬 색상을 랜덤화하기 위한 스크립트 </summary>
 	public class TestSceneSetter : MonoBehaviour
 	{
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void Start()
 		{
@@ -32,7 +32,7 @@ namespace MC.Test
 		void OnValidate() => SetTextMeshTextWithSceneName();
 		void Reset() => SetTextMeshTextWithSceneName();
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		void SetTextMeshTextWithSceneName() => GetComponentInChildren<TextMeshPro>().text = gameObject.scene.name;
 	} // class

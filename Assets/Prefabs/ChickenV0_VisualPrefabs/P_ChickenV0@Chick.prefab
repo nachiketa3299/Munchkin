@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 3428296852172096001}
   - component: {fileID: 8664469277838138578}
   m_Layer: 0
-  m_Name: P_ChickenV0@ChickVisual
+  m_Name: P_ChickenV0@Chick
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

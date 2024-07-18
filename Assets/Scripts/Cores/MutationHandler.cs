@@ -13,7 +13,7 @@ namespace MC
 	[DisallowMultipleComponent]
 	public class MutationHandler : MonoBehaviour
 	{
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void Awake()
 		{
@@ -43,7 +43,7 @@ namespace MC
 			LifespanHandler.LifespanEnded -= OnLifespanEnded;
 		}
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		void OnLifespanStarted()
 		{

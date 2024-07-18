@@ -34,7 +34,7 @@ namespace MC
 		/// </summary>
 		public static event Action LifespanEnded; // 수명이 종료되어 생애주기가 끝났을 때
 
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void OnEnable()
 		{
@@ -66,7 +66,7 @@ namespace MC
 #endif
 		}
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		/// <summary>
 		/// 수명 타이머, 각 시점에 맞게 이벤트를 호출해준다.

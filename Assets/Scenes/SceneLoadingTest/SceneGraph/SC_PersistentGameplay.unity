@@ -642,19 +642,13 @@ PrefabInstance:
     - target: {fileID: 1334351684667443968, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
       propertyPath: m_Name
-      value: P_TestChicken
+      value: P_CharacterObject
       objectReference: {fileID: 0}
     - target: {fileID: 6348100591888285890, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
       propertyPath: _cameraLookAction
       value: 
       objectReference: {fileID: 1737312970}
-    - target: {fileID: 7669265829548699004, guid: 430e86359e4ec1b408f9473b4f10c10e,
-        type: 3}
-      propertyPath: _allCharacterData
-      value: 
-      objectReference: {fileID: 11400000, guid: c7a44c13bec226b4cb53ee059e65ff74,
-        type: 2}
     - target: {fileID: 8901260133182799471, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
       propertyPath: m_LocalPosition.x

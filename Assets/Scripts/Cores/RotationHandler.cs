@@ -18,7 +18,7 @@ namespace MC
 		/// </summary>
 		[Serializable] private enum EDirection { Left, Right }
 
-		#region Unity Message
+		#region Unity Callbacks
 
 		void Awake()
 		{
@@ -66,7 +66,7 @@ namespace MC
 			}
 		}
 
-		#endregion // Unity Message
+		#endregion // Unity Callbacks
 
 		/// <summary>
 		///  (왼쪽 -> 오른쪽) 일때 반시계방향, (오른쪽 -> 왼쪽)일때 시계방향으로 돌리기 위해, 타겟 앵글을 미세하게 조정해준다.

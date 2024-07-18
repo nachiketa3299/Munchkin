@@ -7,11 +7,11 @@ namespace MC
 	[DisallowMultipleComponent]
 	public class LookAction : MonoBehaviour
 	{
-		public void BeginAction(float directionCoeff)
+		public void BeginAction(float directionValue)
 		{
 			// 여기에 캐릭터의 시야행동 시작 로직을 처리
 
-			_cameraLookAction?.BeginAction(directionCoeff);
+			_cameraLookAction?.BeginAction(directionValue);
 		}
 
 		public void EndAction()
@@ -21,7 +21,7 @@ namespace MC
 			_cameraLookAction?.EndAction();
 		}
 
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void Awake()
 		{

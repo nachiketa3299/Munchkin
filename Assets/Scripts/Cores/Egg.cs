@@ -15,7 +15,7 @@ namespace MC
 		public event Action<float> EggImpacted;
 		public event Action EggDestroyed;
 
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void Awake()
 		{
@@ -53,7 +53,7 @@ namespace MC
 			EggImpacted?.Invoke(impactForceMagnitude);
 		}
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		void OnEggCreated()
 		{

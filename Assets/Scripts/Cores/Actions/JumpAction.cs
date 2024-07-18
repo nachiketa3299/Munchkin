@@ -9,14 +9,14 @@ namespace MC
 	[RequireComponent(typeof(Rigidbody))]
 	public class JumpAction : ActionRoutineBase
 	{
-		#region Unity Messages
+		#region Unity Callbacks
 
 		void Awake()
 		{
 			_rigidbody = GetComponent<Rigidbody>();
 		}
 
-		#endregion // Unity Messages
+		#endregion // Unity Callbacks
 
 		public void BeginAction()
 		{

@@ -10,15 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: aa260f5243df0d746b05b2104465c403, type: 3}
-  m_Name: CharacterData_TestChicken@Chicken_Rooster
+  m_Name: CharacterData_ChickenV0@Chick
   m_EditorClassIdentifier: 
   visualInstance: {fileID: 0}
   visualRenderer: {fileID: 0}
-  visualPrefab: {fileID: 4084575685519352125, guid: a9164e144fbd0c54aa205c593eccd15f,
+  visualPrefab: {fileID: 4868319489274763145, guid: c28228d78cfc00c4b998b31103de55e0,
     type: 3}
   agingColors:
-    start: {r: 0, g: 1, b: 0.61960787, a: 0}
-    end: {r: 0, g: 0.29803923, b: 0.18431373, a: 0}
+    start: {r: 1, g: 0.75294125, b: 0, a: 0}
+    end: {r: 0.36078432, g: 0.29803923, b: 0.10980393, a: 0}
   movementStats:
     accelerationMagnitudeOnGround: 0
     accelerationMagnitudeOnAir: 0
