@@ -15,8 +15,8 @@ MonoBehaviour:
   showOverlay: 1
   showCustomFolder: 1
   icons:
-  - folder: {fileID: 102900000, guid: 135803fa66499aa4e845f3e0d29f4b6a, type: 3}
-    folderIcon: {fileID: 2800000, guid: cc08e386fb48b9e439c3a9bd99e3728e, type: 3}
+  - folder: {fileID: 102900000, guid: ab27ee9f6ad36674c985903c3c529996, type: 3}
+    folderIcon: {fileID: 2800000, guid: 6b1895b22a59355479bcd0173987b93d, type: 3}
     overlayIcon: {fileID: 0}
   - folder: {fileID: 102900000, guid: 367c1df8901a8564a897c65ac1020907, type: 3}
     folderIcon: {fileID: 2800000, guid: 2c26ab15f039cf24c973010d915b6385, type: 3}
