@@ -13,6 +13,9 @@ namespace MC
 	[RequireComponent(typeof(Rigidbody))]
 	public class RotationHandler : ActionRoutineBase
 	{
+		/// <summary>
+		/// 캐릭터가 바라보는 방향에 대한 열거형
+		/// </summary>
 		[Serializable] private enum EDirection { Left, Right }
 
 		#region Unity Message
@@ -29,30 +32,34 @@ namespace MC
 		}
 
 		/// <summary>
-		/// 수평 속도가 0 미만이면 왼쪽을 바라보고 있어야 하고, 0 초과면 오른쪽을 바라보고 있어야 하며, 아닌 경우 방향을 유지.
+		/// 캐릭터의 Rigidbody 수평 속도를 체크하여 회전이 일어나야 하는 시점에 회전 코루틴을 호출한다.
 		/// </summary>
 		/// <remarks>
-		/// 단, 기준을 0으로 하면 작은 수평 속도에서 캐릭터가 계속 Flip 하는 문제가 있어서, Threshold를 준다.
+		/// 단, 수평 속도 기준을 0으로 하면 작은 수평 속도에서 캐릭터가 계속 Flip 하는 문제가 있어서, Threshold를 준다.
 		/// </remarks>
 		void FixedUpdate()
 		{
-			if (HorizontalVelocity < -1.0f * Mathf.Abs(_directionChangeHorizontalVelocityThreshold))
+			if (HorizontalRigidbodyVelocity < -1.0f * Mathf.Abs(_directionChangeHorizontalVelocityThreshold))
 			{
 				if (_lastDirection == EDirection.Right)
 				{
 					TryStopCurrentRoutine();
-					_currentRoutine = StartCoroutine(RotateRoutine(EDirection.Left));
+
+					var rotationRoutine = _lerpRotation ? LerpRotateRoutine(EDirection.Left) : FlipRotateRoutine(EDirection.Left);
+					_currentRoutine = StartCoroutine(rotationRoutine);
 
 					_lastDirection = EDirection.Left;
 				}
 			}
 
-			else if (HorizontalVelocity > Mathf.Abs(_directionChangeHorizontalVelocityThreshold))
+			else if (HorizontalRigidbodyVelocity > Mathf.Abs(_directionChangeHorizontalVelocityThreshold))
 			{
 				if (_lastDirection == EDirection.Left)
 				{
 					TryStopCurrentRoutine();
-					_currentRoutine = StartCoroutine(RotateRoutine(EDirection.Right));
+
+					var rotationRoutine = _lerpRotation ? LerpRotateRoutine(EDirection.Right) : FlipRotateRoutine(EDirection.Right);
+					_currentRoutine = StartCoroutine(rotationRoutine);
 
 					_lastDirection = EDirection.Right;
 				}
@@ -62,7 +69,7 @@ namespace MC
 		#endregion // Unity Message
 
 		/// <summary>
-		//  (왼쪽 -> 오른쪽) 일때 반시계방향, (오른쪽 -> 왼쪽)일때 시계방향으로 돌리기 위해, 타겟 앵글을 미세하게 조정해준다.
+		///  (왼쪽 -> 오른쪽) 일때 반시계방향, (오른쪽 -> 왼쪽)일때 시계방향으로 돌리기 위해, 타겟 앵글을 미세하게 조정해준다.
 		/// </summary>
 		float CalibrateAngle(EDirection to, float angle)
 		{
@@ -79,7 +86,10 @@ namespace MC
 			return angle;
 		}
 
-		IEnumerator RotateRoutine(EDirection to)
+		/// <summary>
+		/// 캐릭터를 Rigidbody 를 이용하여 <paramref name="to"/> 방향까지 속도에 맞게 보간하여 회전시킨다.
+		/// </summary>
+		IEnumerator LerpRotateRoutine(EDirection to)
 		{
 			var elapsedTime = 0.0f;
 			var initialRotation = transform.rotation;
@@ -93,19 +103,29 @@ namespace MC
 			while (elapsedTime < _rotationTime)
 			{
 				var curveValue = _rotationCurve.Evaluate(elapsedTime / _rotationTime);
-				var currentRot = Quaternion.Lerp(initialRotation, calibratedTargetRotation, curveValue);
+				var currentRotation = Quaternion.Lerp(initialRotation, calibratedTargetRotation, curveValue);
 
-				transform.rotation = currentRot;
+				_rigidbody.MoveRotation(currentRotation);
 
 				elapsedTime += Time.deltaTime;
 
 				yield return null;
 			}
 
-			transform.rotation = targetRotation;
+			_rigidbody.MoveRotation(targetRotation);
 		}
 
-		float HorizontalVelocity => _rigidbody.velocity.x;
+		/// <summary>
+		/// 캐릭터를 Rigidbody를 이용하여 <paramref name="to"/> 방향까지 즉각적으로 회전시킨다.
+		/// </summary>
+		IEnumerator FlipRotateRoutine(EDirection to)
+		{
+			var targetRotation = Quaternion.Euler(0.0f, _directionToEulerAngleY[to], 0.0f);
+			_rigidbody.MoveRotation(targetRotation);
+			yield break;
+		}
+
+		float HorizontalRigidbodyVelocity => _rigidbody.velocity.x;
 
 		readonly Dictionary<EDirection, float> _directionToEulerAngleY = new() { { EDirection.Left, -90.0f }, { EDirection.Right, 90.0f } };
 
@@ -113,6 +133,10 @@ namespace MC
 		EDirection _lastDirection;
 
 		[SerializeField] EDirection _initialDirection = EDirection.Right;
+		[SerializeField] bool _lerpRotation = true;
+
+		[Header("Lerp Rotation 설정")]
+
 		[SerializeField] float _rotationTime = 0.1f;
 		[SerializeField] AnimationCurve _rotationCurve = AnimationCurve.EaseInOut(0.0f, 0.0f, 1.0f, 1.0f);
 		[SerializeField] float _directionChangeHorizontalVelocityThreshold = 0.5f;
