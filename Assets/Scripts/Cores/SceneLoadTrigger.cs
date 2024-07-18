@@ -1,7 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 using UnityEngine;
 using UnityEngine.SceneManagement;
@@ -9,7 +9,7 @@ using UnityEngine.SceneManagement;
 namespace MC
 {
 	/// <summary>
-	/// 캐릭터가 씬의 콜라이더에 접촉했을 때 이벤트를 발생기키는 용도
+	/// 이 컴포넌트가 부착된 오브젝트가 씬의 경계 콜라이더에 접촉했을 때 이벤트를 발생시킨다.
 	/// </summary>
 	[DisallowMultipleComponent]
 	public class SceneLoadTrigger : MonoBehaviour
@@ -24,26 +24,10 @@ namespace MC
 		{
 			var enteredSceneName = other.gameObject.scene.name;
 
-#if UNITY_EDITOR
-			if (_logOnEnteringNewScene)
-				Debug.Log($"{gameObject.name}가 씬 {other.gameObject.scene.name}의 {other.name}에 OnTriggerEnter 이벤트 수신");
-#endif
-
 			if (_lastEnteredSceneName == enteredSceneName)
 			{
-
-#if UNITY_EDITOR
-				if (_logOnEnteringNewScene)
-					Debug.Log($"씬 {enteredSceneName}에 대한 OnTriggerEnter는 바로 이전에 처리하였으므로, 무시합니다.");
-#endif
 				return;
 			}
-
-
-#if UNITY_EDITOR
-			if (_logOnEnteringNewScene)
-				Debug.Log($"씬 {enteredSceneName}에 대한 입장은 이번이 최초입니다. 이 씬을 기준으로 로딩 타겟을 결정합니다.");
-#endif
 
 			StartCoroutine(EnteredNewSceneRoutine(enteredSceneName));
 		}
