@@ -160,20 +160,24 @@ namespace MC
 			return int.MaxValue;
 		}
 
-		/// <summary> <paramref name="name"/> 이름의 씬과 거리 <paramref name="depth"/> 이하만큼 떨어진 씬을 찾아, 그 이름들을 반환한다. </summary>
-		/// <remarks> 자기 자신과의 거리는 0 이지만, 반환 컬렉션에 포함시키지 않는다. </remarks>
-		public List<string> RetrieveNearSceneNames(string name, int depth = 1)
+		/// <summary>
+		/// <paramref name="pivotSceneName"/> 이름의 씬과 거리 <paramref name="depth"/> 이하만큼 떨어진 씬을 찾아, 그 이름들을 반환한다.
+		/// </summary>
+		public HashSet<string> RetrieveNearSceneUniqueNames(string pivotSceneName, int depth)
 		{
-			var nSceneList = new List<string>();
-			foreach (var (nearSceneName, dist) in _graph.distances[name])
+			var nearSceneNameSet = new HashSet<string>();
+
+			foreach (var (nearSceneName, dist) in _graph.distances[pivotSceneName])
 			{
-				if (nearSceneName != name && dist <= depth)
+				if (dist > depth)
 				{
-					nSceneList.Add(nearSceneName);
+					continue;
 				}
+
+				nearSceneNameSet.Add(nearSceneName);
 			}
 
-			return nSceneList;
+			return nearSceneNameSet;
 		}
 
 		public string InitialSceneName => _initialSceneRef.SceneName;

@@ -108,6 +108,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _data: {fileID: 11400000, guid: d7d1d0ee972f6184d93eafab264a7a8d, type: 2}
+  _loadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96, type: 2}
   _depthToLoad: 2
   _logOnEnteringNewScene: 0
 --- !u!114 &8428375837134010128
@@ -204,7 +205,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 553ae757d8e031542a8920ba0425d681, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _linelength: 2
+  _lineLength: 1
   _lineColor: {r: 1, g: 0, b: 0, a: 1}
 --- !u!114 &295155762174093414
 MonoBehaviour:

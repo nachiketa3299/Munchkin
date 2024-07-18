@@ -29,7 +29,8 @@ namespace MC
 				return;
 			}
 
-			StartCoroutine(EnteredNewSceneRoutine(enteredSceneName));
+			_loadedSceneData.EnteredNewScene(gameObject, enteredSceneName, _depthToLoad);
+			// StartCoroutine(EnteredNewSceneRoutine(enteredSceneName));
 		}
 
 		#endregion // Unity Callbacks
@@ -51,7 +52,7 @@ namespace MC
 				}
 			}
 
-			foreach (var name in _data.RetrieveNearSceneNames(newSceneName, _depthToLoad))
+			foreach (var name in _data.RetrieveNearSceneUniqueNames(newSceneName, _depthToLoad))
 			{
 				if (SceneManager.GetSceneByName(name).isLoaded)
 				{
@@ -92,8 +93,9 @@ namespace MC
 			return nameList;
 		}
 
-		string _lastEnteredSceneName = String.Empty;
+		string _lastEnteredSceneName = string.Empty;
 		[SerializeField] SceneDependencyData _data;
+		[SerializeField] RuntimeLoadedSceneData _loadedSceneData;
 		[SerializeField] int _depthToLoad;
 
 #if UNITY_EDITOR
