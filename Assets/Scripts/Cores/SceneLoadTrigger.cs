@@ -14,14 +14,28 @@ namespace MC
 	[DisallowMultipleComponent]
 	public class SceneLoadTrigger : MonoBehaviour
 	{
+		public event Action<GameObject, string, int> EnteredNewScene;
 
 		#region Unity Callbacks
 
+		void OnEnable()
+		{
+			EnteredNewScene += _runtimeLoadedSceneData.OnEnteredNewScene;
+		}
+
+		/// <summary>
+		/// 이 스크립트가 부착된 오브젝트가 씬 바운드 콜라이더에 트리거 이벤트를 발생시켰을 때 콜백되어야 함
+		/// </summary>
 		/// <remarks>
-		/// 한 씬 트리거를 여러번 연속해서 작동시킬 수 없음
+		/// 한 씬 트리거를 여러번 연속해서 작동시킬 수 없으며, 레이어 마스크 설정을 제대로 확인할 필요가 있음.
 		/// </remarks>
 		void OnTriggerEnter(Collider other)
 		{
+			if (!_canBeTriggered)
+			{
+				return;
+			}
+
 			var enteredSceneName = other.gameObject.scene.name;
 
 			if (_lastEnteredSceneName == enteredSceneName)
@@ -29,8 +43,27 @@ namespace MC
 				return;
 			}
 
-			_loadedSceneData.EnteredNewScene(gameObject, enteredSceneName, _depthToLoad);
-			// StartCoroutine(EnteredNewSceneRoutine(enteredSceneName));
+			// 여기서부터 ㄹㅇ Entered 판정
+
+			Debug.Log($"{gameObject} Entered {enteredSceneName}");
+
+			_canBeTriggered = false;
+
+			_lastEnteredSceneName = enteredSceneName;
+			EnteredNewScene?.Invoke(gameObject, enteredSceneName, _depthToLoad);
+
+			StartCoroutine(Reset());
+		}
+
+		IEnumerator Reset()
+		{
+			yield return new WaitForEndOfFrame();
+			_canBeTriggered = true;
+		}
+
+		void OnDisable()
+		{
+			EnteredNewScene = null;
 		}
 
 		#endregion // Unity Callbacks
@@ -46,13 +79,13 @@ namespace MC
 			var operations = new List<AsyncOperation>();
 			foreach (var name in RetrieveLoadedGamePlaySceneNames())
 			{
-				if (_data.GetDistance(newSceneName, name) > _depthToLoad)
+				if (_sceneDependencyData.GetDistance(newSceneName, name) > _depthToLoad)
 				{
 					operations.Add(SceneManager.UnloadSceneAsync(name));
 				}
 			}
 
-			foreach (var name in _data.RetrieveNearSceneUniqueNames(newSceneName, _depthToLoad))
+			foreach (var name in _sceneDependencyData.RetrieveNearSceneUniqueNames(newSceneName, _depthToLoad))
 			{
 				if (SceneManager.GetSceneByName(name).isLoaded)
 				{
@@ -73,7 +106,7 @@ namespace MC
 		/// <summary>
 		/// 현재 로드된 모든 씬 Persistent Scene을 제외한 모든 씬의 이름을 가져온다.
 		/// </summary>
-		List<string> RetrieveLoadedGamePlaySceneNames()
+		IEnumerable<string> RetrieveLoadedGamePlaySceneNames()
 		{
 			var sceneCounts = SceneManager.sceneCount;
 			var nameList = new List<string>(sceneCounts); // allocate capacity
@@ -82,7 +115,7 @@ namespace MC
 			{
 				var tName = SceneManager.GetSceneAt(i).name;
 
-				if (tName == _data.PersistentSceneName)
+				if (tName == _sceneDependencyData.PersistentSceneName)
 				{
 					continue;
 				}
@@ -94,12 +127,14 @@ namespace MC
 		}
 
 		string _lastEnteredSceneName = string.Empty;
-		[SerializeField] SceneDependencyData _data;
-		[SerializeField] RuntimeLoadedSceneData _loadedSceneData;
+		[SerializeField] SceneDependencyData _sceneDependencyData;
+		[SerializeField] RuntimeLoadedSceneData _runtimeLoadedSceneData;
 		[SerializeField] int _depthToLoad;
 
+		bool _canBeTriggered = true;
+
 #if UNITY_EDITOR
-		[SerializeField] bool _logOnEnteringNewScene = false;
+		// [SerializeField] bool _logOnEnteringNewScene = false;
 #endif
 	}
 }

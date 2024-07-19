@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 1303551044534131362}
   - component: {fileID: 6426055121981755234}
   - component: {fileID: 3099944916264159348}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: P_Egg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -159,10 +159,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82cbe629854ebc041b6f43983c7c89b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _data: {fileID: 11400000, guid: d7d1d0ee972f6184d93eafab264a7a8d, type: 2}
-  _loadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96, type: 2}
-  _depthToLoad: 0
-  _logOnEnteringNewScene: 0
+  _sceneDependencyData: {fileID: 11400000, guid: d7d1d0ee972f6184d93eafab264a7a8d,
+    type: 2}
+  _runtimeLoadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96,
+    type: 2}
+  _depthToLoad: 1
 --- !u!1001 &317923141492936810
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -225,6 +226,16 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: Visual
+      objectReference: {fileID: 0}
+    - target: {fileID: 919132149155446097, guid: f8ee8999f60c1af4aa85fb58707d2e8d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 8164078558771037576, guid: f8ee8999f60c1af4aa85fb58707d2e8d,
+        type: 3}
+      propertyPath: m_Layer
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

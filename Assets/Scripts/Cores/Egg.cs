@@ -146,7 +146,7 @@ namespace MC
 		bool _eggCanBeDamaged = true;
 
 #if UNITY_EDITOR
-		bool _logOnEggEvent = false;
+		// bool _logOnEggEvent = false;
 #endif
 	}
 }

@@ -19,9 +19,9 @@ GameObject:
   - component: {fileID: 6989088779861184092}
   - component: {fileID: 7218347548848475905}
   - component: {fileID: 295155762174093414}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: P_CharacterObject
-  m_TagString: MC_Character
+  m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -107,10 +107,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82cbe629854ebc041b6f43983c7c89b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _data: {fileID: 11400000, guid: d7d1d0ee972f6184d93eafab264a7a8d, type: 2}
-  _loadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96, type: 2}
+  _sceneDependencyData: {fileID: 11400000, guid: d7d1d0ee972f6184d93eafab264a7a8d,
+    type: 2}
+  _runtimeLoadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96,
+    type: 2}
   _depthToLoad: 2
-  _logOnEnteringNewScene: 0
 --- !u!114 &8428375837134010128
 MonoBehaviour:
   m_ObjectHideFlags: 0
