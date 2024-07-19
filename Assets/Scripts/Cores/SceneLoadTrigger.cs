@@ -29,14 +29,9 @@ namespace MC
 		/// <remarks>
 		/// 한 씬 트리거를 여러번 연속해서 작동시킬 수 없으며, 레이어 마스크 설정을 제대로 확인할 필요가 있음.
 		/// </remarks>
-		void OnTriggerEnter(Collider other)
+		void OnTriggerEnter(Collider sceneBoundCollider)
 		{
-			if (!_canBeTriggered)
-			{
-				return;
-			}
-
-			var enteredSceneName = other.gameObject.scene.name;
+			var enteredSceneName = sceneBoundCollider.gameObject.scene.name;
 
 			if (_lastEnteredSceneName == enteredSceneName)
 			{
@@ -47,18 +42,8 @@ namespace MC
 
 			Debug.Log($"{gameObject} Entered {enteredSceneName}");
 
-			_canBeTriggered = false;
-
 			_lastEnteredSceneName = enteredSceneName;
 			EnteredNewScene?.Invoke(gameObject, enteredSceneName, _depthToLoad);
-
-			StartCoroutine(Reset());
-		}
-
-		IEnumerator Reset()
-		{
-			yield return new WaitForEndOfFrame();
-			_canBeTriggered = true;
 		}
 
 		void OnDisable()
@@ -127,6 +112,7 @@ namespace MC
 		}
 
 		string _lastEnteredSceneName = string.Empty;
+
 		[SerializeField] SceneDependencyData _sceneDependencyData;
 		[SerializeField] RuntimeLoadedSceneData _runtimeLoadedSceneData;
 		[SerializeField] int _depthToLoad;

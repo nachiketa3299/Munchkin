@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-
 using UnityEngine;
 using UnityEngine.SceneManagement;
 
@@ -15,69 +14,66 @@ namespace MC
 
 		void OnEnable()
 		{
-			_runtimeLoadedSceneData.AsyncLoadSceneOperationNeeded += OnAsyncLoadOperationNeeded;
-			_runtimeLoadedSceneData.AsyncUnloadSceneOperationNeeded += OnAsyncUnloadOperationNeeded;
+			_runtimeLoadedSceneData.SceneOperationNeeded += OnSceneOperationNeeded;
 		}
 
 		void OnDisable()
 		{
-			_runtimeLoadedSceneData.AsyncLoadSceneOperationNeeded -= OnAsyncLoadOperationNeeded;
-			_runtimeLoadedSceneData.AsyncUnloadSceneOperationNeeded -= OnAsyncUnloadOperationNeeded;
+			_runtimeLoadedSceneData.SceneOperationNeeded -= OnSceneOperationNeeded;
+		}
+
+		void FixedUpdate()
+		{
+			_runtimeLoadedSceneData.ProcessChanges();
 		}
 
 		#endregion // Unity Callbacks
 
-		void OnAsyncLoadOperationNeeded(IEnumerable<string> allUniqueSceneNamesShouldBeLoaded)
+		void OnSceneOperationNeeded(HashSet<string> uniqueSceneNamesToLoad, HashSet<string> uniqueSceneNamesToUnload)
 		{
-			var operations = new List<AsyncOperation>();
+			StartCoroutine(ProcessSceneOperationsRoutine(uniqueSceneNamesToLoad, uniqueSceneNamesToUnload));
+		}
 
-			foreach (var sceneName in allUniqueSceneNamesShouldBeLoaded)
+		IEnumerator ProcessSceneOperationsRoutine(HashSet<string> uniqueSceneNamesToLoad, HashSet<string> uniqueSceneNamesToUnload)
+		{
+			// Unloading Scenes
+			foreach (var sceneName in uniqueSceneNamesToUnload.ToList())
 			{
-				if (SceneManager.GetSceneByName(sceneName).isLoaded)
+				if (SceneManager.GetSceneByName(sceneName).isLoaded && !_unloadingSceneNames.Contains(sceneName))
 				{
-					continue;
+					_unloadingSceneNames.Add(sceneName);
+					yield return StartCoroutine(UnloadSceneRoutine(sceneName));
 				}
-
-				operations.Add(SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive));
 			}
 
-			StartCoroutine(AsyncLoadScenesRoutine(operations));
-		}
-
-
-		void OnAsyncUnloadOperationNeeded(IEnumerable<string> allUniqueSceneNamesShouldBeUnloaded)
-		{
-			var operations = new List<AsyncOperation>();
-
-			foreach (var sceneName in allUniqueSceneNamesShouldBeUnloaded)
+			// Load Scenes
+			foreach (var sceneName in uniqueSceneNamesToLoad.ToList())
 			{
-				if (!SceneManager.GetSceneByName(sceneName).isLoaded)
+				if (!SceneManager.GetSceneByName(sceneName).isLoaded && !_loadingSceneNames.Contains(sceneName))
 				{
-					continue;
+					_loadingSceneNames.Add(sceneName);
+					yield return StartCoroutine(LoadSceneRoutine(sceneName));
 				}
-
-				operations.Add(SceneManager.UnloadSceneAsync(sceneName));
-			}
-
-			StartCoroutine(AsyncUnloadSceneRoutine(operations));
-		}
-
-		IEnumerator AsyncLoadScenesRoutine(IEnumerable<AsyncOperation> operations)
-		{
-			while (operations.All(operations => operations?.isDone == true))
-			{
-				yield return null;
 			}
 		}
 
-		IEnumerator AsyncUnloadSceneRoutine(IEnumerable<AsyncOperation> operations)
+		IEnumerator UnloadSceneRoutine(string sceneName)
 		{
-			while (operations.All(operations => operations?.isDone == true))
-			{
-				yield return null;
-			}
+			var operation = SceneManager.UnloadSceneAsync(sceneName);
+			yield return operation;
+			_unloadingSceneNames.Remove(sceneName);
+		}
+
+		IEnumerator LoadSceneRoutine(string sceneName)
+		{
+			var operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+			yield return operation;
+			_loadingSceneNames.Remove(sceneName);
 		}
 
 		[SerializeField] RuntimeLoadedSceneData _runtimeLoadedSceneData;
+
+		HashSet<string> _loadingSceneNames = new();
+		HashSet<string> _unloadingSceneNames = new();
 	}
 }

@@ -111,7 +111,7 @@ MonoBehaviour:
     type: 2}
   _runtimeLoadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96,
     type: 2}
-  _depthToLoad: 2
+  _depthToLoad: 1
 --- !u!114 &8428375837134010128
 MonoBehaviour:
   m_ObjectHideFlags: 0
