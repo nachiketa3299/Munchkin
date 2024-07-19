@@ -190,4 +190,4 @@ MonoBehaviour:
     _sceneAsset: {fileID: 102900000, guid: a6f866e6531f3e249b3fb25cbad8fa30, type: 3}
     _isDirty: 0
     _scenePath: Assets/Scenes/SC_MainMenu.unity
-  _logBuildingProcess: 0
+  _logBuildingProcess: 1

@@ -107,12 +107,38 @@ namespace MC
 				var str = string.Empty;
 				foreach (var (cSceneName, cSceneDistancePairs) in distances)
 				{
-					str += $"{cSceneName}: ";
+					var sceneString = cSceneName[^2..];
+					str += $"{sceneString}: ";
 
 					foreach (var (nSceneName, distance) in cSceneDistancePairs)
 					{
-						var distString = (distance == int.MaxValue) ? "INF" : distance.ToString();
-						str += $"({nSceneName}, {distString}) ";
+						var inSceneString = nSceneName[^2..];
+						var distString = (distance == int.MaxValue) ? "INF" : distance.ToString("D2");
+
+						if (distance <= 2)
+						{
+							var color = string.Empty;
+
+							if (distance == 0)
+							{
+								color = "green";
+							}
+							else if (distance == 1)
+							{
+								color = "yellow";
+							}
+							else if (distance == 2)
+							{
+								color = "red";
+							}
+
+							str += $"({inSceneString}, <color={color}>{distString}</color>) ";
+						}
+						else
+						{
+							str += $"({inSceneString}, {distString}) ";
+						}
+
 					}
 
 					str += '\n';

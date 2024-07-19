@@ -63,7 +63,7 @@ namespace MC.UI
 #endif
 		}
 
-		/// <summary> 설정된 최초 씬과 PersisteneGameplay 씬을 로드하는 코루틴 </summary>
+		/// <summary> 설정된 최초 씬과 PersistentGameplay 씬을 로드하는 코루틴 </summary>
 		IEnumerator InitialGameLoadingRoutine()
 		{
 			// turn off main ui and turn on loading screen

@@ -3,6 +3,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace MC
 {
@@ -14,24 +15,23 @@ namespace MC
 	{
 		public event Action<HashSet<string>, HashSet<string>> SceneOperationNeeded;
 
-		public void OnEnteredNewScene(GameObject objectEntering, string enteredSceneName, int depthToLoad)
+		public void OnEnteredNewScene(GameObject enteringObject, string enteredSceneName, int depthToLoad)
 		{
-			var nearSceneUniqueNames = _sceneDependencyData.RetrieveNearSceneUniqueNames(enteredSceneName, depthToLoad);
+			// 앞으로 이 오브젝트에 의해 유지해야 할 씬 목록
+			var nearSceneUniqueNamesByObject = _sceneDependencyData.RetrieveNearSceneUniqueNames(enteredSceneName, depthToLoad);
 
-			if (!_loadedScenesByGameObject.ContainsKey(objectEntering)) // 이 오브젝트에 대해서는 처음
+			// 이전에 이 오브젝트에 대한 정보가 없는 경우
+			if (!_loadedScenesByGameObject.TryGetValue(enteringObject, out var prevLoadedSceneNamesByObject))
 			{
-				_loadedScenesByGameObject.Add(objectEntering, new(nearSceneUniqueNames));
+				_loadedScenesByGameObject.Add(enteringObject, nearSceneUniqueNamesByObject);
 			}
-			else // 이미 로드를 했던 적이 있다
+			// 있는 경우 (prevLoadedSceneNamesByObject)
+			else
 			{
-				var prevLoadedSceneNames = _loadedScenesByGameObject[objectEntering];
-				// 이전에 로드한 씬 중에서, 앞으로 로드할 씬을 빼면, 순수하게 이 오브젝트에 대해 언로드할 씬만 남음
-
-				_pendingUnloadSceneNames.UnionWith(prevLoadedSceneNames.Except(nearSceneUniqueNames));
-				_loadedScenesByGameObject[objectEntering] = new(nearSceneUniqueNames);
+				_loadedScenesByGameObject[enteringObject] = new HashSet<string>(nearSceneUniqueNamesByObject);
 			}
 
-			_pendingLoadSceneNames.UnionWith(nearSceneUniqueNames);
+			// 무언가 변경되었으며, 처리가 필요함을 Notate 함
 			_hasChanges = true;
 		}
 
@@ -42,27 +42,65 @@ namespace MC
 		/// </summary>
 		public void ProcessChanges()
 		{
-			if (_hasChanges)
+			if (!_hasChanges)
 			{
-				// 각 오브젝트 별로 로드해야 하는 씬들을 모두 합친다
-				var allLoadedScenes = _loadedScenesByGameObject.Values.SelectMany(_ => _).ToHashSet();
+				return;
+			}
 
-				// 그리고, 언로드되어야 하는 씬 중에서, 언로드되면 안 되는 씬들을 뺀다.
-				// (다른 오브젝트가 존재하고 있기 때문에 언로드되면 안 되는 경우가 있다.)
-				_pendingUnloadSceneNames.ExceptWith(allLoadedScenes);
+			// 오브젝트들을 위해 필요한 모든 씬의 목록
+			var allRequiredSceneNamesByObjects = _loadedScenesByGameObject.Values.SelectMany(_ => _).ToHashSet();
 
-				SceneOperationNeeded?.Invoke(_pendingLoadSceneNames, _pendingUnloadSceneNames);
+			// 현재 이미 로드되어 있는 씬들의 목록
+			var currentlyLoadedSceneNames = RetrieveAllLoadedSceneNames;
 
-				_pendingLoadSceneNames.Clear();
-				_pendingUnloadSceneNames.Clear();
-				_hasChanges = false;
+			// 현재 로드되어 있는 씬 목록에서 현재 필요한 목록을 빼면, 로드되어 있는데 필요 없는 목록임
+			_pendingUnloadSceneNames.UnionWith(currentlyLoadedSceneNames.Except(allRequiredSceneNamesByObjects));
+
+			// 현재 필요한 목록에서 현재 로드되어 있는 씬 목록을 빼면, 로드되어 있지 않은데 필요한 목록임
+			_pendingLoadSceneNames.UnionWith(allRequiredSceneNamesByObjects.Except(currentlyLoadedSceneNames));
+
+			Debug.Log($"_pending Load: <color=green>{string.Join(",", _pendingLoadSceneNames)}</color>, _pending Unload: <color=red>{string.Join(",", _pendingUnloadSceneNames)}</color>");
+
+			SceneOperationNeeded?.Invoke(new(_pendingLoadSceneNames), new(_pendingUnloadSceneNames));
+
+			_pendingLoadSceneNames.Clear();
+			_pendingUnloadSceneNames.Clear();
+
+			_hasChanges = false;
+		}
+
+		HashSet<string> RetrieveAllLoadedSceneNames
+		{
+			get
+			{
+				var ret = new HashSet<string>();
+				for (var i = 0; i < SceneManager.sceneCount; ++i)
+				{
+					var name = SceneManager.GetSceneAt(i).name;
+
+					if (name == _sceneDependencyData.PersistentSceneName)
+					{
+						continue;
+					}
+
+					ret.Add(name);
+				}
+
+				return ret;
 			}
 		}
 
 		[SerializeField] SceneDependencyData _sceneDependencyData;
 		Dictionary<GameObject, HashSet<string>> _loadedScenesByGameObject = new();
 
+		/// <summary>
+		/// 모든 오브젝트에 대해, 로드(유지)되어야 하는 씬임이 확정된 씬 이름들
+		/// </summary>
 		HashSet<string> _pendingLoadSceneNames = new();
+
+		/// <summary>
+		/// 모든 오브젝트에 대해, 언로드 되어야 하는 씬임이 확정된 씬 이름들
+		/// </summary>
 		HashSet<string> _pendingUnloadSceneNames = new();
 		bool _hasChanges = false;
 	}
