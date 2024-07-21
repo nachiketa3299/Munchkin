@@ -107,11 +107,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82cbe629854ebc041b6f43983c7c89b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _sceneDependencyData: {fileID: 11400000, guid: d7d1d0ee972f6184d93eafab264a7a8d,
-    type: 2}
   _runtimeLoadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96,
     type: 2}
-  _depthToLoad: 1
+  _depthToLoad: 2
+  _logOnEnteringNewScene: 0
 --- !u!114 &8428375837134010128
 MonoBehaviour:
   m_ObjectHideFlags: 0

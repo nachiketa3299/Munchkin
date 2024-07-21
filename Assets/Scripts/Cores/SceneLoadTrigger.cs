@@ -1,19 +1,18 @@
 using System;
-using System.Linq;
-using System.Collections;
-using System.Collections.Generic;
 
 using UnityEngine;
-using UnityEngine.SceneManagement;
 
 namespace MC
 {
 	/// <summary>
-	/// 이 컴포넌트가 부착된 오브젝트가 씬의 경계 콜라이더에 접촉했을 때 이벤트를 발생시킨다.
+	/// 이 컴포넌트가 부착된 오브젝트가 씬의 경계 콜라이더에 접촉했을 특정 씬에 입장하였다는 이벤트를 발생시킨다.
 	/// </summary>
 	[DisallowMultipleComponent]
 	public class SceneLoadTrigger : MonoBehaviour
 	{
+		/// <summary>
+		/// 게임 오브젝트(GameObject)가 해당 이름을 가진 씬 이름에 접촉하였으며, 이 씬(string)으로부터 거리가 일정 이내(int)인 씬들이 로드되어야 함을 알리는 이벤트
+		/// </summary>
 		public event Action<GameObject, string, int> EnteredNewScene;
 
 		#region Unity Callbacks
@@ -35,20 +34,32 @@ namespace MC
 
 			if (_lastEnteredSceneName == enteredSceneName)
 			{
+
+#if UNITY_EDITOR
+				if (_logOnEnteringNewScene)
+				{
+					Debug.Log($"{gameObject} triggered {enteredSceneName}'s bound, but not activated event.");
+				}
+#endif
+
 				return;
 			}
 
-			// 여기서부터 ㄹㅇ Entered 판정
-
-			Debug.Log($"{gameObject} Entered {enteredSceneName}");
+#if UNITY_EDITOR
+			if (_logOnEnteringNewScene)
+			{
+				Debug.Log($"{gameObject} Entered {enteredSceneName}");
+			}
+#endif
 
 			_lastEnteredSceneName = enteredSceneName;
+
 			EnteredNewScene?.Invoke(gameObject, enteredSceneName, _depthToLoad);
 		}
 
 		void OnDisable()
 		{
-			EnteredNewScene = null;
+			EnteredNewScene -= _runtimeLoadedSceneData.OnEnteredNewScene;
 		}
 
 		#endregion // Unity Callbacks
@@ -59,7 +70,7 @@ namespace MC
 		[SerializeField] int _depthToLoad;
 
 #if UNITY_EDITOR
-		// [SerializeField] bool _logOnEnteringNewScene = false;
+		[SerializeField] bool _logOnEnteringNewScene = false;
 #endif
 	}
 }

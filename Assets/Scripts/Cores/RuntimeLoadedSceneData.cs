@@ -59,8 +59,7 @@ namespace MC
 			// 현재 필요한 목록에서 현재 로드되어 있는 씬 목록을 빼면, 로드되어 있지 않은데 필요한 목록임
 			_pendingLoadSceneNames.UnionWith(allRequiredSceneNamesByObjects.Except(currentlyLoadedSceneNames));
 
-			Debug.Log($"_pending Load: <color=green>{string.Join(",", _pendingLoadSceneNames)}</color>, _pending Unload: <color=red>{string.Join(",", _pendingUnloadSceneNames)}</color>");
-
+			// 여기서 반드시 참조가 아닌 복사로 전달해야 함
 			SceneOperationNeeded?.Invoke(new(_pendingLoadSceneNames), new(_pendingUnloadSceneNames));
 
 			_pendingLoadSceneNames.Clear();
@@ -102,6 +101,10 @@ namespace MC
 		/// 모든 오브젝트에 대해, 언로드 되어야 하는 씬임이 확정된 씬 이름들
 		/// </summary>
 		HashSet<string> _pendingUnloadSceneNames = new();
+
+		/// <summary>
+		/// <see cref="SceneLoadManager"/>가 매 프레임 이 값을 검사하여 참이면 씬 로딩 상태를 업데이트함
+		/// </summary>
 		bool _hasChanges = false;
 	}
 }
