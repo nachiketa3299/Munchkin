@@ -78,6 +78,21 @@ namespace MC
 				Debug.LogWarning($"캐릭터에 {typeof(LookAction).Name} 컴포넌트가 없습니다.");
 			}
 #endif
+
+			// Cache & Bind GrabAction
+
+			if (_grabAction = GetComponent<GrabAction>())
+			{
+				_inputActions.CharacterActions.Grab.performed += (context) =>
+				{
+					_grabAction.BeginAction();
+				};
+
+				_inputActions.CharacterActions.Grab.canceled += (context) =>
+				{
+					_grabAction.EndAction();
+				};
+			}
 		}
 
 
@@ -102,5 +117,6 @@ namespace MC
 		MoveAction _moveAction;
 		JumpAction _jumpAction;
 		LookAction _lookAction;
+		GrabAction _grabAction;
 	}
 }

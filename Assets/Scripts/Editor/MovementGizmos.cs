@@ -9,7 +9,7 @@ namespace MC
 	/// </summary>
 	public class MovementGizmos : MonoBehaviour
 	{
-		private void OnDrawGizmosSelected()
+		void OnDrawGizmos()
 		{
 			Gizmos.color = _lineColor;
 			Gizmos.DrawRay(transform.position, transform.forward * _lineLength);
