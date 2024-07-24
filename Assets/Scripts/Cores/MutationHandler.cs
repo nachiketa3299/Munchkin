@@ -1,3 +1,5 @@
+using System;
+
 using UnityEngine;
 using UnityEngine.Assertions;
 
@@ -13,6 +15,8 @@ namespace MC
 	[DisallowMultipleComponent]
 	public class MutationHandler : MonoBehaviour
 	{
+		public event Action<ECharacterType> Mutated;
+
 		#region Unity Callbacks
 
 		void Awake()
@@ -57,7 +61,7 @@ namespace MC
 		{
 			_currentVisualInstance.SetActive(false);
 
-			if (Random.Range(0f, 1f) < _roosterMutationChance)
+			if (UnityEngine.Random.Range(0f, 1f) < _roosterMutationChance)
 			{
 				_currentVisualInstance = _allCharacterData.GetVisualInstance(ECharacterType.Rooster);
 				RefreshAgingColors(ECharacterType.Rooster);
@@ -69,6 +73,8 @@ namespace MC
 				RefreshAgingColors(ECharacterType.Hen);
 				_currentCharacterType = ECharacterType.Hen;
 			}
+
+			Mutated?.Invoke(_currentCharacterType);
 
 			_currentVisualInstance.SetActive(true);
 		}

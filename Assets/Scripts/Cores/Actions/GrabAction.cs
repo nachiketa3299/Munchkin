@@ -20,7 +20,6 @@ namespace MC
 				Debug.LogWarning("grabSocket에 아무것도 할당되지 않았습니다.");
 			}
 #endif
-
 		}
 
 		#endregion // Unity Callbacks
@@ -83,7 +82,7 @@ namespace MC
 		{
 			_grabObject.BeginGrabState(_grabSocket);
 
-			yield return null;
+			yield break;
 		}
 
 		public void EndAction()

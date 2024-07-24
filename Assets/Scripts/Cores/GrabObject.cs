@@ -34,7 +34,9 @@ namespace MC
 		public void BeginGrabState(GameObject grabParent)
 		{
 			_grabParent = grabParent;
+
 			_rigidbody.isKinematic = true;
+			_rigidbody.detectCollisions = false; // 임시적으로
 
 			transform.position = grabParent.transform.position;
 			transform.parent = grabParent.transform;
@@ -46,6 +48,8 @@ namespace MC
 		{
 			_grabParent = null;
 			_rigidbody.isKinematic = false;
+			_rigidbody.detectCollisions = true; // 임시적으로
+
 			transform.parent = null;
 
 			_isGrabbed = false;
