@@ -111,7 +111,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _runtimeLoadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96,
     type: 2}
-  _depthToLoad: 2
+  _depthToLoad: 3
   _logOnEnteringNewScene: 0
 --- !u!114 &8428375837134010128
 MonoBehaviour:
@@ -261,10 +261,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5e626860caa20a340a8de272ffb196b9, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _grabObjectMask:
+  _grabThrowObjectMask:
     serializedVersion: 2
     m_Bits: 256
-  _grabSocket: {fileID: 7887266405746795884}
+  _grabThrowSocket: {fileID: 7887266405746795884}
+  _throwForceHorizontal: 300
+  _throwForceVertical: 600
 --- !u!1 &7887266405746795884
 GameObject:
   m_ObjectHideFlags: 0

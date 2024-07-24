@@ -5,20 +5,20 @@ using UnityEditor;
 
 namespace MC
 {
-	public partial class GrabAction : ActionRoutineBase
+	public partial class GrabThrowAction : ActionRoutineBase
 	{
 		void OnDrawGizmos()
 		{
-			if (!_grabSocket)
+			if (!_grabThrowSocket)
 			{
 				return;
 			}
 
 			Gizmos.color = Color.magenta;
-			Gizmos.DrawSphere(_grabSocket.transform.position, 0.1f);
+			Gizmos.DrawSphere(_grabThrowSocket.transform.position, 0.1f);
 		}
 
-		[CustomEditor(typeof(GrabAction))]
+		[CustomEditor(typeof(GrabThrowAction))]
 		private class GrabActionEditor : Editor
 		{
 		}

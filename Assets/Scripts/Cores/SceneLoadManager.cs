@@ -69,7 +69,10 @@ $@"Scene operations needed:
 				{
 
 #if UNITY_EDITOR
-					Debug.Log($"<color=yellow>Scene {sceneName} is already in loading process, so ignored load request.</color>");
+					if (_logOnSceneOperation)
+					{
+						Debug.Log($"<color=yellow>Scene {sceneName} is already in loading process, so ignored load request.</color>");
+					}
 #endif
 
 					continue;
@@ -88,7 +91,10 @@ $@"Scene operations needed:
 				{
 
 #if UNITY_EDITOR
-					Debug.Log($"<color=yellow>Scene {sceneName} is already in unloading process, so ignored load request.</color>");
+					if (_logOnSceneOperation)
+					{
+						Debug.Log($"<color=yellow>Scene {sceneName} is already in unloading process, so ignored load request.</color>");
+					}
 #endif
 					continue;
 				}
@@ -103,7 +109,10 @@ $@"Scene operations needed:
 		{
 
 #if UNITY_EDITOR
-			Debug.Log($"Start loading scene {sceneName}");
+			if (_logOnSceneOperation)
+			{
+				Debug.Log($"Start loading scene {sceneName}");
+			}
 #endif
 
 			var operation = SceneManager.UnloadSceneAsync(sceneName);
@@ -116,7 +125,10 @@ $@"Scene operations needed:
 			_unloadingSceneNames.Remove(sceneName);
 
 #if UNITY_EDITOR
-			Debug.Log($"End Unloading {sceneName}");
+			if (_logOnSceneOperation)
+			{
+				Debug.Log($"End Unloading {sceneName}");
+			}
 #endif
 
 		}
@@ -125,7 +137,10 @@ $@"Scene operations needed:
 		{
 
 #if UNITY_EDITOR
-			Debug.Log($"Start unloading scene {sceneName}");
+			if (_logOnSceneOperation)
+			{
+				Debug.Log($"Start unloading scene {sceneName}");
+			}
 #endif
 			var operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
 
@@ -137,7 +152,10 @@ $@"Scene operations needed:
 			_loadingSceneNames.Remove(sceneName);
 
 #if UNITY_EDITOR
-			Debug.Log($"End unloading scene {sceneName}");
+			if (_logOnSceneOperation)
+			{
+				Debug.Log($"End unloading scene {sceneName}");
+			}
 #endif
 		}
 

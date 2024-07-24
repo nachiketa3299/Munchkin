@@ -79,20 +79,23 @@ namespace MC
 			}
 #endif
 
-			// Cache & Bind GrabAction
+			// Cache & Bind GrabThrowAction
 
-			if (_grabAction = GetComponent<GrabAction>())
+			if (_grabThrowAction = GetComponent<GrabThrowAction>())
 			{
-				_inputActions.CharacterActions.Grab.performed += (context) =>
+				// Grab 상태에 Begin Grab 일 수도, Begin Throw 일 수도 있음.
+				_inputActions.CharacterActions.GrabThrow.performed += (context) =>
 				{
-					_grabAction.BeginAction();
-				};
-
-				_inputActions.CharacterActions.Grab.canceled += (context) =>
-				{
-					_grabAction.EndAction();
+					var directionValue = _inputActions.CharacterActions.Look.ReadValue<float>();
+					_grabThrowAction.BeginAction(directionValue);
 				};
 			}
+#if UNITY_EDITOR
+			else
+			{
+				Debug.LogWarning($"캐릭터에 {typeof(GrabThrowAction).Name} 컴포넌트가 없습니다.");
+			}
+#endif
 		}
 
 
@@ -117,6 +120,6 @@ namespace MC
 		MoveAction _moveAction;
 		JumpAction _jumpAction;
 		LookAction _lookAction;
-		GrabAction _grabAction;
+		GrabThrowAction _grabThrowAction;
 	}
 }
