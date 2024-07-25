@@ -1,5 +1,7 @@
 using System;
+using System.Linq;
 using System.Collections;
+
 using UnityEngine;
 
 namespace MC
@@ -8,6 +10,7 @@ namespace MC
 	// 현재는 그냥 여기서 계속 처리하는 것으로
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(Rigidbody))]
+	[RequireComponent(typeof(SphereCollider))]
 	public partial class Egg : MonoBehaviour
 	{
 		public event Action EggCreated;
@@ -20,6 +23,18 @@ namespace MC
 		void Awake()
 		{
 			_renderer = GetComponentInChildren<Renderer>();
+
+			// _lowerCollider = GetComponents<SphereCollider>().ToList()
+			// 	.OrderByDescending(col => col.center.y)
+			// 	.FirstOrDefault();
+
+			var colliders = GetComponents<SphereCollider>();
+			_bounds = colliders[0].bounds;
+			for (var i = 1; i < colliders.Length; ++i)
+			{
+				_bounds.Encapsulate(colliders[i].bounds);
+			}
+
 
 			EggCreated += OnEggCreated;
 			EggImpacted += OnEggImpacted;
@@ -125,6 +140,10 @@ namespace MC
 		}
 
 		Renderer _renderer;
+
+		Bounds _bounds;
+
+		public Bounds CombinedBound => _bounds;
 
 		float ImpactRatio => _lastImpactForce / _impactThreshold;
 		[SerializeField] float _impactThreshold = 10.0f;

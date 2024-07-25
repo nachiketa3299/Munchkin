@@ -28,7 +28,7 @@ namespace MC
 		public void EndAction()
 		{
 			TryStopCurrentRoutine();
-			PerformJump();
+			PerformJump(CurrentJumpChargeRatio);
 		}
 
 		/// <summary>
@@ -46,15 +46,15 @@ namespace MC
 				yield return null;
 			}
 
-			PerformJump();
+			PerformJump(CurrentJumpChargeRatio);
 
 			_currentRoutine = null;
 		}
 
-		void PerformJump()
+		void PerformJump(in float ratio)
 		{
-			var jumpForce = Mathf.Lerp(_minJumpForce, _maxJumpForce, _jumpChargeCurve.Evaluate(CurrentJumpChargeRatio));
-			_rigidbody.AddForce(Vector3.up * jumpForce, ForceMode.Impulse);
+			var jumpForce = Mathf.Lerp(_minJumpForce, _maxJumpForce, _jumpChargeCurve.Evaluate(ratio));
+			_rigidbody.AddForce(transform.up * jumpForce, ForceMode.Impulse);
 			_currentJumpChargeSeconds = 0.0f;
 		}
 

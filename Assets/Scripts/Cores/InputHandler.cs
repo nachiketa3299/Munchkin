@@ -96,6 +96,21 @@ namespace MC
 				Debug.LogWarning($"캐릭터에 {typeof(GrabThrowAction).Name} 컴포넌트가 없습니다.");
 			}
 #endif
+
+			// Cache & Bind EggAction
+
+			if (_eggAction = GetComponent<EggAction>())
+			{
+				_inputActions.CharacterActions.Egg.performed += (context) =>
+				{
+					_eggAction.BeginAction();
+				};
+
+				_inputActions.CharacterActions.Egg.canceled += (context) =>
+				{
+					_eggAction.EndAction();
+				};
+			}
 		}
 
 
@@ -121,5 +136,6 @@ namespace MC
 		JumpAction _jumpAction;
 		LookAction _lookAction;
 		GrabThrowAction _grabThrowAction;
+		EggAction _eggAction;
 	}
 }

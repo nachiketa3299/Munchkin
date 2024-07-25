@@ -64,6 +64,15 @@ namespace MC
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Egg"",
+                    ""type"": ""Button"",
+                    ""id"": ""ae541ed0-81fe-432c-8f8c-e60e47aaf611"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -253,6 +262,17 @@ namespace MC
                     ""action"": ""GrabThrow"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""d8177aaa-08e5-4e19-90c9-da36122ecb2e"",
+                    ""path"": ""<Keyboard>/z"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""PC"",
+                    ""action"": ""Egg"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
                 }
             ]
         }
@@ -282,6 +302,7 @@ namespace MC
             m_CharacterActions_Look = m_CharacterActions.FindAction("Look", throwIfNotFound: true);
             m_CharacterActions_Jump = m_CharacterActions.FindAction("Jump", throwIfNotFound: true);
             m_CharacterActions_GrabThrow = m_CharacterActions.FindAction("GrabThrow", throwIfNotFound: true);
+            m_CharacterActions_Egg = m_CharacterActions.FindAction("Egg", throwIfNotFound: true);
         }
 
         public void Dispose()
@@ -347,6 +368,7 @@ namespace MC
         private readonly InputAction m_CharacterActions_Look;
         private readonly InputAction m_CharacterActions_Jump;
         private readonly InputAction m_CharacterActions_GrabThrow;
+        private readonly InputAction m_CharacterActions_Egg;
         public struct CharacterActionsActions
         {
             private @IA_InputActions m_Wrapper;
@@ -355,6 +377,7 @@ namespace MC
             public InputAction @Look => m_Wrapper.m_CharacterActions_Look;
             public InputAction @Jump => m_Wrapper.m_CharacterActions_Jump;
             public InputAction @GrabThrow => m_Wrapper.m_CharacterActions_GrabThrow;
+            public InputAction @Egg => m_Wrapper.m_CharacterActions_Egg;
             public InputActionMap Get() { return m_Wrapper.m_CharacterActions; }
             public void Enable() { Get().Enable(); }
             public void Disable() { Get().Disable(); }
@@ -376,6 +399,9 @@ namespace MC
                 @GrabThrow.started += instance.OnGrabThrow;
                 @GrabThrow.performed += instance.OnGrabThrow;
                 @GrabThrow.canceled += instance.OnGrabThrow;
+                @Egg.started += instance.OnEgg;
+                @Egg.performed += instance.OnEgg;
+                @Egg.canceled += instance.OnEgg;
             }
 
             private void UnregisterCallbacks(ICharacterActionsActions instance)
@@ -392,6 +418,9 @@ namespace MC
                 @GrabThrow.started -= instance.OnGrabThrow;
                 @GrabThrow.performed -= instance.OnGrabThrow;
                 @GrabThrow.canceled -= instance.OnGrabThrow;
+                @Egg.started -= instance.OnEgg;
+                @Egg.performed -= instance.OnEgg;
+                @Egg.canceled -= instance.OnEgg;
             }
 
             public void RemoveCallbacks(ICharacterActionsActions instance)
@@ -424,6 +453,7 @@ namespace MC
             void OnLook(InputAction.CallbackContext context);
             void OnJump(InputAction.CallbackContext context);
             void OnGrabThrow(InputAction.CallbackContext context);
+            void OnEgg(InputAction.CallbackContext context);
         }
     }
 }
