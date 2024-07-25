@@ -8,4 +8,5 @@
     -unity-text-outline-color: rgb(0, 0, 0);
     text-shadow: 3px 3px 2px rgb(46, 46, 46);
     letter-spacing: -10px;
+    font-size: 800%;
 }

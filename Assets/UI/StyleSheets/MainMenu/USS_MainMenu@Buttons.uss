@@ -34,16 +34,3 @@
 .mc_button:active {
     background-color: lightpink;
 }
-
-.mc_title {
-    -unity-font: url("project://database/Assets/Fonts/ChangwonDangamAsac_Bold.ttf?fileID=12800000&guid=409f331a73e93144d90ae71ecd07d048&type=3#ChangwonDangamAsac_Bold");
-    font-size: 800%;
-    -unity-font-style: bold;
-    -unity-text-align: middle-center;
-    color: rgb(255, 183, 73);
-    -unity-text-outline-width: 1px;
-    -unity-text-outline-color: rgb(0, 0, 0);
-    width: 100%;
-    height: 30%;
-    -unity-font-definition: url("project://database/Assets/Fonts/ChangwonDangamAsac_Bold%20SDF.asset?fileID=11400000&guid=9c3afee7ee1579742b26b13471c763a7&type=2#ChangwonDangamAsac_Bold SDF");
-}
