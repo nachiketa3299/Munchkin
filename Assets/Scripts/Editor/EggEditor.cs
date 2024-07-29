@@ -1,21 +1,22 @@
 #if UNITY_EDITOR
+#if false
 
 using UnityEngine;
 using UnityEditor;
 
 namespace MC
 {
-	public partial class Egg : MonoBehaviour
+	public partial class EggLifeCycleHandler : MonoBehaviour
 	{
 
-		[CustomEditor(typeof(Egg))]
+		[CustomEditor(typeof(EggLifeCycleHandler))]
 		private class EggEditor : Editor
 		{
 			public override void OnInspectorGUI()
 			{
 				base.OnInspectorGUI();
 
-				var egg = target as Egg;
+				var egg = target as EggLifeCycleHandler;
 
 				if (egg == null)
 				{
@@ -77,4 +78,5 @@ namespace MC
 	}
 }
 
+#endif
 #endif

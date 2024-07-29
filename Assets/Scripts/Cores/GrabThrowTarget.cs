@@ -4,29 +4,13 @@ namespace MC
 {
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(Rigidbody))]
-	public class GrabThrowObject : MonoBehaviour
+	public class GrabThrowTarget : MonoBehaviour
 	{
 		#region Unity Callbacks
 
 		void Awake()
 		{
 			_rigidbody = GetComponent<Rigidbody>();
-		}
-
-		void FixedUpdate()
-		{
-			if (!_isGrabbed)
-			{
-				return;
-			}
-
-			if (!_grabParent)
-			{
-				return;
-			}
-
-			// transform.position = _grabParent.transform.position;
-			// transform.rotation = _grabParent.transform.rotation;
 		}
 
 		#endregion
@@ -37,7 +21,7 @@ namespace MC
 
 
 			_rigidbody.isKinematic = true;
-			_rigidbody.detectCollisions = false; // 임시적으로
+			_rigidbody.detectCollisions = false;
 
 			transform.position = grabParent.transform.position;
 			transform.rotation = Quaternion.identity;
@@ -45,7 +29,7 @@ namespace MC
 			transform.parent = grabParent.transform;
 
 
-			_isGrabbed = true;
+			// _isGrabbed = true;
 		}
 
 		public void EndGrabState()
@@ -54,11 +38,11 @@ namespace MC
 
 
 			_rigidbody.isKinematic = false;
-			_rigidbody.detectCollisions = true; // 임시적으로
+			_rigidbody.detectCollisions = true;
 
 			transform.parent = null;
 
-			_isGrabbed = false;
+			// _isGrabbed = false;
 		}
 
 		public void Throw(in Vector3 lastThrowerVelocity, in Vector3 force)
@@ -68,8 +52,8 @@ namespace MC
 		}
 
 		Rigidbody _rigidbody;
-		bool _isGrabbed = false;
 
+		//bool _isGrabbed = false;
 		GameObject _grabParent;
 	}
 }

@@ -21,6 +21,7 @@ GameObject:
   - component: {fileID: 295155762174093414}
   - component: {fileID: 7058818817593519050}
   - component: {fileID: 7459763658976388867}
+  - component: {fileID: -7025902425445592405}
   m_Layer: 7
   m_Name: P_CharacterObject
   m_TagString: Untagged
@@ -280,8 +281,22 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 24071aa2484c23546a22df4febd29f86, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _rayCastMaxDistance: 10
   _eggPrefab: {fileID: 7674990366172167226, guid: bf3174eadcb8b7844bb62e042ce8ad51,
     type: 3}
+--- !u!114 &-7025902425445592405
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334351684667443968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 90221a9c39b593e47a6a45c7c4ea5fb4, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _eggPool: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40, type: 2}
 --- !u!1 &7887266405746795884
 GameObject:
   m_ObjectHideFlags: 0

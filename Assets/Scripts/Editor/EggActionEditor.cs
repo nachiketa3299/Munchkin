@@ -11,7 +11,7 @@ namespace MC
 		void OnDrawGizmos()
 		{
 			Gizmos.color = Color.magenta;
-			Gizmos.DrawWireSphere(_spawnPosition, 0.3f);
+			Gizmos.DrawWireSphere(_layPosition, 0.3f);
 		}
 
 		[CustomEditor(typeof(EggAction))]

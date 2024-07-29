@@ -191,6 +191,13 @@ namespace MC
 		/// </summary>
 		public HashSet<string> RetrieveNearSceneUniqueNames(string pivotSceneName, int depth)
 		{
+			Debug.Log($"{pivotSceneName} retrieve");
+
+			if (pivotSceneName == PersistentSceneName)
+			{
+				return new();
+			}
+
 			var nearSceneNameSet = new HashSet<string>();
 
 			foreach (var (nearSceneName, dist) in _graph.distances[pivotSceneName])

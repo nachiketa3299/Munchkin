@@ -62,7 +62,7 @@ namespace MC
 			_grabThrowObject = uniqueGrabObjects
 				.OrderBy(obj => (obj.transform.position - transform.position).sqrMagnitude)
 				.FirstOrDefault()?
-				.GetComponent<GrabThrowObject>();
+				.GetComponent<GrabThrowTarget>();
 
 			_grabThrowObject.BeginGrabState(_grabThrowSocket);
 			_isGrabbing = true;
@@ -95,7 +95,7 @@ namespace MC
 
 		Rigidbody _rigidbody;
 		Collider[] _overlapResults = new Collider[5];
-		GrabThrowObject _grabThrowObject;
+		GrabThrowTarget _grabThrowObject;
 		bool _isGrabbing = false;
 
 		[SerializeField] LayerMask _grabThrowObjectMask = 1 << 8;
