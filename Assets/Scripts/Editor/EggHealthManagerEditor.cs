@@ -7,17 +7,20 @@ namespace MC
 
 	public partial class EggHealthManager : MonoBehaviour
 	{
+		float DamageBlockTimerProgress => Mathf.Clamp01(_damageTimerElapsedTime / _damageTimerMaxTime);
+
 		[CustomEditor(typeof(EggHealthManager))]
 		private class EggHealthManagerEditor : Editor
 		{
 			EggHealthManager _eggHealthManager;
 			GUIStyle _labelStyle;
-			#region Unity Callbacks
+
+			#region UnityCallbacks
 
 			void OnEnable()
 			{
 				_eggHealthManager = target as EggHealthManager;
-				_labelStyle = new(EditorStyles.label) { richText = true };
+				_labelStyle = new(EditorStyles.label) { richText = true }; // TODO 이렇게 하는게 맞는지 모르겠음.
 			}
 
 			public override void OnInspectorGUI()

@@ -3,57 +3,82 @@ using UnityEngine;
 namespace MC
 {
 	/// <summary>
-	/// Egg에 가해지는 외력이 임계값을 넘으면 신호를 보냄
+	/// 달걀에 가해지는 충격이 임계값을 넘으면 데미지로 변환하여,
+	/// 데미지를 받아야 함을 알린다.
 	/// </summary>
 	[DisallowMultipleComponent]
 	public partial class EggImpactDetector : MonoBehaviour
 	{
-		delegate void EggImpactEventHandler(in float impactForceMagnitude);
-		event EggImpactEventHandler EggImpacted;
-		public delegate void EggShouldDamagedEventHandler(in float impactForceMagnitude);
-		public event EggShouldDamagedEventHandler ImpactCrossedThreshold;
+		public delegate void ImpactedEventHandler(in Vector3 impact);
+		public event ImpactedEventHandler Impacted;
+		public delegate void ShouldInflictDamageEventHandler(in float damage);
+		public event ShouldInflictDamageEventHandler ShouldInflictDamage;
 
-		#region Unity Callbacks
+		#region UnityCallbacks
 
-		void OnEnable()
+		void Awake()
 		{
-			EggImpacted += OnEggImpacted;
+			// Bind events
+
+			Impacted += OnImpacted;
 		}
+
+		void OnDestroy()
+		{
+			// Unbind events
+
+			Impacted -= OnImpacted;
+		}
+
+		#endregion // UnityCallbacks
+
+		#region UnityCollisions
 
 		void OnCollisionEnter(Collision collision)
 		{
-			var impactForce = collision.impulse;
-			var impactForceMagnitude = impactForce.magnitude;
+			var impact = collision.impulse;
 
-			EggImpacted?.Invoke(impactForceMagnitude);
+			Impacted?.Invoke
+			(
+				impact: impact
+			);
 
 #if UNITY_EDITOR
-			_lastImpactForce = impactForce;
+			_lastImpact = impact;
 #endif
 		}
 
-		void OnDisable()
-		{
-			EggImpacted -= OnEggImpacted;
-		}
-
-
-		#endregion // Unity Callbacks
+		#endregion // UnityCollisions
 
 		/// <summary>
 		/// 전달된 힘이 임계값 이상이라면 데미지를 받아야 함을 Notify
 		/// </summary>
-		void OnEggImpacted(in float impactForceMagnitude)
+		void OnImpacted(in Vector3 impact)
 		{
-			if (impactForceMagnitude <= _impactForceMagnitudeThreshold)
+			if (!IsOverThreshold(impact))
 			{
 				return;
 			}
 
-			ImpactCrossedThreshold?.Invoke(impactForceMagnitude);
+			ShouldInflictDamage?.Invoke
+			(
+				damage: ConvertImpactToDamage(impact)
+			);
 		}
 
-		[SerializeField] float _impactForceMagnitudeThreshold = 10.0f;
-		LayerMask _characterLayerMask = 1 << 7;
+		bool IsOverThreshold(in Vector3 impact)
+		{
+			return impact.sqrMagnitude > _impactMagnitudeThreshold * _impactMagnitudeThreshold;
+		}
+
+		/// <remarks>
+		/// 받은 충격량을 데미지로 변환하는 공식은 여기에서 작성한다.
+		/// </remarks>
+		float ConvertImpactToDamage(in Vector3 impact)
+		{
+			return impact.magnitude * 2.0f;
+		}
+
+		[SerializeField] float _impactMagnitudeThreshold = 1.0f;
 	}
 }

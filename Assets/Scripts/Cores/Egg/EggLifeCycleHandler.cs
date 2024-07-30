@@ -2,77 +2,102 @@ using UnityEngine;
 
 namespace MC
 {
+	/// <summary>
+	/// 달걀 객체의 생성(활성화)과 소멸(비활성화)에 관련된 이벤트를 관리한다.
+	/// </summary>
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(EggFactory))]
-	public partial class EggLifeCycleHandler : MonoBehaviour
+	public class EggLifecycleHandler : MonoBehaviour
 	{
-		public delegate void EggCreatedEventHandler();
-		public EggCreatedEventHandler Created;
-		delegate void EggDestroyedEventHandler();
-		EggDestroyedEventHandler Destroyed;
+		public delegate void LifecycleEventHandler();
 
-		#region Unity Callbacks
+		/// <summary>
+		/// 달걀이 풀에서 꺼내질 때
+		/// </summary>
+		public LifecycleEventHandler LifecycleStarted;
+
+		/// <summary>
+		/// 달걀이 풀에 반납될 때
+		/// </summary>
+		public LifecycleEventHandler LifecycleEnded;
+
+		#region UnityCallbacks
 
 		void Awake()
 		{
-			_eggFactory = GetComponent<EggFactory>();
+			// Cache components
+
+			_factory = GetComponent<EggFactory>();
+
 #if UNITY_EDITOR
-			if (!_eggFactory)
+			if (!_factory)
 			{
 				Debug.LogWarning("EggFactory 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
 
-			_eggHealthManager = GetComponent<EggHealthManager>();
+			_healthManager = GetComponent<EggHealthManager>();
 
 #if UNITY_EDITOR
-			if (!_eggHealthManager)
+			if (!_healthManager)
 			{
 				Debug.LogWarning("EggHealthManager 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
+			Debug.Log("LifeCycleHandler Awake");
+
+			// Bind events
+
+			LifecycleStarted += OnLifecycleStarted;
+			LifecycleEnded += OnLifecycleEnded;
+
+			_healthManager.ShouldEndLifecycle += LifecycleShouldEnded;
 		}
 
 		void OnEnable()
 		{
-			Created += OnEggCreated;
-			Destroyed += OnEggDestroyed;
-			_eggHealthManager.HealthIsBelowZero += OnEggShouldDestroyed;
 		}
 
-		void Start()
+		public void Initialize()
 		{
-			Created?.Invoke();
+			LifecycleStarted?.Invoke();
 		}
 
 		void OnDisable()
 		{
-			Created -= OnEggCreated;
-			Destroyed -= OnEggDestroyed;
-			_eggHealthManager.HealthIsBelowZero -= OnEggShouldDestroyed;
+			LifecycleEnded?.Invoke();
 		}
 
-		#endregion // Unity Callbacks
-
-		void OnEggCreated()
+		void OnDestroy()
 		{
-			Debug.Log("Yeah ~ I'm created ~!");
+			// Unbind events
+
+			LifecycleStarted -= OnLifecycleStarted;
+			LifecycleEnded -= OnLifecycleEnded;
+
+			_healthManager.ShouldEndLifecycle -= LifecycleShouldEnded;
 		}
 
-		void OnEggDestroyed()
+		#endregion // UnityCallbacks
+
+		void OnLifecycleStarted()
 		{
-			Debug.Log("Yeah ~ I'm destroyed ~!");
+			Debug.Log("OnLifecycleStarted Invoked");
 		}
 
-		void OnEggShouldDestroyed()
+		void OnLifecycleEnded()
 		{
-			Destroyed?.Invoke();
-
-			// Destroy(gameObject);
-
-			_eggFactory.Despawn(this);
+			Debug.Log("OnLifecycleEnded Invoked");
 		}
-		EggHealthManager _eggHealthManager;
-		EggFactory _eggFactory;
+
+		void LifecycleShouldEnded()
+		{
+			LifecycleEnded?.Invoke();
+
+			_factory.ReturnEgg(this);
+		}
+
+		EggHealthManager _healthManager;
+		EggFactory _factory;
 	}
 }

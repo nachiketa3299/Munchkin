@@ -11,14 +11,16 @@ namespace MC
 	public partial class GrabThrowAction : ActionRoutineBase
 	{
 
-		#region Unity Callbacks
+		#region UnityCallbacks
 
 		void Awake()
 		{
+			// Cache components
+
 			_rigidbody = GetComponent<Rigidbody>();
 		}
 
-		#endregion // Unity Callbacks
+		#endregion // UnityCallbacks
 
 		public void BeginAction(in float directionValue)
 		{
@@ -62,6 +64,7 @@ namespace MC
 			_grabThrowObject = uniqueGrabObjects
 				.OrderBy(obj => (obj.transform.position - transform.position).sqrMagnitude)
 				.FirstOrDefault()?
+				.transform.root.gameObject
 				.GetComponent<GrabThrowTarget>();
 
 			_grabThrowObject.BeginGrabState(_grabThrowSocket);

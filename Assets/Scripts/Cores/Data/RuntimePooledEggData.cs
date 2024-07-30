@@ -3,56 +3,63 @@ using UnityEngine.Pool;
 
 namespace MC
 {
+	/// <summary>
+	/// 게임 전체에서 생성되는 알 인스턴스들의 풀을 관리
+	/// </summary>
 	[CreateAssetMenu(fileName = "RuntimePooledEggData", menuName = "MC/Scriptable Objects/Runtime Pooled Egg Data")]
-	public class RuntimePooledEggData : ScriptableObject
+	public partial class RuntimePooledEggData : ScriptableObject
 	{
-		public IObjectPool<EggLifeCycleHandler> Pool
+		EggLifecycleHandler CreateInstance()
 		{
-			get
-			{
-				if (_pool == null)
-				{
-					_pool = new
-					(
-						createFunc: CreateInstance,
-						actionOnGet: TakeFromPool,
-						actionOnRelease: ReturnToPool,
-						actionOnDestroy: DestroyInstance,
-						collectionCheck: true,
-						defaultCapacity: _poolCapacity
-					);
-				}
-				return _pool;
-			}
-		}
-		public bool IsPoolInitialized => _pool != null;
-		public int CountInactive => _pool.CountInactive;
-		public int CountActive => _pool.CountActive;
-		public int CountAll => _pool.CountAll;
+			var instance = Instantiate(_eggPrefab);
+			instance.Initialize();
 
-		EggLifeCycleHandler CreateInstance()
-		{
-			return Instantiate(_eggPrefab);
+			return instance;
 		}
-
-		void TakeFromPool(EggLifeCycleHandler egg)
+		void TakeFromPool(EggLifecycleHandler egg)
 		{
 			egg.gameObject.SetActive(true);
+			egg.Initialize();
 		}
-
-		void ReturnToPool(EggLifeCycleHandler egg)
+		void ReturnToPool(EggLifecycleHandler egg)
 		{
 			egg.gameObject.SetActive(false);
 		}
-
-		void DestroyInstance(EggLifeCycleHandler egg)
+		void DestroyInstance(EggLifecycleHandler egg)
 		{
 			Destroy(egg.gameObject);
 		}
 
+		public IObjectPool<EggLifecycleHandler> Pool
+		{
+			get
+			{
+				_pool ??= new
+				(
+					createFunc: CreateInstance,
+					actionOnGet: TakeFromPool,
+					actionOnRelease: ReturnToPool,
+					actionOnDestroy: DestroyInstance,
+					collectionCheck: true,
+					defaultCapacity: _defaultPoolCapacity
+				);
 
-		[SerializeField] EggLifeCycleHandler _eggPrefab;
-		ObjectPool<EggLifeCycleHandler> _pool;
-		[SerializeField] int _poolCapacity = 5;
+				return _pool;
+			}
+		}
+
+		ObjectPool<EggLifecycleHandler> _pool;
+		[SerializeField] int _defaultPoolCapacity = 5;
+		[SerializeField] EggLifecycleHandler _eggPrefab;
+
+		/// <remarks>
+		/// 에디터에서 수동으로 계산된 것(버튼을 눌러라)이 캐싱된다.
+		/// </remarks>
+		public Bounds EggCombinedPhysicalBounds
+		{
+			get => _eggCombinedPhysicalBounds;
+			set => _eggCombinedPhysicalBounds = value;
+		}
+		Bounds _eggCombinedPhysicalBounds;
 	}
 }

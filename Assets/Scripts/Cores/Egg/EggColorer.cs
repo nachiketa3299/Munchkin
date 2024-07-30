@@ -5,10 +5,12 @@ namespace MC
 	[DisallowMultipleComponent]
 	public class EggColorer : MonoBehaviour
 	{
-		#region Unity Callbacks
+		#region UnityCallbacks
 
 		void Awake()
 		{
+			// Cache components
+
 			_renderer = GetComponentInChildren<Renderer>();
 
 #if UNITY_EDITOR
@@ -26,21 +28,22 @@ namespace MC
 				Debug.LogWarning("EggHealthManager 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
+
+			// Bind events
+
+			_eggHealthManager.HealthChanged += ChangeColor;
 		}
 
-		void OnEnable()
+		void OnDestroy()
 		{
-			_eggHealthManager.HealthChanged += OnEggHealthChanged;
+			// Unbind events
+
+			_eggHealthManager.HealthChanged -= ChangeColor;
 		}
 
-		void OnDisable()
-		{
-			_eggHealthManager.HealthChanged -= OnEggHealthChanged;
-		}
+		#endregion // UnityCallbacks
 
-		#endregion // Unity Callbacks
-
-		void OnEggHealthChanged(in float healthRatio)
+		void ChangeColor(in float healthRatio)
 		{
 			_currentColor = Color.Lerp
 			(

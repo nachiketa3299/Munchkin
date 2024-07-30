@@ -12,15 +12,15 @@ namespace MC
 		void OnDrawGizmosSelected()
 		{
 			Gizmos.color = Color.magenta;
-			Gizmos.DrawRay(transform.position, _lastImpactForce);
+			Gizmos.DrawRay(transform.position, _lastImpact);
 		}
 
-		Vector3 _lastImpactForce;
+		Vector3 _lastImpact;
 
 		[CustomEditor(typeof(EggImpactDetector))]
 		private class EggImpactDetectorEditor : Editor
 		{
-			#region Unity Callbacks
+			#region UnityCallbacks
 
 			void OnEnable()
 			{
@@ -37,7 +37,7 @@ namespace MC
 					return;
 				}
 
-				_eggImpactDetector.EggImpacted += OnEggImpacted;
+				_eggImpactDetector.Impacted += OnEggImpacted;
 			}
 
 			public override void OnInspectorGUI()
@@ -62,24 +62,24 @@ namespace MC
 				var maxForce =
 				Mathf.Max
 				(
-					Mathf.Max(_impactForceMagnitudeCache.ToArray()),
-					_eggImpactDetector._impactForceMagnitudeThreshold
+					Mathf.Max(_impactMagnitudeCache.ToArray()),
+					_eggImpactDetector._impactMagnitudeThreshold
 				) * 1.4f;
 
-				if (_impactForceMagnitudeCache.Count > 1)
+				if (_impactMagnitudeCache.Count > 1)
 				{
-					for (var i = 0; i < _impactForceMagnitudeCache.Count - 1; ++i)
+					for (var i = 0; i < _impactMagnitudeCache.Count - 1; ++i)
 					{
 						var start = new Vector2
 						(
-							x: rect.x + (i * rect.width / (_impactForceMagnitudeCache.Count - 1)),
-							y: rect.y + rect.height - (_impactForceMagnitudeCache[i] / maxForce * rect.height)
+							x: rect.x + (i * rect.width / (_impactMagnitudeCache.Count - 1)),
+							y: rect.y + rect.height - (_impactMagnitudeCache[i] / maxForce * rect.height)
 						);
 
 						var end = new Vector2
 						(
-							x: rect.x + ((i + 1) * rect.width / (_impactForceMagnitudeCache.Count - 1)),
-							y: rect.y + rect.height - (_impactForceMagnitudeCache[i + 1] / maxForce * rect.height)
+							x: rect.x + ((i + 1) * rect.width / (_impactMagnitudeCache.Count - 1)),
+							y: rect.y + rect.height - (_impactMagnitudeCache[i + 1] / maxForce * rect.height)
 						);
 
 						Handles.color = _dataPointColor;
@@ -93,13 +93,13 @@ namespace MC
 						Handles.Label
 						(
 							labelPivot,
-							text: $"{_impactForceMagnitudeCache[i + 1]:F2}",
+							text: $"{_impactMagnitudeCache[i + 1]:F2}",
 							style: _dataPointLabelStyle
 						);
 					}
 				}
 
-				var thresholdY = rect.y + rect.height - (_eggImpactDetector._impactForceMagnitudeThreshold / maxForce * rect.height);
+				var thresholdY = rect.y + rect.height - (_eggImpactDetector._impactMagnitudeThreshold / maxForce * rect.height);
 				Handles.color = _thresholdColor;
 				Handles.DrawLine
 				(
@@ -111,7 +111,7 @@ namespace MC
 				Handles.Label
 				(
 					position: new Vector2(rect.x, thresholdY - 15.0f),
-					text: $"Threshold: {_eggImpactDetector._impactForceMagnitudeThreshold:F2}",
+					text: $"Threshold: {_eggImpactDetector._impactMagnitudeThreshold:F2}",
 					style: _thresholdLabelStyle
 				);
 			}
@@ -123,18 +123,19 @@ namespace MC
 					return;
 				}
 
-				_eggImpactDetector.EggImpacted -= OnEggImpacted;
+				_eggImpactDetector.Impacted -= OnEggImpacted;
 			}
 
 			#endregion
 
-			void OnEggImpacted(in float impactForceMagnitude)
+			void OnEggImpacted(in Vector3 impact)
 			{
-				_impactForceMagnitudeCache.Add(impactForceMagnitude);
+				var impactMagnitude = impact.magnitude;
+				_impactMagnitudeCache.Add(impactMagnitude);
 
-				if (_impactForceMagnitudeCache.Count > MAX_DATA_POINTS)
+				if (_impactMagnitudeCache.Count > MAX_DATA_POINTS)
 				{
-					_impactForceMagnitudeCache.RemoveAt(0);
+					_impactMagnitudeCache.RemoveAt(0);
 				}
 
 				Repaint();
@@ -147,7 +148,7 @@ namespace MC
 			GUIStyle _dataPointLabelStyle = new();
 			Color _dataPointColor = Color.green;
 			const int MAX_DATA_POINTS = 20;
-			List<float> _impactForceMagnitudeCache = new();
+			List<float> _impactMagnitudeCache = new();
 		}
 	}
 }
