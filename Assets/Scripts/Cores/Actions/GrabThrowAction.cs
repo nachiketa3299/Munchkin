@@ -34,7 +34,6 @@ namespace MC
 			{
 				_currentRoutine = StartCoroutine(ThrowRoutine(directionValue));
 			}
-
 		}
 
 		IEnumerator GrabRoutine()
@@ -43,7 +42,7 @@ namespace MC
 			(
 				position: transform.position,
 				radius: 3.0f,
-				results: _overlapResults,
+				results: _overlapResultCache,
 				layerMask: _grabThrowObjectMask
 			);
 
@@ -52,22 +51,24 @@ namespace MC
 				yield break;
 			}
 
-			var uniqueGrabObjects = new HashSet<GameObject>(); // 컴파운드 콜라이더를 가진 게임 오브젝트일 가능성이 있음
+			// 콜라이더를 소유한 유일한 오브젝트에 대한 HashSet 형성
+
+			var uniqueGrabbableObjects = new HashSet<GameObject>();
 
 			for (var i = 0; i < resultCount; ++i)
 			{
-				uniqueGrabObjects.Add(_overlapResults[i].gameObject);
+				uniqueGrabbableObjects.Add(_overlapResultCache[i].gameObject);
 			}
 
 			// 추가적인 Find 로직이 있다면 여기서 구현
 
-			_grabThrowObject = uniqueGrabObjects
+			_grabThrowTarget = uniqueGrabbableObjects
 				.OrderBy(obj => (obj.transform.position - transform.position).sqrMagnitude)
 				.FirstOrDefault()?
 				.transform.root.gameObject
 				.GetComponent<GrabThrowTarget>();
 
-			_grabThrowObject.BeginGrabState(_grabThrowSocket);
+			_grabThrowTarget.BeginGrabState(_grabThrowSocket);
 			_isGrabbing = true;
 
 			yield break;
@@ -75,30 +76,38 @@ namespace MC
 
 		IEnumerator ThrowRoutine(float directionValue)
 		{
-			_grabThrowObject.EndGrabState();
+			_grabThrowTarget.EndGrabState();
 			_isGrabbing = false;
 
 			// Vertical Throwing
 			if (directionValue == 1.0f)
 			{
-				var throwDirection = new Vector3(0.0f, directionValue, 0.0f);
-				_grabThrowObject.Throw(_rigidbody.velocity, throwDirection * _throwForceVertical);
+				var throwDirection = transform.up * directionValue;
+				_grabThrowTarget.Throw
+				(
+					lastThrowerVelocity: _rigidbody.velocity,
+					force: throwDirection * _throwForceVertical
+				);
 			}
 			// Horizontal Throwing
 			else
 			{
 				var throwDirection = transform.forward;
-				_grabThrowObject.Throw(_rigidbody.velocity, throwDirection * _throwForceHorizontal);
+				_grabThrowTarget.Throw
+				(
+					lastThrowerVelocity: _rigidbody.velocity,
+					force: throwDirection * _throwForceHorizontal
+				);
 			}
 
-			_grabThrowObject = null;
+			_grabThrowTarget = null;
 
 			yield break;
 		}
 
 		Rigidbody _rigidbody;
-		Collider[] _overlapResults = new Collider[5];
-		GrabThrowTarget _grabThrowObject;
+		Collider[] _overlapResultCache = new Collider[5];
+		GrabThrowTarget _grabThrowTarget;
 		bool _isGrabbing = false;
 
 		[SerializeField] LayerMask _grabThrowObjectMask = 1 << 8;

@@ -6,45 +6,37 @@ namespace MC
 	[RequireComponent(typeof(Rigidbody))]
 	public class GrabThrowTarget : MonoBehaviour
 	{
-		#region Unity Callbacks
+		#region UnityCallbacks
 
 		void Awake()
 		{
+			// Cache components
+
 			_rigidbody = GetComponent<Rigidbody>();
 		}
 
-		#endregion
+		#endregion // UnityCallbacks
 
 		public void BeginGrabState(GameObject grabParent)
 		{
-			_grabParent = grabParent;
-
-
 			_rigidbody.isKinematic = true;
 			_rigidbody.detectCollisions = false;
 
-			transform.position = grabParent.transform.position;
-			transform.rotation = Quaternion.identity;
-
-			transform.parent = grabParent.transform;
-
-
-			// _isGrabbed = true;
+			transform.SetPositionAndRotation(grabParent.transform.position, Quaternion.identity);
+			transform.SetParent(grabParent.transform);
 		}
 
 		public void EndGrabState()
 		{
-			_grabParent = null;
-
-
 			_rigidbody.isKinematic = false;
 			_rigidbody.detectCollisions = true;
 
-			transform.parent = null;
-
-			// _isGrabbed = false;
+			transform.SetParent(null);
 		}
 
+		/// <summary>
+		/// Throw 를 수행하는 오브젝트의 마지막 Velocity와 Throw 행동의 힘을 더해, 물체에 힘을 가한다.
+		/// </summary>
 		public void Throw(in Vector3 lastThrowerVelocity, in Vector3 force)
 		{
 			_rigidbody.AddForce(lastThrowerVelocity, ForceMode.VelocityChange);
@@ -52,8 +44,5 @@ namespace MC
 		}
 
 		Rigidbody _rigidbody;
-
-		//bool _isGrabbed = false;
-		GameObject _grabParent;
 	}
 }

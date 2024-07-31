@@ -93,13 +93,15 @@ namespace MC
 
 			if (isThereObstacle)
 			{
-				spawnPosition.y += _eggPool.EggCombinedPhysicalBounds.extents.y;
+				spawnPosition.y += _eggPhysicalData.CombinedPhysicalBounds.extents.y;
 			}
 
 			return spawnPosition;
 		}
 
 		[SerializeField] RuntimePooledEggData _eggPool;
+		[SerializeField] EggPhysicalData _eggPhysicalData;
+
 		int _eggLayerMaskNormal = 8;
 		int _eggLayerMaskPreparing = 9;
 	}

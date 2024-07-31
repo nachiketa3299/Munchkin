@@ -51,15 +51,5 @@ namespace MC
 		ObjectPool<EggLifecycleHandler> _pool;
 		[SerializeField] int _defaultPoolCapacity = 5;
 		[SerializeField] EggLifecycleHandler _eggPrefab;
-
-		/// <remarks>
-		/// 에디터에서 수동으로 계산된 것(버튼을 눌러라)이 캐싱된다.
-		/// </remarks>
-		public Bounds EggCombinedPhysicalBounds
-		{
-			get => _eggCombinedPhysicalBounds;
-			set => _eggCombinedPhysicalBounds = value;
-		}
-		Bounds _eggCombinedPhysicalBounds;
 	}
 }

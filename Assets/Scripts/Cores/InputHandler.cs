@@ -1,13 +1,14 @@
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace MC
 {
 	public class InputHandler : MonoBehaviour
 	{
-		#region Unity Callbacks
+		#region UnityCallbacks
 
-		/// <summary> 입력 액션과 캐릭터 액션을 바인드. 컴포넌트가 존재하지 않아도 경고 후 실행. </summary>
+		/// <summary>
+		/// 입력 액션과 캐릭터 액션을 바인드. 컴포넌트가 존재하지 않아도 경고 후 실행.
+		/// </summary>
 		void Awake()
 		{
 			_inputActions = new IA_InputActions();
@@ -30,7 +31,7 @@ namespace MC
 #if UNITY_EDITOR
 			else
 			{
-				Debug.LogWarning($"캐릭터에 {typeof(MoveAction).Name} 컴포넌트가 없습니다.");
+				Debug.LogWarning($"{typeof(MoveAction).Name} 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
 
@@ -53,7 +54,7 @@ namespace MC
 #if UNITY_EDITOR
 			else
 			{
-				Debug.LogWarning($"캐릭터에 {typeof(JumpAction).Name} 컴포넌트가 없습니다.");
+				Debug.LogWarning($"{typeof(JumpAction).Name} 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
 
@@ -75,7 +76,7 @@ namespace MC
 #if UNITY_EDITOR
 			else
 			{
-				Debug.LogWarning($"캐릭터에 {typeof(LookAction).Name} 컴포넌트가 없습니다.");
+				Debug.LogWarning($"{typeof(LookAction).Name} 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
 
@@ -93,7 +94,7 @@ namespace MC
 #if UNITY_EDITOR
 			else
 			{
-				Debug.LogWarning($"캐릭터에 {typeof(GrabThrowAction).Name} 컴포넌트가 없습니다.");
+				Debug.LogWarning($"{typeof(GrabThrowAction).Name} 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
 
@@ -111,8 +112,13 @@ namespace MC
 					_eggAction.EndAction();
 				};
 			}
+			#if UNITY_EDITOR
+			else
+			{
+				Debug.LogWarning($"{typeof(EggAction).Name} 컴포넌트를 찾을 수 없습니다.");
+			}
+			#endif
 		}
-
 
 		void OnEnable()
 		{
@@ -124,7 +130,7 @@ namespace MC
 			_inputActions.Disable();
 		}
 
-		#endregion // Unity Callbacks
+		#endregion // UnityCallbacks
 
 		/// <summary>
 		/// InputActionAsset 에디터 에셋에서 Generate C# Class 옵션으로 생성된 래퍼 클래스입니다. 절대 수정하지 마세요.<br/>

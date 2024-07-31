@@ -282,8 +282,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _rayCastMaxDistance: 10
-  _eggPrefab: {fileID: 7674990366172167226, guid: bf3174eadcb8b7844bb62e042ce8ad51,
-    type: 3}
 --- !u!114 &-7025902425445592405
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -297,6 +295,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _eggPool: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40, type: 2}
+  _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
 --- !u!1 &7887266405746795884
 GameObject:
   m_ObjectHideFlags: 0

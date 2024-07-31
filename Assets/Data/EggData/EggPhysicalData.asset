@@ -1,0 +1,19 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 1d7356e7eb32fba43800ca1f5e719f37, type: 3}
+  m_Name: EggPhysicalData
+  m_EditorClassIdentifier: 
+  _eggPrefab: {fileID: 8578106192908227860, guid: bf3174eadcb8b7844bb62e042ce8ad51,
+    type: 3}
+  _combinedPhysicalBounds:
+    m_Center: {x: 0, y: -0.050000012, z: 0}
+    m_Extent: {x: 0.7, y: 0.95, z: 0.7}
