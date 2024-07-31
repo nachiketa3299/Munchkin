@@ -94,7 +94,7 @@ namespace MC
 			Damaged?.Invoke(damage);
 		}
 
-		void InflictDamage(in float damage)
+		public void InflictDamage(in float damage)
 		{
 			_currentHealth -= damage;
 
@@ -116,11 +116,13 @@ namespace MC
 
 		IEnumerator BlockDamageTimerRoutine(float duration)
 		{
+			_currentDamageTimerMaxTime = duration;
+
 			// 데미지 차단 시작 (타이머 시작)
 			_damageTimerElapsedTime = 0.0f;
 			_canBeDamaged = false;
 
-			while (Mathf.Clamp01(_damageTimerElapsedTime / duration) < 1.0f)
+			while (Mathf.Clamp01(_damageTimerElapsedTime / _currentDamageTimerMaxTime) < 1.0f)
 			{
 				_damageTimerElapsedTime += Time.deltaTime;
 				yield return null;
@@ -129,6 +131,8 @@ namespace MC
 			// 데미지 차단 종료 (타이머 종료)
 			_damageTimerElapsedTime = 0.0f;
 			_canBeDamaged = true;
+
+			_currentDamageTimerMaxTime = 0.0f;
 		}
 
 		void OnHealthIsBelowZero()
@@ -145,13 +149,14 @@ namespace MC
 		EggLifecycleHandler _lifeCycleHandler;
 		EggImpactDetector _impactDetector;
 
-		bool _canBeDamaged = true;
-		float _damageTimerElapsedTime = 0.0f;
+		[HideInInspector][SerializeField] bool _canBeDamaged = true;
+		[HideInInspector][SerializeField] float _damageTimerElapsedTime = 0.0f;
 		[SerializeField] float _damageTimerMaxTime = 3.0f;
 		[SerializeField] float _damageTimerMaxTimeForCreated = 1.0f;
+		[HideInInspector][SerializeField] float _currentDamageTimerMaxTime;
 
 		float HealthRatio => Mathf.Clamp01(_currentHealth / _maxHealth);
-		float _currentHealth;
+		[HideInInspector][SerializeField] float _currentHealth;
 		[SerializeField] float _maxHealth = 100.0f;
 
 		Coroutine _currentTimerRoutine;

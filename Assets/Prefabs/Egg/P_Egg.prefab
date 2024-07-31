@@ -271,7 +271,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ebe5e84607ba1c3449d508ad388659c1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _impactForceMagnitudeThreshold: 1
+  _impactMagnitudeThreshold: 1
 --- !u!114 &2066279586368132131
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -284,8 +284,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f9101d9bbeec663428fa3e24ccaf43ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _canBeDamaged: 1
+  _damageTimerElapsedTime: 0
   _damageTimerMaxTime: 3
   _damageTimerMaxTimeForCreated: 1
+  _currentDamageTimerMaxTime: 0
+  _currentHealth: 0
   _maxHealth: 100
 --- !u!114 &2122831093761474713
 MonoBehaviour:
@@ -312,6 +316,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _eggPool: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40, type: 2}
+  _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
 --- !u!1001 &317923141492936810
 PrefabInstance:
   m_ObjectHideFlags: 0

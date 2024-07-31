@@ -2,86 +2,97 @@
 
 using UnityEngine;
 using UnityEditor;
+
 namespace MC
 {
-
-	public partial class EggHealthManager : MonoBehaviour
-	{
-		float DamageBlockTimerProgress => Mathf.Clamp01(_damageTimerElapsedTime / _damageTimerMaxTime);
-
 		[CustomEditor(typeof(EggHealthManager))]
-		private class EggHealthManagerEditor : Editor
+		public class EggHealthManagerEditor : Editor
 		{
-			EggHealthManager _eggHealthManager;
-			GUIStyle _labelStyle;
 
 			#region UnityCallbacks
 
-			void OnEnable()
-			{
-				_eggHealthManager = target as EggHealthManager;
-				_labelStyle = new(EditorStyles.label) { richText = true }; // TODO 이렇게 하는게 맞는지 모르겠음.
-			}
-
 			public override void OnInspectorGUI()
 			{
+				serializedObject.Update();
 				base.OnInspectorGUI();
-
-				if (!_eggHealthManager)
-				{
-					return;
-				}
 
 				EditorGUILayout.Space();
 
-				// Health Gage
-				EditorGUILayout.LabelField("Egg Health Gage");
+				// Health gage
+				EditorGUILayout.LabelField("Health Gage");
 
-				var rect = GUILayoutUtility.GetRect(18.0f, 18.0f);
-				var ratio = _eggHealthManager.HealthRatio;
-				var ratioString = $"{_eggHealthManager._currentHealth}/{_eggHealthManager._maxHealth} ({ratio:P2})";
+				var rect = EditorGUILayout.GetControlRect(false, 18.0f);
+				var currentHealth = serializedObject.FindProperty("_currentHealth").floatValue;
+				var maxHealth = serializedObject.FindProperty("_maxHealth").floatValue;
+				var healthRatio = Mathf.Clamp01(currentHealth / maxHealth);
+				var healthGageLabel = $"{currentHealth}/{maxHealth} ({healthRatio:P2})";
 
 				EditorGUI.ProgressBar
 				(
 					position: rect,
-					value: ratio,
-					text: ratioString
+					value: healthRatio,
+					text: healthGageLabel
 				);
 
-				// Damage Block Timer
 				EditorGUILayout.Space();
-				EditorGUILayout.LabelField("Egg Damage Timer");
 
-				var canBeDamagedString = _eggHealthManager._canBeDamaged
-					? "Egg can be damaged"
-					: "<color='red'>Egg can't be damaged</color>";
+				// Damageable label
+
+				EditorGUILayout.LabelField("Egg damage timers:");
+
+				var canBeDamaged = serializedObject.FindProperty("_canBeDamaged").boolValue;
+				var damageableLabel = canBeDamaged
+					? "<color='green'>Can be damaged</color>"
+					: "<color='red'>Can't be damaged</color>";
 
 				EditorGUILayout.LabelField
 				(
-					label: canBeDamagedString,
-					style: _labelStyle
+					label: damageableLabel,
+					style: new GUIStyle(EditorStyles.textArea) {richText = true}
 				);
 
+				// Damage block timer
+				EditorGUILayout.LabelField("Egg damage timer for creation");
+
 				rect = GUILayoutUtility.GetRect(18.0f, 9.0f);
-				ratio = _eggHealthManager.DamageBlockTimerProgress;
-				ratioString = $"{_eggHealthManager._damageTimerElapsedTime}/{_eggHealthManager._damageTimerMaxTime} ({ratio:P2})";
+				var elapsedTime =  serializedObject.FindProperty("_damageTimerElapsedTime").floatValue;
+				var maxTimeForCreation = serializedObject.FindProperty("_currentDamageTimerMaxTime").floatValue;
+				var creationTimerRatio = Mathf.Clamp01(elapsedTime / maxTimeForCreation);
+				var creationTimerLabel = $"{elapsedTime}/{maxTimeForCreation} ({(float.IsNaN(creationTimerRatio) ? 0.0f:creationTimerRatio):P2})";
 
 				EditorGUI.ProgressBar
 				(
 					position: rect,
-					value: ratio,
-					text: ratioString
+					value: creationTimerRatio,
+					text: creationTimerLabel
 				);
 
-				if (Application.isPlaying)
+				EditorGUILayout.Space();
+
+				// Utility Tools
+				if (EditorApplication.isPlaying)
 				{
-					Repaint();
+					_damageToForceInflict = EditorGUILayout.FloatField("Damage to force inflict: ", _damageToForceInflict);
+
+					if (GUILayout.Button("Force inflict damage"))
+					{
+						var eggHealthManager = target as EggHealthManager;
+
+						if (!eggHealthManager.gameObject.activeSelf)
+						{
+							Debug.Log("활성화되지 않은 알의 체력을 감소시킬 수 없습니다.");
+						}
+						else
+						{
+							eggHealthManager.InflictDamage(Mathf.Abs(_damageToForceInflict));
+						}
+					}
 				}
+				serializedObject.ApplyModifiedProperties();
 			}
 
-			#endregion
-		} // inner class
-	} // outer class
+			#endregion // UnityCallbacks
+			float _damageToForceInflict;
+		}
 } // namespace
-
 #endif
