@@ -191,8 +191,6 @@ namespace MC
 		/// </summary>
 		public HashSet<string> RetrieveNearSceneUniqueNames(string pivotSceneName, int depth)
 		{
-			Debug.Log($"{pivotSceneName} retrieve");
-
 			if (pivotSceneName == PersistentSceneName)
 			{
 				return new();

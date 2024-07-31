@@ -41,7 +41,6 @@ namespace MC
 				Debug.LogWarning("EggImpactDetector 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
-			Debug.Log("HealthManager Awake");
 
 			// Bind events
 
@@ -71,11 +70,6 @@ namespace MC
 
 		void MaxUpHealth()
 		{
-
-#if UNITY_EDITOR
-			Debug.Log($"{gameObject}'s health set to max health.");
-#endif
-
 			_currentHealth = _maxHealth;
 			HealthChanged?.Invoke(HealthRatio);
 		}
@@ -122,7 +116,6 @@ namespace MC
 
 		IEnumerator BlockDamageTimerRoutine(float duration)
 		{
-			Debug.Log($"Damage Timer Started for duration {duration}");
 			// 데미지 차단 시작 (타이머 시작)
 			_damageTimerElapsedTime = 0.0f;
 			_canBeDamaged = false;

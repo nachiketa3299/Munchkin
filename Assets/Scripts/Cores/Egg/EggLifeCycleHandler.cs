@@ -44,7 +44,6 @@ namespace MC
 				Debug.LogWarning("EggHealthManager 컴포넌트를 찾을 수 없습니다.");
 			}
 #endif
-			Debug.Log("LifeCycleHandler Awake");
 
 			// Bind events
 
@@ -82,12 +81,10 @@ namespace MC
 
 		void OnLifecycleStarted()
 		{
-			Debug.Log("OnLifecycleStarted Invoked");
 		}
 
 		void OnLifecycleEnded()
 		{
-			Debug.Log("OnLifecycleEnded Invoked");
 		}
 
 		void LifecycleShouldEnded()
