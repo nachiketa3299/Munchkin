@@ -2,33 +2,55 @@
 
 using UnityEngine;
 using UnityEditor;
+using UnityEngine.Pool;
+
 
 namespace MC
 {
-
-	public partial class RuntimePooledEggData : ScriptableObject
+	[CustomEditor(typeof(RuntimePooledEggData))]
+	public class RuntimePooledEggDataEditor : Editor
 	{
-		public bool IsPoolInitialized => _pool != null;
-		public int CountInactive => _pool.CountInactive;
-		public int CountActive => _pool.CountActive;
-		public int CountAll => _pool.CountAll;
+		#region UnityCallbacks
 
-
-		[CustomEditor(typeof(RuntimePooledEggData))]
-		private class RuntimePooledEggDataEditor : Editor
+		public override bool RequiresConstantRepaint()
 		{
-			#region UnityCallbacks
+			return true;
+		}
 
-			void OnEnable()
+		public override void OnInspectorGUI()
+		{
+			serializedObject.Update();
+
+			base.OnInspectorGUI();
+
+			var data = target as RuntimePooledEggData;
+
+			if (data.Pool == null)
 			{
-				_runtimePooledEggData = target as RuntimePooledEggData;
+				EditorGUILayout.LabelField("Pool is not initialized");
 			}
 
-			#endregion
+			else
+			{
+				EditorGUILayout.LabelField("Pool data:");
+				var all = data.Pool.CountAll;
+				var active = data.Pool.CountActive;
+				var inactive = data.Pool.CountInactive;
 
-			RuntimePooledEggData _runtimePooledEggData;
+				EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+				EditorGUI.BeginDisabledGroup(true);
+
+				EditorGUILayout.IntField("CountAll", all);
+				EditorGUILayout.IntField("CountActive", active);
+				EditorGUILayout.IntField("CountInActive", inactive);
+
+				EditorGUI.EndDisabledGroup();
+				EditorGUILayout.EndVertical();
+			}
 		}
+		#endregion // UnityCallbacks
 	}
 }
+
 
 #endif

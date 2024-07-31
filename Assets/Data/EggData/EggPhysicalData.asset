@@ -15,5 +15,5 @@ MonoBehaviour:
   _eggPrefab: {fileID: 8578106192908227860, guid: bf3174eadcb8b7844bb62e042ce8ad51,
     type: 3}
   _combinedPhysicalBounds:
-    m_Center: {x: 0, y: -0.050000012, z: 0}
-    m_Extent: {x: 0.7, y: 0.95, z: 0.7}
+    m_Center: {x: 0, y: 0, z: 0}
+    m_Extent: {x: 0.716218, y: 1, z: 0.716218}

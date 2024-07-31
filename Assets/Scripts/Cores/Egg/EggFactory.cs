@@ -5,7 +5,7 @@ using UnityEngine;
 namespace MC
 {
 	[DisallowMultipleComponent]
-	public partial class EggFactory : MonoBehaviour
+	public class EggFactory : MonoBehaviour
 	{
 		#region UnityCallbacks
 
@@ -19,6 +19,11 @@ namespace MC
 #endif
 		}
 
+		// TODO 알이 캐릭터와 겹쳐져서 생성되지 않을 수 있으므로, 그 부분에 대한 처리가 필요하다
+		/// <summary>
+		/// Egg는 항상 <see cref="_eggLayerMaskPreparing"/> 레이어에서 생성되며, 기본적으로 캐릭터와 충돌 처리를 하지 않는다. <br/>
+		/// Egg는 항상 캐릭터와 겹쳐져서 생성되는데, 이때 캐릭터와 겹침 판정을 벗어나면, 캐릭터와 정상적으로 충돌할 수 있도록 마스크를 재설정한다.
+		/// </summary>
 		void OnTriggerExit(Collider collider)
 		{
 			if (collider.gameObject.layer != _eggLayerMaskPreparing)
@@ -31,7 +36,7 @@ namespace MC
 
 			SetEggLayerMaskRecursively
 			(
-				root: collider.gameObject.transform.root.gameObject,
+				rootGameObject: collider.gameObject.transform.root.gameObject,
 				newLayer: _eggLayerMaskNormal
 			);
 		}
@@ -45,7 +50,7 @@ namespace MC
 		{
 			var spawnPosition = FindSpawnPositionByRaycast
 			(
-				pivotObject: characterObject,
+				pivotGameObject: characterObject,
 				rayCastDistance: raycastDistance,
 				maskToIgnore: characterObject.layer
 			);
@@ -69,23 +74,23 @@ namespace MC
 			_eggPool.Pool.Release(egg);
 		}
 
-		static void SetEggLayerMaskRecursively(GameObject root, in int newLayer)
+		static void SetEggLayerMaskRecursively(GameObject rootGameObject, in int newLayer)
 		{
-			root.layer = newLayer;
-			foreach (Transform childTransform in root.transform)
+			rootGameObject.layer = newLayer;
+			foreach (Transform childTransform in rootGameObject.transform)
 			{
 				SetEggLayerMaskRecursively(childTransform.gameObject, newLayer);
 			}
 		}
 
-		Vector3 FindSpawnPositionByRaycast(GameObject pivotObject, in float rayCastDistance, in int maskToIgnore)
+		Vector3 FindSpawnPositionByRaycast(GameObject pivotGameObject, in float rayCastDistance, in int maskToIgnore)
 		{
-			var spawnPosition = pivotObject.transform.position;
+			var spawnPosition = pivotGameObject.transform.position;
 
 			var isThereObstacle = Physics.Raycast
 			(
 				origin: spawnPosition,
-				direction: -1.0f * pivotObject.transform.up,
+				direction: -1.0f * pivotGameObject.transform.up,
 				hitInfo: out var hitInfo,
 				maxDistance: rayCastDistance,
 				layerMask: maskToIgnore
