@@ -90,6 +90,8 @@ namespace MC
 		}
 
 		[SerializeField] SceneDependencyData _sceneDependencyData;
+
+		public Dictionary<GameObject, HashSet<string>> LoadedScenesByGameObject => _loadedScenesByGameObject;
 		Dictionary<GameObject, HashSet<string>> _loadedScenesByGameObject = new();
 
 		/// <summary>

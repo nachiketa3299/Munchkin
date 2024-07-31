@@ -15,11 +15,16 @@ namespace MC
 		/// </summary>
 		public event Action<GameObject, string, int> EnteredNewScene;
 
-		#region Unity Callbacks
+		#region UnityCallbacks
 
 		void OnEnable()
 		{
 			EnteredNewScene += _runtimeLoadedSceneData.OnEnteredNewScene;
+		}
+
+		void OnDisable()
+		{
+			EnteredNewScene -= _runtimeLoadedSceneData.OnEnteredNewScene;
 		}
 
 		/// <summary>
@@ -30,6 +35,11 @@ namespace MC
 		/// </remarks>
 		void OnTriggerEnter(Collider sceneBoundCollider)
 		{
+			if (sceneBoundCollider.gameObject.layer != _sceneLoadingBoxLayer)
+			{
+				return;
+			}
+
 			var enteredSceneName = sceneBoundCollider.gameObject.scene.name;
 
 			if (_lastEnteredSceneName == enteredSceneName)
@@ -57,17 +67,14 @@ namespace MC
 			EnteredNewScene?.Invoke(gameObject, enteredSceneName, _depthToLoad);
 		}
 
-		void OnDisable()
-		{
-			EnteredNewScene -= _runtimeLoadedSceneData.OnEnteredNewScene;
-		}
-
-		#endregion // Unity Callbacks
+		#endregion // UnityCallbacks
 
 		string _lastEnteredSceneName = string.Empty;
 
 		[SerializeField] RuntimeLoadedSceneData _runtimeLoadedSceneData;
 		[SerializeField] int _depthToLoad;
+
+		int _sceneLoadingBoxLayer = 6;
 
 #if UNITY_EDITOR
 		[SerializeField] bool _logOnEnteringNewScene = false;
