@@ -19,12 +19,16 @@ namespace MC
 				EditorGUILayout.Space();
 
 				// Health gage
+
 				EditorGUILayout.LabelField("Health Gage");
 
 				var rect = EditorGUILayout.GetControlRect(false, 18.0f);
+
 				var currentHealth = serializedObject.FindProperty("_currentHealth").floatValue;
 				var maxHealth = serializedObject.FindProperty("_maxHealth").floatValue;
 				var healthRatio = Mathf.Clamp01(currentHealth / maxHealth);
+				healthRatio = float.IsNaN(healthRatio) ? 0.0f : healthRatio;
+
 				var healthGageLabel = $"{currentHealth}/{maxHealth} ({healthRatio:P2})";
 
 				EditorGUI.ProgressBar
@@ -52,26 +56,32 @@ namespace MC
 				);
 
 				// Damage block timer
+
 				EditorGUILayout.LabelField("Egg damage timer for creation");
 
 				rect = GUILayoutUtility.GetRect(18.0f, 9.0f);
 				var elapsedTime =  serializedObject.FindProperty("_damageTimerElapsedTime").floatValue;
 				var maxTimeForCreation = serializedObject.FindProperty("_currentDamageTimerMaxTime").floatValue;
-				var creationTimerRatio = Mathf.Clamp01(elapsedTime / maxTimeForCreation);
-				var creationTimerLabel = $"{elapsedTime}/{maxTimeForCreation} ({(float.IsNaN(creationTimerRatio) ? 0.0f:creationTimerRatio):P2})";
+				var timerRatio = Mathf.Clamp01(elapsedTime / maxTimeForCreation);
+				timerRatio = float.IsNaN(timerRatio) ? 0.0f : timerRatio;
+
+				var timerLabel = $"{elapsedTime:F2}/{maxTimeForCreation:F2} ({timerRatio:P2})";
 
 				EditorGUI.ProgressBar
 				(
 					position: rect,
-					value: creationTimerRatio,
-					text: creationTimerLabel
+					value: timerRatio,
+					text: timerLabel
 				);
 
 				EditorGUILayout.Space();
 
 				// Utility Tools
+
 				if (EditorApplication.isPlaying)
 				{
+					EditorGUILayout.LabelField("Manipulate egg health");
+
 					_damageToForceInflict = EditorGUILayout.FloatField("Damage to force inflict: ", _damageToForceInflict);
 
 					if (GUILayout.Button("Force inflict damage"))
@@ -92,6 +102,7 @@ namespace MC
 			}
 
 			#endregion // UnityCallbacks
+
 			float _damageToForceInflict;
 		}
 } // namespace

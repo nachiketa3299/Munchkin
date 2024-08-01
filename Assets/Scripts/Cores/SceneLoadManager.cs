@@ -27,7 +27,7 @@ namespace MC
 
 		void FixedUpdate()
 		{
-			_runtimeLoadedSceneData.ProcessChanges();
+			_runtimeLoadedSceneData.TryProcessChanges();
 		}
 
 		#endregion // Unity Callbacks

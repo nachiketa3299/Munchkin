@@ -10,6 +10,12 @@ namespace MC
 	[DisallowMultipleComponent]
 	public class SceneLoadTrigger : MonoBehaviour
 	{
+		public delegate void SceneDataRequestAddedHandler(GameObject enteringGameObject, in string sceneName, in int depth);
+		public delegate void SceneDataRequestRemovedHandler(GameObject enteringGameObject);
+
+		public event SceneDataRequestAddedHandler SceneDataRequestAdded;
+		public event SceneDataRequestRemovedHandler SceneDataRequestRemoved;
+
 		/// <summary>
 		/// 게임 오브젝트(GameObject)가 해당 이름을 가진 씬 이름에 접촉하였으며, 이 씬(string)으로부터 거리가 일정 이내(int)인 씬들이 로드되어야 함을 알리는 이벤트
 		/// </summary>
@@ -17,14 +23,34 @@ namespace MC
 
 		#region UnityCallbacks
 
-		void OnEnable()
+		void Awake()
 		{
-			EnteredNewScene += _runtimeLoadedSceneData.OnEnteredNewScene;
+
+			// Bind events
+
+			// EnteredNewScene += _runtimeLoadedSceneData.OnEnteredNewScene;
+
+			SceneDataRequestAdded += _runtimeLoadedSceneData.PendingAddSceneData;
+			SceneDataRequestRemoved = _runtimeLoadedSceneData.PendingRemoveSceneData;
 		}
 
+		void OnDestroy()
+		{
+
+			// Unbind events
+
+			// EnteredNewScene -= _runtimeLoadedSceneData.OnEnteredNewScene;
+
+			SceneDataRequestAdded -= _runtimeLoadedSceneData.PendingAddSceneData;
+			SceneDataRequestRemoved -= _runtimeLoadedSceneData.PendingRemoveSceneData;
+		}
+
+		/// <summary>
+		/// 이 게임 오브젝트가 비활성화 되었을 때, 이 씬에 의해 로드된 씬의 목록을 정리해 달라고 요청
+		/// </summary>
 		void OnDisable()
 		{
-			EnteredNewScene -= _runtimeLoadedSceneData.OnEnteredNewScene;
+			SceneDataRequestRemoved?.Invoke(gameObject);
 		}
 
 		/// <summary>
@@ -33,41 +59,46 @@ namespace MC
 		/// <remarks>
 		/// 한 씬 트리거를 여러번 연속해서 작동시킬 수 없으며, 레이어 마스크 설정을 제대로 확인할 필요가 있음.
 		/// </remarks>
-		void OnTriggerEnter(Collider sceneBoundCollider)
+		void OnTriggerEnter(Collider collider)
 		{
-			if (sceneBoundCollider.gameObject.layer != _sceneLoadingBoxLayer)
+			if (IsSceneLoadingBoxLayer(collider.gameObject.layer))
 			{
 				return;
 			}
 
-			var enteredSceneName = sceneBoundCollider.gameObject.scene.name;
+			var sceneName = collider.gameObject.scene.name;
 
-			if (_lastEnteredSceneName == enteredSceneName)
+			if (_lastEnteredSceneName == sceneName)
 			{
 
 #if UNITY_EDITOR
 				if (_logOnEnteringNewScene)
 				{
-					Debug.Log($"{gameObject} triggered {enteredSceneName}'s bound, but not activated event.");
+					Debug.Log($"{gameObject} triggered {sceneName}'s bound, but not activated event.");
 				}
 #endif
-
 				return;
 			}
 
 #if UNITY_EDITOR
 			if (_logOnEnteringNewScene)
 			{
-				Debug.Log($"{gameObject} Entered {enteredSceneName}");
+				Debug.Log($"{gameObject} Entered {sceneName}");
 			}
 #endif
 
-			_lastEnteredSceneName = enteredSceneName;
+			_lastEnteredSceneName = sceneName;
 
-			EnteredNewScene?.Invoke(gameObject, enteredSceneName, _depthToLoad);
+			// EnteredNewScene?.Invoke(gameObject, sceneName, _depthToLoad);
+			SceneDataRequestAdded?.Invoke(gameObject, sceneName, _depthToLoad);
 		}
 
 		#endregion // UnityCallbacks
+
+		public bool IsSceneLoadingBoxLayer(in int layer)
+		{
+			return layer != _sceneLoadingBoxLayer;
+		}
 
 		string _lastEnteredSceneName = string.Empty;
 

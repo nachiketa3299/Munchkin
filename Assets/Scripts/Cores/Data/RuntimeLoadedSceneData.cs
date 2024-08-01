@@ -15,34 +15,55 @@ namespace MC
 	{
 		public event Action<HashSet<string>, HashSet<string>> SceneOperationNeeded;
 
-		public void OnEnteredNewScene(GameObject enteringObject, string enteredSceneName, int depthToLoad)
+		public void PendingAddSceneData(GameObject enteringGameObject, in string sceneName, in int depthToLoad)
 		{
-			// 앞으로 이 오브젝트에 의해 유지해야 할 씬 목록
-			var nearSceneUniqueNamesByObject = _sceneDependencyData.RetrieveNearSceneUniqueNames(enteredSceneName, depthToLoad);
+			var sceneNamesToAdd = _sceneDependencyData.RetrieveNearSceneUniqueNames(sceneName, depthToLoad);
 
-			// 이전에 이 오브젝트에 대한 정보가 없는 경우
-			if (!_loadedScenesByGameObject.TryGetValue(enteringObject, out var prevLoadedSceneNamesByObject))
+			if (!_loadedScenesByGameObject.ContainsKey(enteringGameObject))
 			{
-				_loadedScenesByGameObject.Add(enteringObject, nearSceneUniqueNamesByObject);
+				_loadedScenesByGameObject.Add(enteringGameObject, sceneNamesToAdd);
 			}
-			// 있는 경우 (prevLoadedSceneNamesByObject)
 			else
 			{
-				_loadedScenesByGameObject[enteringObject] = new HashSet<string>(nearSceneUniqueNamesByObject);
+				_loadedScenesByGameObject[enteringGameObject] = sceneNamesToAdd;
 			}
 
-			// 무언가 변경되었으며, 처리가 필요함을 Notate 함
-			_hasChanges = true;
+			_isDirty = true;
 		}
+
+		public void PendingRemoveSceneData(GameObject enteringGameObject)
+		{
+			_isDirty = _loadedScenesByGameObject.Remove(enteringGameObject);
+		}
+
+		// public void OnEnteredNewScene(GameObject enteringObject, string enteredSceneName, int depthToLoad)
+		// {
+		// 	// 앞으로 이 오브젝트에 의해 유지해야 할 씬 목록
+		// 	var nearSceneUniqueNamesByObject = _sceneDependencyData.RetrieveNearSceneUniqueNames(enteredSceneName, depthToLoad);
+
+		// 	// 이전에 이 오브젝트에 대한 정보가 없는 경우
+		// 	if (!_loadedScenesByGameObject.TryGetValue(enteringObject, out var prevLoadedSceneNamesByObject))
+		// 	{
+		// 		_loadedScenesByGameObject.Add(enteringObject, nearSceneUniqueNamesByObject);
+		// 	}
+		// 	// 있는 경우 (prevLoadedSceneNamesByObject)
+		// 	else
+		// 	{
+		// 		_loadedScenesByGameObject[enteringObject] = new HashSet<string>(nearSceneUniqueNamesByObject);
+		// 	}
+
+		// 	// 무언가 변경되었으며, 처리가 필요함을 Notate 함
+		// 	_isDirty = true;
+		// }
 
 		/// <summary>
 		/// <see cref="SceneLoadManager"/> 가 매 프레임 이 메서드를 호출하면서
 		/// <see cref="_pendingLoadSceneNames"/> 와 <see cref="_pendingUnLoadSceneNames"/> 에 변경 사항이 있으면 새 씬 관련 연산이 필요하다는
 		/// 이벤트(<see cref="SceneOperationNeeded"/> )를 발생시킨다.
 		/// </summary>
-		public void ProcessChanges()
+		public void TryProcessChanges()
 		{
-			if (!_hasChanges)
+			if (!_isDirty)
 			{
 				return;
 			}
@@ -65,7 +86,7 @@ namespace MC
 			_pendingLoadSceneNames.Clear();
 			_pendingUnloadSceneNames.Clear();
 
-			_hasChanges = false;
+			_isDirty = false;
 		}
 
 		HashSet<string> RetrieveAllLoadedSceneNames
@@ -107,6 +128,6 @@ namespace MC
 		/// <summary>
 		/// <see cref="SceneLoadManager"/>가 매 프레임 이 값을 검사하여 참이면 씬 로딩 상태를 업데이트함
 		/// </summary>
-		bool _hasChanges = false;
+		bool _isDirty = false;
 	}
 }
