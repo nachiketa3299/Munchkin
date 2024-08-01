@@ -89,7 +89,11 @@ namespace MC
 		EggFactory _eggFactory;
 
 		bool _alreadyLayed = false;
+
+	#if UNITY_EDITOR
 		Vector3 _layPosition = new();
+	#endif
+
 		float CurrentLayChargeRatio => Mathf.Clamp01(_layChargeElapsedTime / _layChargeMaxTime);
 		float _layChargeElapsedTime = 0.0f;
 		float _layChargeMaxTime = 1.0f;

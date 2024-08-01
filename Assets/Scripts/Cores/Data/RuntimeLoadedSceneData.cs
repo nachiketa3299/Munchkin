@@ -8,12 +8,14 @@ using UnityEngine.SceneManagement;
 namespace MC
 {
 	/// <summary>
-	/// <see cref="SceneLoadManager"/> 가 부착된 오브젝트가 현재 어떤 씬을 로드하고 있는지 관리하는 싱글턴 데이터
+	/// <see cref="SceneLoadTrigger"/> 로부터 씬 로드/언로드 요청을 받아 정리하여, <br/>
+	/// <see cref="SceneLoadManager"/> 에게 로드/유지/언로드 씬 목록을 보낸다.
 	/// </summary>
 	[CreateAssetMenu(fileName = "RuntimeLoadedSceneData", menuName = "MC/Scriptable Objects/Runtime Loaded Scene Data")]
 	public class RuntimeLoadedSceneData : ScriptableObject
 	{
-		public event Action<HashSet<string>, HashSet<string>> SceneOperationNeeded;
+		public delegate void SceneOperationNeededHandler(HashSet<string> toLoadSceneNames, HashSet<string> toUnloadSceneNames);
+		public event SceneOperationNeededHandler SceneOperationNeeded;
 
 		public void PendingAddSceneData(GameObject enteringGameObject, in string sceneName, in int depthToLoad)
 		{
@@ -36,26 +38,6 @@ namespace MC
 			_isDirty = _loadedScenesByGameObject.Remove(enteringGameObject);
 		}
 
-		// public void OnEnteredNewScene(GameObject enteringObject, string enteredSceneName, int depthToLoad)
-		// {
-		// 	// 앞으로 이 오브젝트에 의해 유지해야 할 씬 목록
-		// 	var nearSceneUniqueNamesByObject = _sceneDependencyData.RetrieveNearSceneUniqueNames(enteredSceneName, depthToLoad);
-
-		// 	// 이전에 이 오브젝트에 대한 정보가 없는 경우
-		// 	if (!_loadedScenesByGameObject.TryGetValue(enteringObject, out var prevLoadedSceneNamesByObject))
-		// 	{
-		// 		_loadedScenesByGameObject.Add(enteringObject, nearSceneUniqueNamesByObject);
-		// 	}
-		// 	// 있는 경우 (prevLoadedSceneNamesByObject)
-		// 	else
-		// 	{
-		// 		_loadedScenesByGameObject[enteringObject] = new HashSet<string>(nearSceneUniqueNamesByObject);
-		// 	}
-
-		// 	// 무언가 변경되었으며, 처리가 필요함을 Notate 함
-		// 	_isDirty = true;
-		// }
-
 		/// <summary>
 		/// <see cref="SceneLoadManager"/> 가 매 프레임 이 메서드를 호출하면서
 		/// <see cref="_pendingLoadSceneNames"/> 와 <see cref="_pendingUnLoadSceneNames"/> 에 변경 사항이 있으면 새 씬 관련 연산이 필요하다는
@@ -69,16 +51,16 @@ namespace MC
 			}
 
 			// 오브젝트들을 위해 필요한 모든 씬의 목록
-			var allRequiredSceneNamesByObjects = _loadedScenesByGameObject.Values.SelectMany(_ => _).ToHashSet();
+			var allRequestedSceneNames = _loadedScenesByGameObject.Values.SelectMany(_ => _).ToHashSet();
 
 			// 현재 이미 로드되어 있는 씬들의 목록
 			var currentlyLoadedSceneNames = RetrieveAllLoadedSceneNames;
 
 			// 현재 로드되어 있는 씬 목록에서 현재 필요한 목록을 빼면, 로드되어 있는데 필요 없는 목록임
-			_pendingUnloadSceneNames.UnionWith(currentlyLoadedSceneNames.Except(allRequiredSceneNamesByObjects));
+			_pendingUnloadSceneNames.UnionWith(currentlyLoadedSceneNames.Except(allRequestedSceneNames));
 
 			// 현재 필요한 목록에서 현재 로드되어 있는 씬 목록을 빼면, 로드되어 있지 않은데 필요한 목록임
-			_pendingLoadSceneNames.UnionWith(allRequiredSceneNamesByObjects.Except(currentlyLoadedSceneNames));
+			_pendingLoadSceneNames.UnionWith(allRequestedSceneNames.Except(currentlyLoadedSceneNames));
 
 			// 여기서 반드시 참조가 아닌 복사로 전달해야 함
 			SceneOperationNeeded?.Invoke(new(_pendingLoadSceneNames), new(_pendingUnloadSceneNames));

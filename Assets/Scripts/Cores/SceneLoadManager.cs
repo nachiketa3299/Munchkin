@@ -13,15 +13,27 @@ namespace MC
 	public class SceneLoadManager : MonoBehaviour
 	{
 
-		#region Unity Callbacks
+		#region UnityCallbacks
 
-		void OnEnable()
+		void Awake()
 		{
+
+#if UNITY_EDITOR
+			if (!_runtimeLoadedSceneData)
+			{
+				Debug.LogWarning("RuntimeLoadedSceneData를 찾을 수 없습니다.");
+			}
+#endif
+
+			// Bind events
+
 			_runtimeLoadedSceneData.SceneOperationNeeded += OnSceneOperationNeeded;
 		}
 
-		void OnDisable()
+		void OnDestroy()
 		{
+			// Unbind events
+
 			_runtimeLoadedSceneData.SceneOperationNeeded -= OnSceneOperationNeeded;
 		}
 
@@ -30,7 +42,7 @@ namespace MC
 			_runtimeLoadedSceneData.TryProcessChanges();
 		}
 
-		#endregion // Unity Callbacks
+		#endregion // UnityCallbacks
 
 		/// <summary>
 		/// 어떤 씬들의 연산이 필요성이 수신되었을때 실행되는 로직
@@ -65,7 +77,7 @@ $@"Scene operations needed:
 
 			foreach (var sceneName in uniqueSceneNamesToUnload)
 			{
-				if (AlreadyUnloading(sceneName))
+				if (IsAlreadyUnloading(sceneName))
 				{
 
 #if UNITY_EDITOR
@@ -87,7 +99,7 @@ $@"Scene operations needed:
 
 			foreach (var sceneName in uniqueSceneNamesToLoad)
 			{
-				if (AlreadyLoading(sceneName))
+				if (IsAlreadyLoading(sceneName))
 				{
 
 #if UNITY_EDITOR
@@ -159,9 +171,9 @@ $@"Scene operations needed:
 #endif
 		}
 
-		bool AlreadyUnloading(string sceneName) => _unloadingSceneNames.Contains(sceneName);
+		bool IsAlreadyUnloading(string sceneName) => _unloadingSceneNames.Contains(sceneName);
 
-		bool AlreadyLoading(string sceneName) => _loadingSceneNames.Contains(sceneName);
+		bool IsAlreadyLoading(string sceneName) => _loadingSceneNames.Contains(sceneName);
 
 		/// <summary>
 		/// 현재 로드되는 중인 씬들의 이름
