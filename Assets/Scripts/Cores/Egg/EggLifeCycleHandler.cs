@@ -3,7 +3,7 @@ using UnityEngine;
 namespace MC
 {
 	/// <summary>
-	/// 달걀 객체의 생성(활성화)과 소멸(비활성화)에 관련된 이벤트를 관리한다.
+	/// Egg의 생성(활성화)과 소멸(비활성화)에 관련된 이벤트를 관리한다.
 	/// </summary>
 	[DisallowMultipleComponent]
 	[RequireComponent(typeof(EggFactory))]
@@ -12,12 +12,12 @@ namespace MC
 		public delegate void LifecycleEventHandler();
 
 		/// <summary>
-		/// 달걀이 풀에서 꺼내질 때
+		/// Egg가 풀에서 꺼내질 때
 		/// </summary>
 		public LifecycleEventHandler LifecycleStarted;
 
 		/// <summary>
-		/// 달걀이 풀에 반납될 때
+		/// Egg가 풀에 반납될 때
 		/// </summary>
 		public LifecycleEventHandler LifecycleEnded;
 
@@ -47,18 +47,15 @@ namespace MC
 
 			// Bind events
 
-			LifecycleStarted += OnLifecycleStarted;
-			LifecycleEnded += OnLifecycleEnded;
-
 			_healthManager.ShouldEndLifecycle += LifecycleShouldEnded;
 		}
 
-		void OnEnable()
-		{
-		}
-
+		/// <remarks>
+		/// Egg가 풀에서 꺼내질 때, 명시적으로 호출된다.
+		/// </remarks>
 		public void Initialize()
 		{
+			// 여기에 바인드된 이벤트들의 실행 순서를 통제할 수 없음.
 			LifecycleStarted?.Invoke();
 		}
 
@@ -71,22 +68,10 @@ namespace MC
 		{
 			// Unbind events
 
-			LifecycleStarted -= OnLifecycleStarted;
-			LifecycleEnded -= OnLifecycleEnded;
-
 			_healthManager.ShouldEndLifecycle -= LifecycleShouldEnded;
 		}
 
 		#endregion // UnityCallbacks
-
-		void OnLifecycleStarted()
-		{
-		}
-
-		void OnLifecycleEnded()
-		{
-		}
-
 		void LifecycleShouldEnded()
 		{
 			LifecycleEnded?.Invoke();

@@ -1,6 +1,7 @@
 #if UNITY_EDITOR
 
 using UnityEditor;
+using UnityEngine.Pool;
 
 namespace MC
 {
@@ -22,30 +23,45 @@ namespace MC
 
 			var data = target as RuntimePooledEggData;
 
-			if (data.Pool == null)
-			{
-				EditorGUILayout.LabelField("Pool is not initialized");
-			}
+			// Character egg pool state
 
+			if (data.CharacterEggPool == null)
+			{
+				EditorGUILayout.LabelField("CharacterEggPool is not initialized");
+			}
 			else
 			{
-				EditorGUILayout.LabelField("Pool data:");
-				var all = data.Pool.CountAll;
-				var active = data.Pool.CountActive;
-				var inactive = data.Pool.CountInactive;
+				EditorGUILayout.LabelField("CharacterEggPool data:");
+				DrawDisabledGroup(data.CharacterEggPool);
+			}
 
-				EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-				EditorGUI.BeginDisabledGroup(true);
+			// Nest egg pool state
 
-				EditorGUILayout.IntField("CountAll", all);
-				EditorGUILayout.IntField("CountActive", active);
-				EditorGUILayout.IntField("CountInActive", inactive);
-
-				EditorGUI.EndDisabledGroup();
-				EditorGUILayout.EndVertical();
+			if (data.NestEggPool == null)
+			{
+				EditorGUILayout.LabelField("NestEggPool is not initialized");
+			}
+			else
+			{
+				EditorGUILayout.LabelField("NestEggPool data:");
+				DrawDisabledGroup(data.NestEggPool);
 			}
 		}
+
 		#endregion // UnityCallbacks
+
+		void DrawDisabledGroup(ObjectPool<EggLifecycleHandler> pool)
+		{
+			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+			EditorGUI.BeginDisabledGroup(true);
+
+			EditorGUILayout.IntField("CountAll", pool.CountAll);
+			EditorGUILayout.IntField("CountActive", pool.CountActive);
+			EditorGUILayout.IntField("CountInActive", pool.CountInactive);
+
+			EditorGUI.EndDisabledGroup();
+			EditorGUILayout.EndVertical();
+		}
 	}
 }
 

@@ -9,29 +9,55 @@ namespace MC
 	[CreateAssetMenu(fileName = "RuntimePooledEggData", menuName = "MC/Scriptable Objects/Runtime Pooled Egg Data")]
 	public class RuntimePooledEggData : ScriptableObject
 	{
-		public ObjectPool<EggLifecycleHandler> Pool
+		public ObjectPool<EggLifecycleHandler> CharacterEggPool
 		{
 			get
 			{
-				return _pool ??=  new
+				return _characterEggPool ??=  new
 				(
-					createFunc: CreateInstance,
+					createFunc: CreateCharacterEggInstance,
 					actionOnGet: TakeFromPool,
 					actionOnRelease: ReturnToPool,
 					actionOnDestroy: DestroyInstance,
 					collectionCheck: true,
-					defaultCapacity: _defaultPoolCapacity
+					defaultCapacity: _characterEggPoolDefaultCapacity
+				);
+			}
+		}
+
+		public ObjectPool<EggLifecycleHandler> NestEggPool
+		{
+			get
+			{
+				return _nestEggPool ??= new
+				(
+					createFunc: CreateNestEggInstance,
+					actionOnGet: TakeFromPool,
+					actionOnRelease: ReturnToPool,
+					actionOnDestroy: DestroyInstance,
+					collectionCheck: true,
+					defaultCapacity: _nestEggPoolDefaultCapacity
 				);
 			}
 		}
 
 		/// <summary>
-		/// Pool에 새 인스턴스를 생성할 때 실행되는 로직
+		/// CharacterEggPool에 새 인스턴스를 생성할 때 실행되는 로직
 		/// </summary>
-		EggLifecycleHandler CreateInstance()
+		EggLifecycleHandler CreateCharacterEggInstance()
 		{
-			var instance = Instantiate(_eggPrefab);
-			instance.Initialize();
+			var instance = Instantiate(_characterEggPrefab);
+
+			return instance;
+		}
+
+		/// <summary>
+		/// NestEggPool에 새 인스턴스를 생성할 때 실행되는 로직
+		/// </summary>
+		/// <returns></returns>
+		EggLifecycleHandler CreateNestEggInstance()
+		{
+			var instance = Instantiate(_nestEggPrefab);
 
 			return instance;
 		}
@@ -61,8 +87,11 @@ namespace MC
 			Destroy(egg.gameObject);
 		}
 
-		ObjectPool<EggLifecycleHandler> _pool;
-		[SerializeField] int _defaultPoolCapacity = 5;
-		[SerializeField] EggLifecycleHandler _eggPrefab;
+		ObjectPool<EggLifecycleHandler> _characterEggPool;
+		ObjectPool<EggLifecycleHandler> _nestEggPool;
+		[SerializeField] int _characterEggPoolDefaultCapacity = 5;
+		[SerializeField] int _nestEggPoolDefaultCapacity = 5;
+		[SerializeField] EggLifecycleHandler _characterEggPrefab;
+		[SerializeField] EggLifecycleHandler _nestEggPrefab;
 	}
 }
