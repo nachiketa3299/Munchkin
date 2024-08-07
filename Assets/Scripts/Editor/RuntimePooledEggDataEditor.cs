@@ -3,66 +3,54 @@
 using UnityEditor;
 using UnityEngine.Pool;
 
-namespace MC
+namespace MC.Editors
 {
-	[CustomEditor(typeof(RuntimePooledEggData))]
-	public class RuntimePooledEggDataEditor : Editor
+
+[CustomEditor(typeof(RuntimePooledEggData))]
+internal sealed class RuntimePooledEggDataEditor : Editor
+{
+	#region UnityCallbacks
+
+	public override bool RequiresConstantRepaint() => true;
+
+	public override void OnInspectorGUI()
 	{
-		#region UnityCallbacks
+		serializedObject.Update();
+		base.OnInspectorGUI();
 
-		public override bool RequiresConstantRepaint()
+		var data = target as RuntimePooledEggData;
+
+		// Character egg pool state
+
+		if (data.Pool == null)
 		{
-			return true;
+			EditorGUILayout.LabelField("CharacterEggPool is not initialized");
+		}
+		else
+		{
+			EditorGUILayout.LabelField("CharacterEggPool data:");
+			DrawDisabledGroup(data.Pool);
 		}
 
-		public override void OnInspectorGUI()
-		{
-			serializedObject.Update();
-
-			base.OnInspectorGUI();
-
-			var data = target as RuntimePooledEggData;
-
-			// Character egg pool state
-
-			if (data.CharacterEggPool == null)
-			{
-				EditorGUILayout.LabelField("CharacterEggPool is not initialized");
-			}
-			else
-			{
-				EditorGUILayout.LabelField("CharacterEggPool data:");
-				DrawDisabledGroup(data.CharacterEggPool);
-			}
-
-			// Nest egg pool state
-
-			if (data.NestEggPool == null)
-			{
-				EditorGUILayout.LabelField("NestEggPool is not initialized");
-			}
-			else
-			{
-				EditorGUILayout.LabelField("NestEggPool data:");
-				DrawDisabledGroup(data.NestEggPool);
-			}
-		}
-
-		#endregion // UnityCallbacks
-
-		void DrawDisabledGroup(ObjectPool<EggLifecycleHandler> pool)
-		{
-			EditorGUILayout.BeginVertical(EditorStyles.helpBox);
-			EditorGUI.BeginDisabledGroup(true);
-
-			EditorGUILayout.IntField("CountAll", pool.CountAll);
-			EditorGUILayout.IntField("CountActive", pool.CountActive);
-			EditorGUILayout.IntField("CountInActive", pool.CountInactive);
-
-			EditorGUI.EndDisabledGroup();
-			EditorGUILayout.EndVertical();
-		}
+		serializedObject.ApplyModifiedProperties();
 	}
+
+	#endregion // UnityCallbacks
+
+	void DrawDisabledGroup(ObjectPool<EggLifecycleHandler> pool)
+	{
+		EditorGUILayout.BeginVertical(EditorStyles.helpBox);
+		EditorGUI.BeginDisabledGroup(true);
+
+		EditorGUILayout.IntField("CountAll", pool.CountAll);
+		EditorGUILayout.IntField("CountActive", pool.CountActive);
+		EditorGUILayout.IntField("CountInActive", pool.CountInactive);
+
+		EditorGUI.EndDisabledGroup();
+		EditorGUILayout.EndVertical();
+	}
+}
+
 }
 
 

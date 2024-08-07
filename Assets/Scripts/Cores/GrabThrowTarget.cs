@@ -2,47 +2,56 @@ using UnityEngine;
 
 namespace MC
 {
-	[DisallowMultipleComponent]
-	[RequireComponent(typeof(Rigidbody))]
-	public class GrabThrowTarget : MonoBehaviour
+
+[DisallowMultipleComponent]
+[RequireComponent(typeof(Rigidbody))]
+public class GrabThrowTarget : MonoBehaviour
+{
+	public delegate void GrabThrowTargetDisabledEventHandler();
+	public GrabThrowTargetDisabledEventHandler GrabThrowTargetDisabled;
+
+	#region UnityCallbacks
+
+	void Awake()
 	{
-		#region UnityCallbacks
+		// Cache components
 
-		void Awake()
-		{
-			// Cache components
+		_rigidbody = GetComponent<Rigidbody>();
 
-			_rigidbody = GetComponent<Rigidbody>();
-		}
-
-		#endregion // UnityCallbacks
-
-		public void BeginGrabState(GameObject grabParent)
-		{
-			_rigidbody.isKinematic = true;
-			_rigidbody.detectCollisions = false;
-
-			transform.SetPositionAndRotation(grabParent.transform.position, Quaternion.identity);
-			transform.SetParent(grabParent.transform);
-		}
-
-		public void EndGrabState()
-		{
-			_rigidbody.isKinematic = false;
-			_rigidbody.detectCollisions = true;
-
-			transform.SetParent(null);
-		}
-
-		/// <summary>
-		/// Throw 를 수행하는 오브젝트의 마지막 Velocity와 Throw 행동의 힘을 더해, 물체에 힘을 가한다.
-		/// </summary>
-		public void Throw(in Vector3 lastThrowerVelocity, in Vector3 force)
-		{
-			_rigidbody.AddForce(lastThrowerVelocity, ForceMode.VelocityChange);
-			_rigidbody.AddForce(force, ForceMode.Force);
-		}
-
-		Rigidbody _rigidbody;
+		// Bind events
 	}
+
+	void OnDisable()
+	{
+		GrabThrowTargetDisabled?.Invoke();
+	}
+
+	#endregion // UnityCallbacks
+
+	public void BeginGrabState()
+	{
+		_rigidbody.isKinematic = true;
+		_rigidbody.detectCollisions = false;
+
+		_isGrabState = true;
+	}
+
+	public void EndGrabState()
+	{
+		_rigidbody.isKinematic = false;
+		_rigidbody.detectCollisions = true;
+
+		_isGrabState = false;
+	}
+
+	public void AddForce(in Vector3 force)
+	{
+		_rigidbody.AddForce(force, ForceMode.VelocityChange);
+	}
+
+	bool _isGrabState = false;
+	public Rigidbody Rigidbody => _rigidbody;
+	Rigidbody _rigidbody;
+}
+
 }

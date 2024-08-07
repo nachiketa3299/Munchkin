@@ -12,9 +12,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5d908780675144a499607e7683fa35bc, type: 3}
   m_Name: RuntimePooledEggData
   m_EditorClassIdentifier: 
-  _characterEggPoolDefaultCapacity: 5
-  _nestEggPoolDefaultCapacity: 5
-  _characterEggPrefab: {fileID: 8578106192908227860, guid: bf3174eadcb8b7844bb62e042ce8ad51,
-    type: 3}
-  _nestEggPrefab: {fileID: 8578106192908227860, guid: bf3174eadcb8b7844bb62e042ce8ad51,
+  _defaultCapacity: 5
+  _eggPrefab: {fileID: 8578106192908227860, guid: bf3174eadcb8b7844bb62e042ce8ad51,
     type: 3}

@@ -3,53 +3,54 @@
 using UnityEditor;
 using UnityEngine;
 
-namespace MC
+namespace MC.Editors
 {
-	public partial class LifespanHandler : MonoBehaviour
+
+[CustomEditor(typeof(LifespanHandler))]
+internal sealed class LifespanHandlerEditor : Editor
+{
+	public override bool RequiresConstantRepaint() => true;
+
+	public override void OnInspectorGUI()
 	{
-		/// <summary>
-		/// <see cref="LifespanHandler"/> 컴포넌트 커스텀 인스펙터 (단순 게이지 표시용)
-		/// </summary>
-		[CustomEditor(typeof(LifespanHandler))]
-		private class LifespanHandlerEditor : Editor
+		base.OnInspectorGUI();
+
+		if (!target)
 		{
-			public override void OnInspectorGUI()
-			{
-				base.OnInspectorGUI();
+			return;
+		}
 
-				var lifespan = target as LifespanHandler;
+		serializedObject.Update();
 
-				if (lifespan == null)
-				{
-					return;
-				}
+		EditorGUILayout.Space();
+		EditorGUILayout.LabelField("Lifespan progress");
 
-				EditorGUILayout.Space(10.0f);
+		var rect = GUILayoutUtility.GetRect(18.0f, 18.0f);
 
-				EditorGUILayout.LabelField("수명 진행 상황");
+		var currentLifespan = serializedObject.FindProperty("_currentLifespan").floatValue;
+		var maxLifespan = serializedObject.FindProperty("_maxLifespan").floatValue;
+		var ratio = Mathf.Clamp01(currentLifespan / maxLifespan);
+		ratio = float.IsNaN(ratio) ? 0.0f : ratio;
+		var label = $"{currentLifespan:F2}/{maxLifespan:F2} ({ratio:P2})";
 
-				var rect = GUILayoutUtility.GetRect(18.0f, 18.0f);
+		EditorGUI.ProgressBar
+		(
+			position: rect,
+			value: ratio,
+			text: label
+		);
 
-				EditorGUI.ProgressBar
-				(
-					rect,
-					lifespan.LifespanRatio,
-					$"{lifespan._currentLifespan:F2}s/{lifespan._maxLifespan:F2}s ({lifespan.LifespanRatio:P2})"
-				);
+		var mutationThreshold = serializedObject.FindProperty("_mutationThreshold").floatValue;
+		var thresholdXPos = rect.x + rect.width * (mutationThreshold / maxLifespan);
 
-				var thresholdXPos = rect.x + rect.width * (lifespan._mutationThreshold / lifespan._maxLifespan);
+		EditorGUI.DrawRect(new Rect(thresholdXPos, rect.y, 1, rect.height), _mutationThresholdColor);
 
-				EditorGUI.DrawRect(new Rect(thresholdXPos, rect.y, 1, rect.height), _mutationThresholdColor);
+		serializedObject.ApplyModifiedProperties();
+	}
 
-				if (Application.isPlaying)
-				{
-					Repaint();
-				}
-			}
+	readonly Color _mutationThresholdColor = new(1.0f, 0.0f, 0.0f, 0.7f);
+}
 
-			readonly Color _mutationThresholdColor = new(1.0f, 0.0f, 0.0f, 0.7f);
-		} // inner class
-	} // class
 } // namespace
 
 #endif

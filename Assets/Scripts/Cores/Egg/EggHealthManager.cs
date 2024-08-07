@@ -94,6 +94,14 @@ namespace MC
 			Damaged?.Invoke(damage);
 		}
 
+		public void ForceInflictLethalDamage()
+		{
+			_currentHealth -= _currentHealth;
+			HealthChanged?.Invoke(HealthRatio);
+			StopAllCoroutines();
+			ShouldEndLifecycle?.Invoke();
+		}
+
 		public void InflictDamage(in float damage)
 		{
 			_currentHealth -= damage;

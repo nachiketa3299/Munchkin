@@ -1,23 +1,20 @@
 #if UNITY_EDITOR
 
-using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
-namespace MC
+namespace MC.Editors
 {
 	[CustomEditor(typeof(RuntimeLoadedSceneData))]
-	public class RuntimeLoadedSceneDataEditor : Editor
+	internal sealed class RuntimeLoadedSceneDataEditor : Editor
 	{
 		#region UnityCallbacks
 
-		public override bool RequiresConstantRepaint()
-		{
-			return true;
-		}
+		public override bool RequiresConstantRepaint() => true;
 
 		public override void OnInspectorGUI()
 		{
+			serializedObject.Update();
 			base.OnInspectorGUI();
 
 			var runtimeLoadedSceneData = target as RuntimeLoadedSceneData;
@@ -45,6 +42,8 @@ namespace MC
 			EditorGUILayout.BeginScrollView(new(), GUILayout.Height(300.0f));
 			EditorGUILayout.SelectableLabel(ret, style, GUILayout.ExpandHeight(true));
 			EditorGUILayout.EndScrollView();
+
+			serializedObject.ApplyModifiedProperties();
 		}
 
 		#endregion // UnityCallbacks

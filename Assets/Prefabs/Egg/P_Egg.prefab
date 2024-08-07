@@ -155,6 +155,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: af6339666b3ab564ab61d72690206ee7, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  _owner: 0
 --- !u!114 &3099944916264159348
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -238,8 +239,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 90221a9c39b593e47a6a45c7c4ea5fb4, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _eggPool: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40, type: 2}
-  _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
+  _runtimePooledEggData: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40,
+    type: 2}
 --- !u!1001 &317923141492936810
 PrefabInstance:
   m_ObjectHideFlags: 0

@@ -6,113 +6,162 @@ using UnityEngine;
 
 namespace MC
 {
-	[DisallowMultipleComponent]
-	[RequireComponent(typeof(Rigidbody))]
-	public partial class GrabThrowAction : ActionRoutineBase
+
+[DisallowMultipleComponent]
+[RequireComponent(typeof(Rigidbody))]
+public partial class GrabThrowAction : ActionRoutineBase
+{
+
+	#region UnityCallbacks
+
+	void Awake()
+	{
+		// Cache components
+
+		_rigidbody = GetComponent<Rigidbody>();
+	}
+
+	#endregion // UnityCallbacks
+
+	/// <summary>
+	/// 아무것도 잡고 있지 않다면, 무언가 잡으려고 시도한다. <br/>
+	/// 이미 잡고 있다면, <paramref name="directionValue"/> 를 이용해 던진다.
+	/// </summary>
+	public void BeginAction(in float directionValue)
+	{
+		TryStopCurrentRoutine();
+
+		_currentRoutine = !_grabThrowTarget
+			? StartCoroutine(GrabRoutine())
+			: StartCoroutine(ThrowRoutine(directionValue));
+	}
+
+	public void EndAction()
+	{
+		if (!_grabThrowTarget)
+		{
+			return;
+		}
+
+		TryDetachTargetFromSocket();
+		_grabThrowTarget.EndGrabState();
+		_grabThrowTarget = null;
+	}
+
+	IEnumerator GrabRoutine()
+	{
+		if (!(_grabThrowTarget = FindGrabTarget()))
+		{
+			yield break;
+		}
+
+		_grabThrowTarget.BeginGrabState();
+
+		TryAttachTargetToSocket();
+
+		_grabThrowTarget.GrabThrowTargetDisabled += EndAction;
+
+		yield break;
+	}
+
+	IEnumerator ThrowRoutine(float directionValue)
 	{
 
-		#region UnityCallbacks
+		TryDetachTargetFromSocket();
 
-		void Awake()
-		{
-			// Cache components
+		_grabThrowTarget.EndGrabState();
 
-			_rigidbody = GetComponent<Rigidbody>();
-		}
+		_grabThrowTarget.AddForce(CalculateThrowForce(directionValue));
 
-		#endregion // UnityCallbacks
+		_grabThrowTarget.GrabThrowTargetDisabled -= EndAction;
 
-		public void BeginAction(in float directionValue)
-		{
-			TryStopCurrentRoutine();
+		_grabThrowTarget = null;
 
-			if (!_isGrabbing)
-			{
-				_currentRoutine = StartCoroutine(GrabRoutine());
-			}
-			else
-			{
-				_currentRoutine = StartCoroutine(ThrowRoutine(directionValue));
-			}
-		}
-
-		IEnumerator GrabRoutine()
-		{
-			var resultCount = Physics.OverlapSphereNonAlloc
-			(
-				position: transform.position,
-				radius: 3.0f,
-				results: _overlapResultCache,
-				layerMask: _grabThrowObjectMask
-			);
-
-			if (resultCount <= 0)
-			{
-				yield break;
-			}
-
-			// 콜라이더를 소유한 유일한 오브젝트에 대한 HashSet 형성
-
-			var uniqueGrabbableObjects = new HashSet<GameObject>();
-
-			for (var i = 0; i < resultCount; ++i)
-			{
-				uniqueGrabbableObjects.Add(_overlapResultCache[i].gameObject);
-			}
-
-			// 추가적인 Find 로직이 있다면 여기서 구현
-
-			_grabThrowTarget = uniqueGrabbableObjects
-				.OrderBy(obj => (obj.transform.position - transform.position).sqrMagnitude)
-				.FirstOrDefault()?
-				.transform.root.gameObject
-				.GetComponent<GrabThrowTarget>();
-
-			_grabThrowTarget.BeginGrabState(_grabThrowSocket);
-			_isGrabbing = true;
-
-			yield break;
-		}
-
-		IEnumerator ThrowRoutine(float directionValue)
-		{
-			_grabThrowTarget.EndGrabState();
-			_isGrabbing = false;
-
-			// Vertical Throwing
-			if (directionValue == 1.0f)
-			{
-				var throwDirection = transform.up * directionValue;
-				_grabThrowTarget.Throw
-				(
-					lastThrowerVelocity: _rigidbody.velocity,
-					force: throwDirection * _throwForceVertical
-				);
-			}
-			// Horizontal Throwing
-			else
-			{
-				var throwDirection = transform.forward;
-				_grabThrowTarget.Throw
-				(
-					lastThrowerVelocity: _rigidbody.velocity,
-					force: throwDirection * _throwForceHorizontal
-				);
-			}
-
-			_grabThrowTarget = null;
-
-			yield break;
-		}
-
-		Rigidbody _rigidbody;
-		Collider[] _overlapResultCache = new Collider[5];
-		GrabThrowTarget _grabThrowTarget;
-		bool _isGrabbing = false;
-
-		[SerializeField] LayerMask _grabThrowObjectMask = 1 << 8;
-		[SerializeField] GameObject _grabThrowSocket;
-		[SerializeField] float _throwForceHorizontal = 300.0f;
-		[SerializeField] float _throwForceVertical = 600.0f;
+		yield break;
 	}
+	GrabThrowTarget FindGrabTarget()
+	{
+		var resultCount = Physics.OverlapSphereNonAlloc
+		(
+			position: transform.position,
+			radius: 3.0f,
+			results: _overlapResultCache,
+			layerMask: _grabThrowObjectMask
+		);
+
+		if (resultCount <= 0)
+		{
+			return null;
+		}
+
+		var uniqueTargets = new HashSet<GameObject>();
+
+		for (var i = 0; i < resultCount; ++i)
+		{
+			uniqueTargets.Add(_overlapResultCache[i].gameObject);
+		}
+
+		var optimalTarget = uniqueTargets
+			.OrderBy(obj => (obj.transform.position - transform.position).sqrMagnitude)
+			.FirstOrDefault()?
+			.transform.root.gameObject
+			.GetComponent<GrabThrowTarget>();
+
+		return optimalTarget;
+	}
+
+	void TryAttachTargetToSocket()
+	{
+		if (!_grabThrowTarget)
+		{
+			Debug.Log("Try attaching, but failed.");
+			return;
+		}
+
+		// only process if there is target
+
+		// set position
+		_grabThrowTarget.transform.SetPositionAndRotation
+		(
+			position: _grabThrowSocket.transform.position,
+			rotation: Quaternion.identity
+		);
+
+		// set parent
+		_grabThrowTarget.transform.SetParent(_grabThrowSocket.transform);
+		_grabThrowTarget.AddForce(_rigidbody.velocity);
+	}
+
+	void TryDetachTargetFromSocket()
+	{
+		if (!_grabThrowTarget)
+		{
+			return;
+		}
+
+		// only process if there is target
+
+		// unset parent
+		_grabThrowTarget.transform.SetParent(null);
+	}
+
+	Vector3 CalculateThrowForce(in float directionValue)
+	{
+		var throwForce = directionValue == 1.0f
+			? transform.up * directionValue * _throwForceVertical
+			: transform.forward * _throwForceHorizontal
+			+ _rigidbody.velocity;
+
+		return throwForce;
+	}
+
+	Rigidbody _rigidbody;
+	Collider[] _overlapResultCache = new Collider[5];
+	GrabThrowTarget _grabThrowTarget;
+	[SerializeField] LayerMask _grabThrowObjectMask = 1 << 8;
+	[SerializeField] GameObject _grabThrowSocket;
+	[SerializeField] float _throwForceHorizontal = 10.0f;
+	[SerializeField] float _throwForceVertical = 10.0f;
+}
+
 }

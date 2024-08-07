@@ -694,6 +694,16 @@ PrefabInstance:
       propertyPath: _cameraLookAction
       value: 
       objectReference: {fileID: 1737312970}
+    - target: {fileID: 7058818817593519050, guid: 430e86359e4ec1b408f9473b4f10c10e,
+        type: 3}
+      propertyPath: _throwForceVertical
+      value: 60
+      objectReference: {fileID: 0}
+    - target: {fileID: 7058818817593519050, guid: 430e86359e4ec1b408f9473b4f10c10e,
+        type: 3}
+      propertyPath: _throwForceHorizontal
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 8901260133182799471, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -828,12 +838,12 @@ PrefabInstance:
     - target: {fileID: 2874194492744323937, guid: dfd789c366d4fc54e940a0fc5b4037b1,
         type: 3}
       propertyPath: m_LocalPosition.x
-      value: 0
+      value: -5.08
       objectReference: {fileID: 0}
     - target: {fileID: 2874194492744323937, guid: dfd789c366d4fc54e940a0fc5b4037b1,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: 0
+      value: -9.86
       objectReference: {fileID: 0}
     - target: {fileID: 2874194492744323937, guid: dfd789c366d4fc54e940a0fc5b4037b1,
         type: 3}

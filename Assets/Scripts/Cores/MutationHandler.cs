@@ -1,114 +1,110 @@
 using System;
 
 using UnityEngine;
-using UnityEngine.Assertions;
 
 namespace MC
 {
-	// TODO Aging의 경우 따로 컴포넌트를 만들어야 할 수도 있음.
-	/// <summary>
-	/// 캐릭터의 변이(hen -> chicken) / 노화(in character) / 사망(character -> soul) / 부활(soul -> hen) 시점에서
-	/// 캐릭터의 변경을 담당한다. <br/>
-	/// 여기서 캐릭터의 변경은 외형적인 것 뿐만아니라 스탯 등의 내부 속성도 포함하기로 한다.
-	/// </summary>
-	[RequireComponent(typeof(LifespanHandler))]
-	[DisallowMultipleComponent]
-	public class MutationHandler : MonoBehaviour
+
+// TODO Aging의 경우 따로 컴포넌트를 만들어야 할 수도 있음.
+/// <summary>
+/// 캐릭터의 변이(hen -> chicken) / 노화(in character) / 사망(character -> soul) / 부활(soul -> hen) 시점에서
+/// 캐릭터의 변경을 담당한다. <br/>
+/// 여기서 캐릭터의 변경은 외형적인 것 뿐만아니라 스탯 등의 내부 속성도 포함하기로 한다. (프리팹으로 관리)
+/// </summary>
+[DisallowMultipleComponent]
+[RequireComponent(typeof(LifespanHandler))]
+public class MutationHandler : MonoBehaviour
+{
+	public event Action<ECharacterType> Mutated;
+
+	#region UnityCallbacks
+
+	void Awake()
 	{
-		public event Action<ECharacterType> Mutated;
+		// Cache components & data
 
-		#region Unity Callbacks
+		_lifespanHandler = GetComponent<LifespanHandler>();
 
-		void Awake()
+#if UNITY_EDITOR
+		if (!_allCharactersData)
 		{
-			_lifespanHandler = GetComponent<LifespanHandler>();
-
-			Assert.IsNotNull(_allCharacterData);
-
-			foreach (ECharacterType type in ECharacterType.GetValues(typeof(ECharacterType)))
-			{
-				_allCharacterData.InitializeVisualInstance(type, transform);
-			}
+			Debug.LogWarning("AllCharactersData를 찾을 수 없습니다.");
 		}
+#endif
 
-		void OnEnable()
+		// Instantiate visual instances
+
+		foreach (ECharacterType type in ECharacterType.GetValues(typeof(ECharacterType)))
 		{
-			LifespanHandler.LifespanStarted += OnLifespanStarted;
-			LifespanHandler.LifespanReachedMutationThreshold += OnLifespanReachedMutationThreshold;
-			LifespanHandler.LifespanChanged += OnLifespanChanged;
-			LifespanHandler.LifespanEnded += OnLifespanEnded;
+			_allCharactersData.InitializeVisualInstance(type, transform);
 		}
-
-		void OnDisable()
-		{
-			LifespanHandler.LifespanStarted -= OnLifespanStarted;
-			LifespanHandler.LifespanReachedMutationThreshold -= OnLifespanReachedMutationThreshold;
-			LifespanHandler.LifespanChanged -= OnLifespanChanged;
-			LifespanHandler.LifespanEnded -= OnLifespanEnded;
-		}
-
-		#endregion // Unity Callbacks
-
-		void OnLifespanStarted()
-		{
-			_currentVisualInstance = _allCharacterData.GetVisualInstance(ECharacterType.Chick);
-			RefreshAgingColors(ECharacterType.Chick);
-			_currentVisualInstance.SetActive(true);
-			_currentCharacterType = ECharacterType.Chick;
-		}
-
-		void OnLifespanReachedMutationThreshold()
-		{
-			_currentVisualInstance.SetActive(false);
-
-			if (UnityEngine.Random.Range(0f, 1f) < _roosterMutationChance)
-			{
-				_currentVisualInstance = _allCharacterData.GetVisualInstance(ECharacterType.Rooster);
-				RefreshAgingColors(ECharacterType.Rooster);
-				_currentCharacterType = ECharacterType.Rooster;
-			}
-			else
-			{
-				_currentVisualInstance = _allCharacterData.GetVisualInstance(ECharacterType.Hen);
-				RefreshAgingColors(ECharacterType.Hen);
-				_currentCharacterType = ECharacterType.Hen;
-			}
-
-			Mutated?.Invoke(_currentCharacterType);
-
-			_currentVisualInstance.SetActive(true);
-		}
-
-		void OnLifespanChanged(float totalSpanRatio, float agingRatio)
-		{
-			// NOTE 현재 Color 업데이트가 LifespanHandler의 resolution에 영향을 받음,
-			// 수명이 긴 경우 (3분 이상) 티가 나지 않지만, 짧은 경우 각 컬러 업데이트가 끊기는 것이 보임.
-			_currentAgingColor = Color.Lerp(_currentAgingStartColor, _currentAgingEndColor, agingRatio);
-			_allCharacterData.GetVisualRenderer(_currentCharacterType).material.color = _currentAgingColor;
-		}
-
-		void OnLifespanEnded()
-		{
-			_currentVisualInstance.SetActive(false);
-		}
-
-		void RefreshAgingColors(ECharacterType type)
-		{
-			var palette = _allCharacterData[type].agingColors;
-			_currentAgingStartColor = palette.start;
-			_currentAgingEndColor = palette.end;
-			_currentAgingColor = palette.start;
-		}
-
-		GameObject _currentVisualInstance = null;
-		ECharacterType _currentCharacterType;
-		Color _currentAgingStartColor;
-		Color _currentAgingColor;
-		Color _currentAgingEndColor;
-
-		[SerializeField] AllCharactersData _allCharacterData;
-		[SerializeField][Range(0f, 1f)] float _roosterMutationChance = 0.05f;
-
-		LifespanHandler _lifespanHandler;
 	}
+
+	void OnEnable()
+	{
+		_lifespanHandler.Started += InitializeVisualInstance;
+		_lifespanHandler.ReachedMutationThreshold += Mutate;
+		_lifespanHandler.Changed += ChangeVisualInstanceColor;
+		_lifespanHandler.Ended += OnLifespanEnded;
+	}
+
+	void OnDestroy()
+	{
+		_lifespanHandler.Started -= InitializeVisualInstance;
+		_lifespanHandler.ReachedMutationThreshold -= Mutate;
+		_lifespanHandler.Changed -= ChangeVisualInstanceColor;
+		_lifespanHandler.Ended -= OnLifespanEnded;
+	}
+
+	#endregion // UnityCallbacks
+
+	void InitializeVisualInstance()
+	{
+		_currentVisualInstance = _allCharactersData.GetVisualInstance(ECharacterType.Chick);
+
+		_currentVisualInstance.SetActive(true);
+		_currentCharacterType = ECharacterType.Chick;
+	}
+
+	void Mutate()
+	{
+		_currentVisualInstance.SetActive(false);
+
+		if (UnityEngine.Random.Range(0f, 1f) < _roosterMutationChance)
+		{
+			_currentVisualInstance = _allCharactersData.GetVisualInstance(ECharacterType.Rooster);
+			_currentCharacterType = ECharacterType.Rooster;
+		}
+		else
+		{
+			_currentVisualInstance = _allCharactersData.GetVisualInstance(ECharacterType.Hen);
+			_currentCharacterType = ECharacterType.Hen;
+		}
+
+		Mutated?.Invoke(_currentCharacterType);
+
+		_currentVisualInstance.SetActive(true);
+	}
+
+	void ChangeVisualInstanceColor(in float totalRatio, in float currentRatio)
+	{
+		var colorPalette = _allCharactersData[_currentCharacterType].agingColors;
+		var agingColor = Color.Lerp(colorPalette.start, colorPalette.end, currentRatio);
+
+		_allCharactersData.GetVisualRenderer(_currentCharacterType).material.color = agingColor;
+	}
+
+	void OnLifespanEnded()
+	{
+		// TODO 영혼이 되었을 때의 로직을 여기서 작성
+		_currentVisualInstance.SetActive(false);
+	}
+
+	LifespanHandler _lifespanHandler;
+	[SerializeField][HideInInspector] GameObject _currentVisualInstance = null;
+	[SerializeField][HideInInspector] ECharacterType _currentCharacterType;
+	[SerializeField] AllCharactersData _allCharactersData;
+	[SerializeField][Range(0f, 1f)] float _roosterMutationChance = 0.05f;
+}
+
 } // namespace
