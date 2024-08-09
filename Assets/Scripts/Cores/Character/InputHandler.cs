@@ -5,7 +5,8 @@ namespace MC
 
 public class InputHandler : MonoBehaviour
 {
-	#region UnityCallbacks
+
+#region UnityCallbacks
 
 	/// <summary>
 	/// 입력 액션과 캐릭터 액션을 바인드. 컴포넌트가 존재하지 않아도 경고 후 실행.

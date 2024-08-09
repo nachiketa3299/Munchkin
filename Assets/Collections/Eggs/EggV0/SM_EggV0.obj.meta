@@ -9,6 +9,11 @@ ModelImporter:
       assembly: UnityEngine.CoreModule
       name: EggSurface
     second: {fileID: 2100000, guid: deb82b2e70da71246abafa17bac9404a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: defaultMat
+    second: {fileID: 2100000, guid: deb82b2e70da71246abafa17bac9404a, type: 2}
   materials:
     materialImportMode: 2
     materialName: 0

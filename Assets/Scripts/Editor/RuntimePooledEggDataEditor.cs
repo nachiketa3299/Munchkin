@@ -24,11 +24,11 @@ internal sealed class RuntimePooledEggDataEditor : Editor
 
 		if (data.Pool == null)
 		{
-			EditorGUILayout.LabelField("CharacterEggPool is not initialized");
+			EditorGUILayout.LabelField("EggPool is not initialized");
 		}
 		else
 		{
-			EditorGUILayout.LabelField("CharacterEggPool data:");
+			EditorGUILayout.LabelField("EggPool data:");
 			DrawDisabledGroup(data.Pool);
 		}
 

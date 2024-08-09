@@ -1,4 +1,3 @@
-using System.Collections;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -177,8 +176,6 @@ public
 	[DrawGizmo(GizmoType.Selected)]
 	static void DrawNestEggName(NestEggHandler target, GizmoType gizmoType)
 	{
-		// var style = new GUIStyle();
-		// style.normal.textColor = Color.yellow;
 
 		Gizmos.color = Color.magenta;
 
@@ -190,16 +187,6 @@ public
 				nestEgg.transform.position
 			);
 		}
-
-		// foreach(var nestEgg in target._nestEggs)
-		// {
-		// 	Handles.Label
-		// 	(
-		// 		position: nestEgg.transform.position,
-		// 		text: $"{nestEgg.gameObject.name}",
-		// 		style: style
-		// 	);
-		// }
 	}
 
 #endif
