@@ -6,7 +6,8 @@ namespace MC
 [DisallowMultipleComponent]
 public class EggFactory : MonoBehaviour
 {
-	#region UnityCallbacks
+
+#region UnityCallbacks
 
 	void Awake()
 	{
@@ -20,12 +21,12 @@ public class EggFactory : MonoBehaviour
 #endif
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	public GameObject TakeInitializedEggFromPool(EEggOwner owner)
 	{
 		var egg = _runtimePooledEggData.Pool.Get();
-		egg.Initialize(owner);
+		egg.InitializeLifecycle(owner);
 
 		return egg.gameObject;
 	}
@@ -34,7 +35,6 @@ public class EggFactory : MonoBehaviour
 	{
 		// egg.Deinitialize
 		_runtimePooledEggData.Pool.Release(egg);
-
 	}
 
 	[SerializeField] RuntimePooledEggData _runtimePooledEggData;

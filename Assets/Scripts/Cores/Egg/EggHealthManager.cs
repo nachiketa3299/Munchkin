@@ -4,171 +4,163 @@ using UnityEngine;
 
 namespace MC
 {
-	/// <summary>
-	/// 알의 데미지 자극원들로부터 전달된 데미지를 알의 체력에 적용할 지 말 지 판단
-	/// </summary>
-	[DisallowMultipleComponent]
-	public partial class EggHealthManager : MonoBehaviour
+
+/// <summary>
+/// 알의 데미지 자극원들로부터 전달된 데미지를 알의 체력에 적용할 지 말 지 판단
+/// </summary>
+[DisallowMultipleComponent]
+[RequireComponent(typeof(EggLifecycleHandler))]
+[RequireComponent(typeof(EggImpactDetector))]
+public partial class EggHealthManager : MonoBehaviour
+{
+	public delegate void DamagedEventHandler(in float damage);
+	public event DamagedEventHandler Damaged;
+	public delegate void HealthChangedEventHandler(in float healthRatio);
+	public event HealthChangedEventHandler HealthChanged;
+	public delegate void ShouldDestroyedEventHandler();
+	public event ShouldDestroyedEventHandler ShouldEndLifecycle;
+
+#region UnityCallbacks
+
+	void Awake()
 	{
-		// (TryInflictDamage) -> InflictDamaged -> HealthChanged -> HealthIsBelowZero
-		public delegate void DamagedEventHandler(in float damage);
-		public event DamagedEventHandler Damaged;
-		public delegate void HealthChangedEventHandler(in float healthRatio);
-		public event HealthChangedEventHandler HealthChanged;
-		public delegate void ShouldDestroyedEventHandler();
-		public event ShouldDestroyedEventHandler ShouldEndLifecycle;
+		// Cache components
 
-		#region UnityCallbacks
+		_eggLifecycleHandler = GetComponent<EggLifecycleHandler>();
+		_impactDetector = GetComponent<EggImpactDetector>();
 
-		void Awake()
-		{
-			// Cache components
+		// Bind events
 
-			_lifeCycleHandler = GetComponent<EggLifecycleHandler>();
+		_eggLifecycleHandler.LifecycleStarted += MaxUpHealth;
+		_eggLifecycleHandler.LifecycleStarted += BlockDamageForCreation;
 
-#if UNITY_EDITOR
-			if (!_lifeCycleHandler)
-			{
-				Debug.LogWarning("EggLifeCycleHandler 컴포넌트를 찾을 수 없습니다.");
-			}
-#endif
+		_impactDetector.ShouldInflictDamage += TryInflictDamage;
 
-			_impactDetector = GetComponent<EggImpactDetector>();
-
-#if UNITY_EDITOR
-			if (!_impactDetector)
-			{
-				Debug.LogWarning("EggImpactDetector 컴포넌트를 찾을 수 없습니다.");
-			}
-#endif
-
-			// Bind events
-
-			_lifeCycleHandler.LifecycleStarted += MaxUpHealth;
-			_lifeCycleHandler.LifecycleStarted += BlockDamageForCreation;
-
-			_impactDetector.ShouldInflictDamage += TryInflictDamage;
-
-			ShouldEndLifecycle += OnHealthIsBelowZero;
-			Damaged += InflictDamage;
-		}
-
-		void OnDestroy()
-		{
-			// Unbind events
-
-			_lifeCycleHandler.LifecycleStarted -= MaxUpHealth;
-			_lifeCycleHandler.LifecycleStarted -= BlockDamageForCreation;
-
-			_impactDetector.ShouldInflictDamage -= TryInflictDamage;
-
-			ShouldEndLifecycle -= OnHealthIsBelowZero;
-			Damaged -= InflictDamage;
-		}
-
-		#endregion // UnityCallbacks
-
-		void MaxUpHealth()
-		{
-			_currentHealth = _maxHealth;
-			HealthChanged?.Invoke(HealthRatio);
-		}
-
-		void BlockDamageForCreation()
-		{
-			if (_currentTimerRoutine != null)
-			{
-				StopCoroutine(_currentTimerRoutine);
-			}
-
-			_currentTimerRoutine = StartCoroutine(BlockDamageTimerRoutine(_damageTimerMaxTimeForCreated));
-		}
-
-		void TryInflictDamage(in float damage)
-		{
-			if (!_canBeDamaged)
-			{
-				return;
-			}
-
-			Damaged?.Invoke(damage);
-		}
-
-		public void ForceInflictLethalDamage()
-		{
-			_currentHealth -= _currentHealth;
-			HealthChanged?.Invoke(HealthRatio);
-			StopAllCoroutines();
-			ShouldEndLifecycle?.Invoke();
-		}
-
-		public void InflictDamage(in float damage)
-		{
-			_currentHealth -= damage;
-
-			HealthChanged?.Invoke(HealthRatio);
-
-			if (_currentTimerRoutine != null)
-			{
-				StopCoroutine(_currentTimerRoutine);
-			}
-
-			if (_currentHealth <= 0.0f)
-			{
-				ShouldEndLifecycle?.Invoke();
-				return;
-			}
-
-			_currentTimerRoutine = StartCoroutine(BlockDamageTimerRoutine(_damageTimerMaxTime));
-		}
-
-		IEnumerator BlockDamageTimerRoutine(float duration)
-		{
-			_currentDamageTimerMaxTime = duration;
-
-			// 데미지 차단 시작 (타이머 시작)
-			_damageTimerElapsedTime = 0.0f;
-			_canBeDamaged = false;
-
-			while (Mathf.Clamp01(_damageTimerElapsedTime / _currentDamageTimerMaxTime) < 1.0f)
-			{
-				_damageTimerElapsedTime += Time.deltaTime;
-				yield return null;
-			}
-
-			// 데미지 차단 종료 (타이머 종료)
-			_damageTimerElapsedTime = 0.0f;
-			_canBeDamaged = true;
-
-			_currentDamageTimerMaxTime = 0.0f;
-		}
-
-		void OnHealthIsBelowZero()
-		{
-			_currentHealth = 0.0f;
-
-			if (_currentTimerRoutine != null)
-			{
-				StopCoroutine(_currentTimerRoutine);
-			}
-			_currentTimerRoutine = null;
-		}
-
-		EggLifecycleHandler _lifeCycleHandler;
-		EggImpactDetector _impactDetector;
-
-		[HideInInspector][SerializeField] bool _canBeDamaged = true;
-		[HideInInspector][SerializeField] float _damageTimerElapsedTime = 0.0f;
-		[SerializeField] float _damageTimerMaxTime = 3.0f;
-		[SerializeField] float _damageTimerMaxTimeForCreated = 1.0f;
-		[HideInInspector][SerializeField] float _currentDamageTimerMaxTime;
-
-		float HealthRatio => Mathf.Clamp01(_currentHealth / _maxHealth);
-		[HideInInspector][SerializeField] float _currentHealth;
-		[SerializeField] float _maxHealth = 100.0f;
-
-		Coroutine _currentTimerRoutine;
+		ShouldEndLifecycle += OnHealthIsBelowZero;
+		Damaged += InflictDamage;
 	}
+
+	void OnDestroy()
+	{
+		// Unbind events
+
+		_eggLifecycleHandler.LifecycleStarted -= MaxUpHealth;
+		_eggLifecycleHandler.LifecycleStarted -= BlockDamageForCreation;
+
+		_impactDetector.ShouldInflictDamage -= TryInflictDamage;
+
+		ShouldEndLifecycle -= OnHealthIsBelowZero;
+		Damaged -= InflictDamage;
+	}
+
+	#endregion // UnityCallbacks
+
+	void MaxUpHealth()
+	{
+		_currentHealth = _maxHealth;
+		HealthChanged?.Invoke(HealthRatio);
+	}
+
+	void BlockDamageForCreation()
+	{
+		if (_currentTimerRoutine != null)
+		{
+			StopCoroutine(_currentTimerRoutine);
+		}
+
+		_currentTimerRoutine = StartCoroutine(BlockDamageTimerRoutine(_damageTimerMaxTimeForCreated));
+	}
+
+	void TryInflictDamage(in float damage)
+	{
+		if (!_canBeDamaged)
+		{
+			return;
+		}
+
+		Damaged?.Invoke(damage);
+	}
+
+	public void ForceInflictLethalDamage()
+	{
+		_currentHealth -= _currentHealth;
+		HealthChanged?.Invoke(HealthRatio);
+
+		StopAllCoroutines();
+
+		ShouldEndLifecycle?.Invoke();
+	}
+
+	/// <summary>
+	/// 데미지를 받을 수 있는지의 여부와 관계없이, 데미지를 바로 적용한다.
+	/// </summary>
+	public void InflictDamage(in float damage)
+	{
+		_currentHealth -= damage;
+
+		HealthChanged?.Invoke(HealthRatio);
+
+		if (_currentTimerRoutine != null)
+		{
+			StopCoroutine(_currentTimerRoutine);
+		}
+
+		if (_currentHealth <= 0.0f)
+		{
+			ShouldEndLifecycle?.Invoke();
+			return;
+		}
+
+		_currentTimerRoutine = StartCoroutine(BlockDamageTimerRoutine(_damageTimerMaxTime));
+	}
+
+	IEnumerator BlockDamageTimerRoutine(float duration)
+	{
+		_currentDamageTimerMaxTime = duration;
+
+		// 데미지 차단 시작 (타이머 시작)
+		_damageTimerElapsedTime = 0.0f;
+		_canBeDamaged = false;
+
+		while (Mathf.Clamp01(_damageTimerElapsedTime / _currentDamageTimerMaxTime) < 1.0f)
+		{
+			_damageTimerElapsedTime += Time.deltaTime;
+			yield return null;
+		}
+
+		// 데미지 차단 종료 (타이머 종료)
+		_damageTimerElapsedTime = 0.0f;
+		_canBeDamaged = true;
+
+		_currentDamageTimerMaxTime = 0.0f;
+	}
+
+	void OnHealthIsBelowZero()
+	{
+		_currentHealth = 0.0f;
+
+		if (_currentTimerRoutine != null)
+		{
+			StopCoroutine(_currentTimerRoutine);
+		}
+		_currentTimerRoutine = null;
+	}
+
+	float HealthRatio => Mathf.Clamp01(_currentHealth / _maxHealth);
+
+	EggLifecycleHandler _eggLifecycleHandler;
+	EggImpactDetector _impactDetector;
+
+	[HideInInspector][SerializeField] bool _canBeDamaged = true;
+	[HideInInspector][SerializeField] float _damageTimerElapsedTime = 0.0f;
+	[SerializeField] float _damageTimerMaxTime = 3.0f;
+	[SerializeField] float _damageTimerMaxTimeForCreated = 1.0f;
+	[HideInInspector][SerializeField] float _currentDamageTimerMaxTime;
+	[HideInInspector][SerializeField] float _currentHealth;
+	[SerializeField] float _maxHealth = 100.0f;
+	Coroutine _currentTimerRoutine;
+}
+
 }
 
 // NOTE ActionRoutineBase 와 아무런 관련이 없으나, 비슷한 구조임

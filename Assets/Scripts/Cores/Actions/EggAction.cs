@@ -11,7 +11,8 @@ namespace MC
 [RequireComponent(typeof(EggFactory))]
 public partial class EggAction : ActionRoutineBase
 {
-	#region UnityCallbacks
+
+#region UnityCallbacks
 
 	void Awake()
 	{
@@ -21,7 +22,7 @@ public partial class EggAction : ActionRoutineBase
 		_eggFactory = GetComponent<EggFactory>();
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	public void BeginAction()
 	{

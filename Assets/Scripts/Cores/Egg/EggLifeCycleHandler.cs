@@ -1,5 +1,11 @@
 using UnityEngine;
 
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#endif
+
 namespace MC
 {
 
@@ -7,43 +13,22 @@ namespace MC
 /// Egg의 생성(활성화)과 소멸(비활성화)에 관련된 이벤트를 관리한다.
 /// </summary>
 [DisallowMultipleComponent]
+[RequireComponent(typeof(EggFactory))]
+[RequireComponent(typeof(EggHealthManager))]
 public class EggLifecycleHandler : MonoBehaviour
 {
 	public delegate void LifecycleEventHandler();
+	public event LifecycleEventHandler LifecycleStarted;
+	public event LifecycleEventHandler LifecycleEnded;
 
-	/// <summary>
-	/// Egg가 풀에서 꺼내질 때
-	/// </summary>
-	public LifecycleEventHandler LifecycleStarted;
-
-	/// <summary>
-	/// Egg가 풀에 반납될 때
-	/// </summary>
-	public LifecycleEventHandler LifecycleEnded;
-
-	#region UnityCallbacks
+#region UnityCallbacks
 
 	void Awake()
 	{
 		// Cache components
 
 		_factory = GetComponent<EggFactory>();
-
-#if UNITY_EDITOR
-		if (!_factory)
-		{
-			Debug.LogWarning("EggFactory 컴포넌트를 찾을 수 없습니다.");
-		}
-#endif
-
 		_healthManager = GetComponent<EggHealthManager>();
-
-#if UNITY_EDITOR
-		if (!_healthManager)
-		{
-			Debug.LogWarning("EggHealthManager 컴포넌트를 찾을 수 없습니다.");
-		}
-#endif
 
 		// Bind events
 
@@ -51,18 +36,16 @@ public class EggLifecycleHandler : MonoBehaviour
 	}
 
 	/// <remarks>
-	/// Egg가 풀에서 꺼내질 때, 명시적으로 호출된다.
+	/// Egg가 풀에서 꺼내질 때, <see cref="EggFactory"/>에 의해 명시적으로 호출된다.
 	/// </remarks>
-	public void Initialize(in EEggOwner owner)
+	public void InitializeLifecycle(in EEggOwner owner)
 	{
 		_owner = owner;
 
 #if UNITY_EDITOR
-		gameObject.name = $"Egg({owner})_{gameObject.GetInstanceID()}";
+		gameObject.name = MakeInstanceName(owner);
 #endif
 
-		// 여기에 바인드된 이벤트들의 실행 순서를 통제할 수 없음을 반드시 주의
-		// 기본적으로 바인딩한 순서대로 호출되는 것 같지만, 보장되지는 않은 듯 (이것에 의존한 구현은 좋지 않음)
 		LifecycleStarted?.Invoke();
 	}
 
@@ -73,7 +56,8 @@ public class EggLifecycleHandler : MonoBehaviour
 		_healthManager.ShouldEndLifecycle -= LifecycleShouldEnded;
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
+
 	public void LifecycleShouldEnded()
 	{
 		LifecycleEnded?.Invoke();
@@ -83,9 +67,35 @@ public class EggLifecycleHandler : MonoBehaviour
 
 	public EEggOwner Owner => _owner;
 
-	[SerializeField][HideInInspector] EEggOwner _owner;
-	EggHealthManager _healthManager;
 	EggFactory _factory;
+	EggHealthManager _healthManager;
+	[SerializeField][HideInInspector] EEggOwner _owner;
+
+#if UNITY_EDITOR
+
+	/// <summary>
+	/// <paramref name="owner"/>가 매 생애주기 마다 바뀌므로, 팩토리나 풀이 아닌, 여기에서 주기가 시작될 때마다 이름을 재설정 해주어야 함.
+	/// </summary>
+	string MakeInstanceName(in EEggOwner owner) => $"{owner}Egg ({gameObject.GetInstanceID()})";
+
+	[DrawGizmo(GizmoType.Active | GizmoType.NonSelected)]
+	static void DrawUniqueNameOfEgg(EggLifecycleHandler target, GizmoType gizmoType)
+	{
+		var style = new GUIStyle();
+		{
+			style.normal.textColor = Color.yellow;
+			style.alignment = TextAnchor.MiddleCenter;
+		}
+
+		Handles.Label
+		(
+			position: target.transform.position,
+			text: target.gameObject.name,
+			style: style
+		);
+	}
+
+#endif
 }
 
 }

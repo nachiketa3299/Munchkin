@@ -12,7 +12,7 @@ namespace MC
 public partial class GrabThrowAction : ActionRoutineBase
 {
 
-	#region UnityCallbacks
+#region UnityCallbacks
 
 	void Awake()
 	{
@@ -21,7 +21,7 @@ public partial class GrabThrowAction : ActionRoutineBase
 		_rigidbody = GetComponent<Rigidbody>();
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	/// <summary>
 	/// 아무것도 잡고 있지 않다면, 무언가 잡으려고 시도한다. <br/>
@@ -129,7 +129,6 @@ public partial class GrabThrowAction : ActionRoutineBase
 
 		// set parent
 		_grabThrowTarget.transform.SetParent(_grabThrowSocket.transform);
-		_grabThrowTarget.AddForce(_rigidbody.velocity);
 	}
 
 	void TryDetachTargetFromSocket()
@@ -142,7 +141,11 @@ public partial class GrabThrowAction : ActionRoutineBase
 		// only process if there is target
 
 		// unset parent
+		if (_grabThrowTarget.gameObject.activeSelf)
+		{
 		_grabThrowTarget.transform.SetParent(null);
+		}
+		_grabThrowTarget.AddForce(_rigidbody.velocity);
 	}
 
 	Vector3 CalculateThrowForce(in float directionValue)
@@ -154,6 +157,8 @@ public partial class GrabThrowAction : ActionRoutineBase
 
 		return throwForce;
 	}
+
+	public GrabThrowTarget GrabThrowTarget => _grabThrowTarget;
 
 	Rigidbody _rigidbody;
 	Collider[] _overlapResultCache = new Collider[5];

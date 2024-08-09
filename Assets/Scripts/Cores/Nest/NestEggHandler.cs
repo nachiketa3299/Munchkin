@@ -1,94 +1,209 @@
+using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
+
 using UnityEngine;
+using UnityEngine.SceneManagement;
+
+#if UNITY_EDITOR
+
+using UnityEditor;
+
+#endif
 
 namespace MC
 {
 
+/// <summary>
+/// Nest 내부의 알의 갯수가 일정하게 유지되도록 관리한다.
+/// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(EggFactory))]
-[RequireComponent(typeof(NestTrigger))]
 public class NestEggHandler : MonoBehaviour
 {
-	public delegate void NestEggEventHandler();
-	public NestEggEventHandler NestIsEmpty;
+	public delegate void NestEggQuantityEventHandler(int quantity);
+	public event NestEggQuantityEventHandler NestEggSpawnNeeded;
+	public event NestEggQuantityEventHandler NestEggDespawnNeeded;
 
-	#region UnityCallbacks
+#region UnityCallbacks
 
 	void Awake()
 	{
 		// Cache components & data
 
 		_eggFactory = GetComponent<EggFactory>();
-		_nestTrigger = GetComponent<NestTrigger>();
 
 		// Bind events
 
-		NestIsEmpty += SpawnEggInNest;
+		NestEggSpawnNeeded += SpawnNestEggs;
+		NestEggDespawnNeeded += DespawnNestEggs;
 
-		_nestTrigger.NestEggEnteredTrigger += OnNestEggEnteredTrigger;
-		_nestTrigger.NestEggExitedTrigger += OnNestEggExitedTrigger;
-	}
-
-	void Start()
-	{
-		if (_nestEggs.Count != 0)
-		{
-			return;
-		}
-
-		// Nest is empty in start
-
-		NestIsEmpty?.Invoke();
+		SceneManager.activeSceneChanged += (_, _) => { CheckNestEggCounts();  };
 	}
 
 	void OnDestroy()
 	{
-		NestIsEmpty -= SpawnEggInNest;
+		// Unbind events
 
-		_nestTrigger.NestEggEnteredTrigger -= OnNestEggEnteredTrigger;
-		_nestTrigger.NestEggExitedTrigger -= OnNestEggExitedTrigger;
+		NestEggSpawnNeeded -= SpawnNestEggs;
+		NestEggDespawnNeeded -= DespawnNestEggs;
 	}
 
-	#endregion // UnityCallbacks
-
-	void OnNestEggExitedTrigger(EggLifecycleHandler nestEgg)
+	void OnTriggerEnter(Collider collider)
 	{
-		_nestEggs.Remove(nestEgg);
-		nestEgg.GetComponent<EggHealthManager>().ForceInflictLethalDamage();
+		// 루트오브젝트의 컴포넌트로 판별. (Egg에는 컴파운드 콜라이더가 존재)
+		var incomingGameObject = collider.transform.root.gameObject;
 
-		if (_nestEggs.Count == 0)
+		if (!incomingGameObject)
 		{
-			SpawnEggInNest();
+			return;
+		}
+
+		var incomingEgg = incomingGameObject.GetComponent<EggLifecycleHandler>();
+
+		if (!incomingEgg)
+		{
+			var grabSubject = incomingGameObject.GetComponent<GrabThrowAction>();
+
+			if (!grabSubject)
+			{
+				return;
+			}
+
+			incomingEgg = grabSubject.GrabThrowTarget?.GetComponent<EggLifecycleHandler>();
+
+			if (!incomingEgg)
+			{
+				return;
+			}
+		}
+
+		if(incomingEgg.Owner != EEggOwner.Nest)
+		{
+			return;
+		}
+
+		incomingEgg.GetComponent<EggHealthManager>().ForceInflictLethalDamage();
+
+		if (!_nestEggs.Contains(incomingEgg))
+		{
+			return;
+		}
+
+		_nestEggs.Remove(incomingEgg);
+
+		CheckNestEggCounts();
+	}
+
+#endregion // UnityCallbacks
+
+	void CheckNestEggCounts()
+	{
+		var delta = _maxNestEggCount - _nestEggs.Count;
+
+		if (delta == 0)
+		{
+			return;
+		}
+
+		if (delta > 0)
+		{
+			NestEggSpawnNeeded?.Invoke(delta);
+			return;
+		}
+
+		if (delta < 0)
+		{
+			NestEggDespawnNeeded?.Invoke(Mathf.Abs(delta));
+			return;
 		}
 	}
 
-	void OnNestEggEnteredTrigger(EggLifecycleHandler nestEgg)
+#if UNITY_EDITOR
+public
+#endif
+	 void SpawnNestEggs(int quantity)
 	{
-		Debug.Log("OnNestEggEnteredTrigger");
-		_nestEggs.Add(nestEgg);
-
-		if (_nestEggs.Count > _maxNestEggCount)
+		for (var i = 0; i < quantity; ++i)
 		{
-			var toDestroy = _nestEggs.First();
-			_eggFactory.ReturnEggToPool(toDestroy);
-			_nestEggs.RemoveAt(0);
+			var spawnedNestEgg = _eggFactory.TakeInitializedEggFromPool(owner: EEggOwner.Nest);
+
+			spawnedNestEgg.transform.SetPositionAndRotation
+			(
+				position: SpawnPosition,
+				rotation: Quaternion.identity
+			);
+
+			_nestEggs.Add(spawnedNestEgg.GetComponent<EggLifecycleHandler>());
 		}
 	}
 
-	public void SpawnEggInNest()
+	public void DespawnNestEggs(int quantity)
 	{
-		var spawnedInstance = _eggFactory.TakeInitializedEggFromPool(owner: EEggOwner.Nest);
+		for (var i = 0; i < quantity; ++i)
+		{
+			_nestEggs[i].GetComponent<EggHealthManager>().ForceInflictLethalDamage();
+		}
 
-		spawnedInstance.transform.SetPositionAndRotation(_spawnPositionObject.transform.position, Quaternion.identity);
+		_nestEggs.RemoveRange(0, quantity);
 	}
 
-	[SerializeField][HideInInspector] GameObject _currentNestEgg;
 	EggFactory _eggFactory;
-	NestTrigger _nestTrigger;
+	Vector3 SpawnPosition => _spawnPosition + transform.position;
 	[SerializeField][HideInInspector] List<EggLifecycleHandler> _nestEggs = new();
-	int _maxNestEggCount = 1;
-	[SerializeField] GameObject _spawnPositionObject;
+	[SerializeField] int _maxNestEggCount = 1;
+	[SerializeField] Vector3 _spawnPosition = new();
+
+#if UNITY_EDITOR
+	[SerializeField] EggPhysicalData _eggPhysicalData;
+
+	[DrawGizmo(GizmoType.NotInSelectionHierarchy | GizmoType.Active)]
+	static void DrawSpawnPosition(NestEggHandler target, GizmoType gizmoType)
+	{
+		Gizmos.color = Color.magenta;
+
+		if (target._eggPhysicalData)
+		{
+			var bounds = target._eggPhysicalData.CombinedPhysicalBounds;
+			var spawnPosition = target.SpawnPosition + bounds.center;
+			Gizmos.DrawWireCube(spawnPosition, bounds.size);
+		}
+		else
+		{
+			var spawnPosition = target.SpawnPosition;
+			Gizmos.DrawWireCube(spawnPosition, Vector3.one);
+		}
+	}
+
+	[DrawGizmo(GizmoType.Selected)]
+	static void DrawNestEggName(NestEggHandler target, GizmoType gizmoType)
+	{
+		// var style = new GUIStyle();
+		// style.normal.textColor = Color.yellow;
+
+		Gizmos.color = Color.magenta;
+
+		foreach(var nestEgg in target._nestEggs)
+		{
+			Gizmos.DrawLine
+			(
+				target.SpawnPosition,
+				nestEgg.transform.position
+			);
+		}
+
+		// foreach(var nestEgg in target._nestEggs)
+		// {
+		// 	Handles.Label
+		// 	(
+		// 		position: nestEgg.transform.position,
+		// 		text: $"{nestEgg.gameObject.name}",
+		// 		style: style
+		// 	);
+		// }
+	}
+
+#endif
+
 }
 
 }

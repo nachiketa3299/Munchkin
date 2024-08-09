@@ -20,17 +20,18 @@ internal sealed class MutationHandlerEditor : Editor
 			var characterType = (ECharacterType) serializedObject.FindProperty("_currentCharacterType").enumValueIndex;
 
 			EditorGUI.BeginDisabledGroup(true);
-			EditorGUILayout.EnumPopup("Character Type", characterType);
 
-			var visualInstance = serializedObject.FindProperty("_currentVisualInstance").objectReferenceValue;
+				EditorGUILayout.EnumPopup("Character Type", characterType);
 
-			EditorGUILayout.ObjectField
-			(
-				label: "Visual Instance",
-				obj: visualInstance,
-				objType: typeof(UnityEngine.Object),
-				allowSceneObjects: true
-			);
+				var visualInstance = serializedObject.FindProperty("_currentVisualInstance").objectReferenceValue;
+
+				EditorGUILayout.ObjectField
+				(
+					label: "Visual Instance",
+					obj: visualInstance,
+					objType: typeof(UnityEngine.Object),
+					allowSceneObjects: true
+				);
 
 			EditorGUI.EndDisabledGroup();
 

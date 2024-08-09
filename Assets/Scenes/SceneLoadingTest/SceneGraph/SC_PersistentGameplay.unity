@@ -160,7 +160,7 @@ Camera:
   m_GameObject: {fileID: 330585543}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 1
+  m_ClearFlags: 4
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -885,10 +885,45 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
+    - target: {fileID: 2953053612707389190, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: _seedColliderCenter.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 2953053612707389190, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: _seedColliderCenter.y
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 4937790989048267566, guid: dfd789c366d4fc54e940a0fc5b4037b1,
         type: 3}
       propertyPath: m_Name
       value: P_Nest
+      objectReference: {fileID: 0}
+    - target: {fileID: 5434518518976066108, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: _maxNestEggCount
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7569059274847178279, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: m_Size.x
+      value: 15
+      objectReference: {fileID: 0}
+    - target: {fileID: 7569059274847178279, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: m_Size.y
+      value: 12
+      objectReference: {fileID: 0}
+    - target: {fileID: 7569059274847178279, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: m_Center.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 7569059274847178279, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: m_Center.y
+      value: 0
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []

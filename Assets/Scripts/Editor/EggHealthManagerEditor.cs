@@ -10,7 +10,7 @@ namespace MC.Editors
 internal sealed class EggHealthManagerEditor : Editor
 {
 
-	#region UnityCallbacks
+#region UnityCallbacks
 
 	public override void OnInspectorGUI()
 	{
@@ -102,7 +102,7 @@ internal sealed class EggHealthManagerEditor : Editor
 		serializedObject.ApplyModifiedProperties();
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	float _damageToForceInflict;
 }

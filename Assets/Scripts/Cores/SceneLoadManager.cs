@@ -6,189 +6,191 @@ using UnityEngine.SceneManagement;
 
 namespace MC
 {
-	/// <summary>
-	/// 여러 오브젝트들에 의해 로드/언로드되어야 하는 씬들을 관리
-	/// </summary>
-	[DisallowMultipleComponent]
-	public class SceneLoadManager : MonoBehaviour
+
+/// <summary>
+/// 여러 오브젝트들에 의해 로드/언로드되어야 하는 씬들을 관리
+/// </summary>
+[DisallowMultipleComponent]
+public class SceneLoadManager : MonoBehaviour
+{
+
+	#region UnityCallbacks
+
+	void Awake()
 	{
 
-		#region UnityCallbacks
-
-		void Awake()
-		{
-
 #if UNITY_EDITOR
-			if (!_runtimeLoadedSceneData)
-			{
-				Debug.LogWarning("RuntimeLoadedSceneData를 찾을 수 없습니다.");
-			}
+		if (!_runtimeLoadedSceneData)
+		{
+			Debug.LogWarning("RuntimeLoadedSceneData를 찾을 수 없습니다.");
+		}
 #endif
 
-			// Bind events
+		// Bind events
 
-			_runtimeLoadedSceneData.SceneOperationNeeded += OnSceneOperationNeeded;
-		}
+		_runtimeLoadedSceneData.SceneOperationNeeded += OnSceneOperationNeeded;
+	}
 
-		void OnDestroy()
-		{
-			// Unbind events
+	void OnDestroy()
+	{
+		// Unbind events
 
-			_runtimeLoadedSceneData.SceneOperationNeeded -= OnSceneOperationNeeded;
-		}
+		_runtimeLoadedSceneData.SceneOperationNeeded -= OnSceneOperationNeeded;
+	}
 
-		void FixedUpdate()
-		{
-			_runtimeLoadedSceneData.TryProcessChanges();
-		}
+	void FixedUpdate()
+	{
+		_runtimeLoadedSceneData.TryProcessChanges();
+	}
 
-		#endregion // UnityCallbacks
+	#endregion // UnityCallbacks
 
-		/// <summary>
-		/// 어떤 씬들의 연산이 필요성이 수신되었을때 실행되는 로직
-		/// </summary>
-		void OnSceneOperationNeeded(HashSet<string> uniqueSceneNamesToLoad, HashSet<string> uniqueSceneNamesToUnload)
-		{
+	/// <summary>
+	/// 어떤 씬들의 연산이 필요성이 수신되었을때 실행되는 로직
+	/// </summary>
+	void OnSceneOperationNeeded(HashSet<string> uniqueSceneNamesToLoad, HashSet<string> uniqueSceneNamesToUnload)
+	{
 
 #if UNITY_EDITOR
-			if (_logOnSceneOperation)
-			{
-				var toLoadSceneNames = string.Join(", ", uniqueSceneNamesToLoad);
-				var toUnloadSceneNames = string.Join(", ", uniqueSceneNamesToUnload);
+		if (_logOnSceneOperation)
+		{
+			var toLoadSceneNames = string.Join(", ", uniqueSceneNamesToLoad);
+			var toUnloadSceneNames = string.Join(", ", uniqueSceneNamesToUnload);
 
-				Debug.Log
-				(
+			Debug.Log
+			(
 $@"Scene operations needed:
-	To load: <color=green>{toLoadSceneNames}</color>
-	To unload: <color=red>{toUnloadSceneNames}</color>"
-				);
-			}
+To load: <color=green>{toLoadSceneNames}</color>
+To unload: <color=red>{toUnloadSceneNames}</color>"
+			);
+		}
 #endif
 
-			StartCoroutine(ProcessSceneOperationsRoutine(uniqueSceneNamesToLoad, uniqueSceneNamesToUnload));
-		}
+		StartCoroutine(ProcessSceneOperationsRoutine(uniqueSceneNamesToLoad, uniqueSceneNamesToUnload));
+	}
 
-		/// <remarks>
-		/// 어떤 씬들의 연산이 필요하다고 바로 그 연산이 수행되는 것이 아님. 해당 씬에 대한 연산이 이미 진행 중이라면, 무시한다.
-		/// </remarks>
-		IEnumerator ProcessSceneOperationsRoutine(HashSet<string> uniqueSceneNamesToLoad, HashSet<string> uniqueSceneNamesToUnload)
+	/// <remarks>
+	/// 어떤 씬들의 연산이 필요하다고 바로 그 연산이 수행되는 것이 아님. 해당 씬에 대한 연산이 이미 진행 중이라면, 무시한다.
+	/// </remarks>
+	IEnumerator ProcessSceneOperationsRoutine(HashSet<string> uniqueSceneNamesToLoad, HashSet<string> uniqueSceneNamesToUnload)
+	{
+		// 언로딩 연산에 대한 처리
+
+		foreach (var sceneName in uniqueSceneNamesToUnload)
 		{
-			// 언로딩 연산에 대한 처리
-
-			foreach (var sceneName in uniqueSceneNamesToUnload)
+			if (IsAlreadyUnloading(sceneName))
 			{
-				if (IsAlreadyUnloading(sceneName))
+
+#if UNITY_EDITOR
+				if (_logOnSceneOperation)
 				{
-
-#if UNITY_EDITOR
-					if (_logOnSceneOperation)
-					{
-						Debug.Log($"<color=yellow>Scene {sceneName} is already in loading process, so ignored load request.</color>");
-					}
+					Debug.Log($"<color=yellow>Scene {sceneName} is already in loading process, so ignored load request.</color>");
+				}
 #endif
 
-					continue;
-				}
-
-				_unloadingSceneNames.Add(sceneName);
-
-				yield return StartCoroutine(UnloadSceneRoutine(sceneName));
+				continue;
 			}
 
-			// 로딩 연산에 대한 처리
+			_unloadingSceneNames.Add(sceneName);
 
-			foreach (var sceneName in uniqueSceneNamesToLoad)
+			yield return StartCoroutine(UnloadSceneRoutine(sceneName));
+		}
+
+		// 로딩 연산에 대한 처리
+
+		foreach (var sceneName in uniqueSceneNamesToLoad)
+		{
+			if (IsAlreadyLoading(sceneName))
 			{
-				if (IsAlreadyLoading(sceneName))
+
+#if UNITY_EDITOR
+				if (_logOnSceneOperation)
 				{
-
-#if UNITY_EDITOR
-					if (_logOnSceneOperation)
-					{
-						Debug.Log($"<color=yellow>Scene {sceneName} is already in unloading process, so ignored load request.</color>");
-					}
-#endif
-					continue;
+					Debug.Log($"<color=yellow>Scene {sceneName} is already in unloading process, so ignored load request.</color>");
 				}
-
-				_loadingSceneNames.Add(sceneName);
-
-				yield return StartCoroutine(LoadSceneRoutine(sceneName));
+#endif
+				continue;
 			}
-		}
 
-		IEnumerator UnloadSceneRoutine(string sceneName)
+			_loadingSceneNames.Add(sceneName);
+
+			yield return StartCoroutine(LoadSceneRoutine(sceneName));
+		}
+	}
+
+	IEnumerator UnloadSceneRoutine(string sceneName)
+	{
+
+#if UNITY_EDITOR
+		if (_logOnSceneOperation)
 		{
-
-#if UNITY_EDITOR
-			if (_logOnSceneOperation)
-			{
-				Debug.Log($"Start loading scene {sceneName}");
-			}
-#endif
-
-			var operation = SceneManager.UnloadSceneAsync(sceneName);
-
-			while (!operation.isDone)
-			{
-				yield return operation;
-			}
-
-			_unloadingSceneNames.Remove(sceneName);
-
-#if UNITY_EDITOR
-			if (_logOnSceneOperation)
-			{
-				Debug.Log($"End Unloading {sceneName}");
-			}
-#endif
-
+			Debug.Log($"Start loading scene {sceneName}");
 		}
+#endif
 
-		IEnumerator LoadSceneRoutine(string sceneName)
+		var operation = SceneManager.UnloadSceneAsync(sceneName);
+
+		while (!operation.isDone)
 		{
-
-#if UNITY_EDITOR
-			if (_logOnSceneOperation)
-			{
-				Debug.Log($"Start unloading scene {sceneName}");
-			}
-#endif
-			var operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-
-			while (!operation.isDone)
-			{
-				yield return operation;
-			}
-
-			_loadingSceneNames.Remove(sceneName);
-
-#if UNITY_EDITOR
-			if (_logOnSceneOperation)
-			{
-				Debug.Log($"End unloading scene {sceneName}");
-			}
-#endif
+			yield return operation;
 		}
 
-		bool IsAlreadyUnloading(string sceneName) => _unloadingSceneNames.Contains(sceneName);
-
-		bool IsAlreadyLoading(string sceneName) => _loadingSceneNames.Contains(sceneName);
-
-		/// <summary>
-		/// 현재 로드되는 중인 씬들의 이름
-		/// </summary>
-		HashSet<string> _loadingSceneNames = new();
-
-		/// <summary>
-		/// 현재 언로드되는 중인 씬들의 이름
-		/// </summary>
-		HashSet<string> _unloadingSceneNames = new();
-
-		[SerializeField] RuntimeLoadedSceneData _runtimeLoadedSceneData;
+		_unloadingSceneNames.Remove(sceneName);
 
 #if UNITY_EDITOR
-		[SerializeField] bool _logOnSceneOperation = false;
+		if (_logOnSceneOperation)
+		{
+			Debug.Log($"End Unloading {sceneName}");
+		}
+#endif
+
+	}
+
+	IEnumerator LoadSceneRoutine(string sceneName)
+	{
+
+#if UNITY_EDITOR
+		if (_logOnSceneOperation)
+		{
+			Debug.Log($"Start unloading scene {sceneName}");
+		}
+#endif
+		var operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
+
+		while (!operation.isDone)
+		{
+			yield return operation;
+		}
+
+		_loadingSceneNames.Remove(sceneName);
+
+#if UNITY_EDITOR
+		if (_logOnSceneOperation)
+		{
+			Debug.Log($"End unloading scene {sceneName}");
+		}
 #endif
 	}
+
+	bool IsAlreadyUnloading(string sceneName) => _unloadingSceneNames.Contains(sceneName);
+
+	bool IsAlreadyLoading(string sceneName) => _loadingSceneNames.Contains(sceneName);
+
+	/// <summary>
+	/// 현재 로드되는 중인 씬들의 이름
+	/// </summary>
+	HashSet<string> _loadingSceneNames = new();
+
+	/// <summary>
+	/// 현재 언로드되는 중인 씬들의 이름
+	/// </summary>
+	HashSet<string> _unloadingSceneNames = new();
+
+	[SerializeField] RuntimeLoadedSceneData _runtimeLoadedSceneData;
+
+#if UNITY_EDITOR
+	[SerializeField] bool _logOnSceneOperation = false;
+#endif
+}
+
 }

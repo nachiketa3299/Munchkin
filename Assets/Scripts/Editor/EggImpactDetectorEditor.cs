@@ -11,11 +11,12 @@ namespace MC.Editors
 [CustomEditor(typeof(EggImpactDetector))]
 internal sealed class EggImpactDetectorEditor : Editor
 {
-		#region UnityCallbacks
 
-		public override bool RequiresConstantRepaint() => true;
+#region UnityCallbacks
 
-		void OnEnable()
+	public override bool RequiresConstantRepaint() => true;
+
+	void OnEnable()
 	{
 		_thresholdLabelStyle.normal.textColor = _thresholdColor;
 		_thresholdLabelStyle.fontSize = 10;
@@ -124,7 +125,7 @@ internal sealed class EggImpactDetectorEditor : Editor
 		_eggImpactDetector.Impacted -= OnEggImpacted;
 	}
 
-	#endregion
+#endregion // UnityCallbacks
 
 	void OnEggImpacted(in Vector3 impact)
 	{

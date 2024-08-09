@@ -19,14 +19,14 @@ public class LifespanHandler : MonoBehaviour
 	public event LifespanEventHandler ReachedMutationThreshold;
 	public event LifespanEventHandler Ended;
 
-	#region UnityCallbacks
+#region UnityCallbacks
 
 	void Start()
 	{
 		StartCoroutine(LifespanTimerRoutine());
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	IEnumerator LifespanTimerRoutine()
 	{
@@ -77,4 +77,4 @@ public class LifespanHandler : MonoBehaviour
 	[SerializeField] float _mutationThreshold = 15.0f;
 }
 
-} // namespace
+}

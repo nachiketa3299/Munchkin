@@ -9,6 +9,9 @@ namespace MC.Editors
 [CustomEditor(typeof(LifespanHandler))]
 internal sealed class LifespanHandlerEditor : Editor
 {
+
+#region UnityCallbacks
+
 	public override bool RequiresConstantRepaint() => true;
 
 	public override void OnInspectorGUI()
@@ -51,6 +54,8 @@ internal sealed class LifespanHandlerEditor : Editor
 	readonly Color _mutationThresholdColor = new(1.0f, 0.0f, 0.0f, 0.7f);
 }
 
-} // namespace
+#endregion // UnityCallbacks
+
+}
 
 #endif

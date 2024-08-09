@@ -9,6 +9,9 @@ namespace MC.Editors
 [CustomEditor(typeof(EggLifecycleHandler))]
 internal sealed class EggLifecycleHandlerEditor : Editor
 {
+
+#region UnityCallbacks
+
 	public override void OnInspectorGUI()
 	{
 		serializedObject.Update();
@@ -38,6 +41,8 @@ internal sealed class EggLifecycleHandlerEditor : Editor
 		serializedObject.ApplyModifiedProperties();
 	}
 }
+
+#endregion // UnityCallbacks
 
 }
 

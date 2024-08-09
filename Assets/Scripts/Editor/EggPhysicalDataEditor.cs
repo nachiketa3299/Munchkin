@@ -9,10 +9,8 @@ namespace MC.Editors
 [CustomEditor(typeof(EggPhysicalData))]
 internal sealed class EggPhysicalDataEditor : Editor
 {
-	SerializedProperty _eggPrefabProperty;
-	SerializedProperty _combinedPhysicalBoundsProperty;
 
-	#region UnityCallbacks
+#region UnityCallbacks
 
 	void OnEnable()
 	{
@@ -66,7 +64,7 @@ internal sealed class EggPhysicalDataEditor : Editor
 		serializedObject.ApplyModifiedProperties();
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	Bounds CalculatedCombinedBounds()
 	{
@@ -90,9 +88,10 @@ internal sealed class EggPhysicalDataEditor : Editor
 
 			return combinedBounds;
 	}
-
+	SerializedProperty _eggPrefabProperty;
+	SerializedProperty _combinedPhysicalBoundsProperty;
 }
 
-} // namespace
+}
 
 #endif

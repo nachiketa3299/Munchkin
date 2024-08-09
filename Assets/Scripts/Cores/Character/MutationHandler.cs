@@ -7,17 +7,16 @@ namespace MC
 
 // TODO Aging의 경우 따로 컴포넌트를 만들어야 할 수도 있음.
 /// <summary>
-/// 캐릭터의 변이(hen -> chicken) / 노화(in character) / 사망(character -> soul) / 부활(soul -> hen) 시점에서
-/// 캐릭터의 변경을 담당한다. <br/>
-/// 여기서 캐릭터의 변경은 외형적인 것 뿐만아니라 스탯 등의 내부 속성도 포함하기로 한다. (프리팹으로 관리)
+/// 캐릭터의 변이시점에서 실제로 일어나야 하는 일들을 일어나도록 한다.
 /// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(LifespanHandler))]
 public class MutationHandler : MonoBehaviour
 {
-	public event Action<ECharacterType> Mutated;
+	public delegate void MutatedHandler(ECharacterType characterType);
+	public event MutatedHandler Mutated;
 
-	#region UnityCallbacks
+#region UnityCallbacks
 
 	void Awake()
 	{
@@ -56,7 +55,7 @@ public class MutationHandler : MonoBehaviour
 		_lifespanHandler.Ended -= OnLifespanEnded;
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	void InitializeVisualInstance()
 	{
@@ -70,11 +69,13 @@ public class MutationHandler : MonoBehaviour
 	{
 		_currentVisualInstance.SetActive(false);
 
+		// Hen 으로 변이
 		if (UnityEngine.Random.Range(0f, 1f) < _roosterMutationChance)
 		{
 			_currentVisualInstance = _allCharactersData.GetVisualInstance(ECharacterType.Rooster);
 			_currentCharacterType = ECharacterType.Rooster;
 		}
+		// Rooster 로 변이
 		else
 		{
 			_currentVisualInstance = _allCharactersData.GetVisualInstance(ECharacterType.Hen);
@@ -107,4 +108,4 @@ public class MutationHandler : MonoBehaviour
 	[SerializeField][Range(0f, 1f)] float _roosterMutationChance = 0.05f;
 }
 
-} // namespace
+}

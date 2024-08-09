@@ -9,7 +9,8 @@ namespace MC.Editors
 [CustomEditor(typeof(EggAction))]
 internal sealed class EggActionEditor : Editor
 {
-	#region UnityCallbacks
+
+#region UnityCallbacks
 
 	public override bool RequiresConstantRepaint() => true;
 
@@ -39,7 +40,7 @@ internal sealed class EggActionEditor : Editor
 		serializedObject.ApplyModifiedProperties();
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	}
 }
