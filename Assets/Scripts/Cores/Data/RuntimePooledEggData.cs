@@ -1,12 +1,6 @@
 using UnityEngine;
 using UnityEngine.Pool;
 
-#if UNITY_EDITOR
-
-using UnityEditor;
-
-#endif
-
 namespace MC
 {
 
@@ -37,7 +31,14 @@ public class RuntimePooledEggData : ScriptableObject
 	/// </summary>
 	EggLifecycleHandler CreateInstance()
 	{
-		// NOTE 메인 메뉴에서 진입시 생성된 게임오브젝트가 메인 메뉴에 귀속되는 경우가 있으므로 주의
+
+	#if UNITY_EDITOR
+		if (!_eggPrefab)
+		{
+			Debug.LogWarning("EggPrefab을 찾을 수 없습니다.");
+		}
+	#endif
+
 		var instance = Instantiate(_eggPrefab);
 		return instance;
 	}
@@ -48,7 +49,7 @@ public class RuntimePooledEggData : ScriptableObject
 	void TakeFromPool(EggLifecycleHandler egg)
 	{
 		egg.gameObject.SetActive(true);
-		egg.GetComponent<Rigidbody>().isKinematic = false;
+		egg.GetComponent<Rigidbody>().isKinematic = false; // TODO 다른 더 적절한 옮겨야 함
 	}
 
 	/// <summary>
@@ -62,7 +63,7 @@ public class RuntimePooledEggData : ScriptableObject
 		}
 
 		egg.gameObject.SetActive(false);
-		egg.GetComponent<Rigidbody>().isKinematic = true;
+		egg.GetComponent<Rigidbody>().isKinematic = true; // TODO 다른 더 적절한 곳으로 옮겨야 함
 	}
 
 	/// <summary>

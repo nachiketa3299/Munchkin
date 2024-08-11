@@ -186,7 +186,7 @@ Camera:
   far clip plane: 1000
   field of view: 68.29296
   orthographic: 0
-  orthographic size: 5
+  orthographic size: 10
   m_Depth: -1
   m_CullingMask:
     serializedVersion: 2
@@ -631,6 +631,11 @@ PrefabInstance:
       propertyPath: m_Lens.ModeOverride
       value: 2
       objectReference: {fileID: 0}
+    - target: {fileID: 1875648577769865197, guid: ddc1e28ef5721a94790f83d0120647b2,
+        type: 3}
+      propertyPath: m_Lens.OrthographicSize
+      value: 10
+      objectReference: {fileID: 0}
     - target: {fileID: 2260662679189535983, guid: ddc1e28ef5721a94790f83d0120647b2,
         type: 3}
       propertyPath: m_ScreenY
@@ -697,12 +702,12 @@ PrefabInstance:
     - target: {fileID: 7058818817593519050, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
       propertyPath: _throwForceVertical
-      value: 60
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 7058818817593519050, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
       propertyPath: _throwForceHorizontal
-      value: 10
+      value: 30
       objectReference: {fileID: 0}
     - target: {fileID: 8901260133182799471, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
@@ -887,13 +892,23 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2953053612707389190, guid: dfd789c366d4fc54e940a0fc5b4037b1,
         type: 3}
+      propertyPath: _seedColliderSize.x
+      value: 20
+      objectReference: {fileID: 0}
+    - target: {fileID: 2953053612707389190, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: _seedColliderSize.y
+      value: 24
+      objectReference: {fileID: 0}
+    - target: {fileID: 2953053612707389190, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
       propertyPath: _seedColliderCenter.x
       value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2953053612707389190, guid: dfd789c366d4fc54e940a0fc5b4037b1,
         type: 3}
       propertyPath: _seedColliderCenter.y
-      value: 0
+      value: 10
       objectReference: {fileID: 0}
     - target: {fileID: 4937790989048267566, guid: dfd789c366d4fc54e940a0fc5b4037b1,
         type: 3}
@@ -904,6 +919,11 @@ PrefabInstance:
         type: 3}
       propertyPath: _maxNestEggCount
       value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 5434518518976066108, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+        type: 3}
+      propertyPath: _spawnPosition.y
+      value: 8
       objectReference: {fileID: 0}
     - target: {fileID: 7569059274847178279, guid: dfd789c366d4fc54e940a0fc5b4037b1,
         type: 3}

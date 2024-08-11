@@ -12,6 +12,7 @@ using UnityEditor;
 namespace MC
 {
 
+
 /// <summary>
 /// Nest 내부의 알의 갯수가 일정하게 유지되도록 관리한다.
 /// </summary>
@@ -36,7 +37,8 @@ public class NestEggHandler : MonoBehaviour
 		NestEggSpawnNeeded += SpawnNestEggs;
 		NestEggDespawnNeeded += DespawnNestEggs;
 
-		SceneManager.activeSceneChanged += (_, _) => { CheckNestEggCounts();  };
+		// Start는 Scene이 Active 되기 이전에 실행되기 때문에, Nest Egg가 PersistentScene에 만들어지지 않으므로 주의
+		SceneManager.activeSceneChanged += OnPersistentGameplaySceneLoadedAndActivated;
 	}
 
 	void OnDestroy()
@@ -51,49 +53,39 @@ public class NestEggHandler : MonoBehaviour
 	{
 		// 루트오브젝트의 컴포넌트로 판별. (Egg에는 컴파운드 콜라이더가 존재)
 		var incomingGameObject = collider.transform.root.gameObject;
-
-		if (!incomingGameObject)
-		{
-			return;
-		}
-
 		var incomingEgg = incomingGameObject.GetComponent<EggLifecycleHandler>();
 
-		if (!incomingEgg)
+		// 알이고, 소유자가 둥지인가?
+		if (incomingEgg && incomingEgg.Owner == EEggOwner.Nest)
+		{
+			DestroyTriggeredNestEgg(incomingEgg);
+		}
+
+		// Grabbed character
+		else
 		{
 			var grabSubject = incomingGameObject.GetComponent<GrabThrowAction>();
-
-			if (!grabSubject)
+			if (grabSubject)
 			{
-				return;
+				var grabTarget = grabSubject.GrabThrowTarget;
+
+				if (grabTarget)
+				{
+					var grabbedEgg = grabTarget.GetComponent<EggLifecycleHandler>();
+					if (grabbedEgg.Owner == EEggOwner.Nest)
+					{
+						DestroyTriggeredGrabbedNestEgg(grabbedEgg, grabSubject);
+					}
+				}
 			}
-
-			incomingEgg = grabSubject.GrabThrowTarget?.GetComponent<EggLifecycleHandler>();
-
-			if (!incomingEgg)
-			{
-				return;
-			}
 		}
-
-		if(incomingEgg.Owner != EEggOwner.Nest)
-		{
-			return;
-		}
-
-		incomingEgg.GetComponent<EggHealthManager>().ForceInflictLethalDamage();
-
-		if (!_nestEggs.Contains(incomingEgg))
-		{
-			return;
-		}
-
-		_nestEggs.Remove(incomingEgg);
-
-		CheckNestEggCounts();
 	}
 
 #endregion // UnityCallbacks
+	void OnPersistentGameplaySceneLoadedAndActivated(Scene from, Scene to)
+	{
+		CheckNestEggCounts();
+	}
 
 	void CheckNestEggCounts()
 	{
@@ -114,6 +106,28 @@ public class NestEggHandler : MonoBehaviour
 		{
 			NestEggDespawnNeeded?.Invoke(Mathf.Abs(delta));
 			return;
+		}
+	}
+
+	void DestroyTriggeredNestEgg(EggLifecycleHandler nestEgg)
+	{
+		nestEgg.LifecycleEndedByTriggerEvent?.Invoke (new FEggPhysicalState(nestEgg));
+
+		if (_nestEggs.Contains(nestEgg))
+		{
+			_nestEggs.Remove(nestEgg);
+			CheckNestEggCounts();
+		}
+	}
+
+	void DestroyTriggeredGrabbedNestEgg(EggLifecycleHandler grabTarget, GrabThrowAction grabSubject)
+	{
+		grabTarget.LifecycleEndedByTriggerEvent?.Invoke(new FEggPhysicalState(grabTarget, grabSubject));
+
+		if (_nestEggs.Contains(grabTarget))
+		{
+			_nestEggs.Remove(grabTarget);
+			CheckNestEggCounts();
 		}
 	}
 
@@ -148,6 +162,7 @@ public
 
 	EggFactory _eggFactory;
 	Vector3 SpawnPosition => _spawnPosition + transform.position;
+
 	[SerializeField][HideInInspector] List<EggLifecycleHandler> _nestEggs = new();
 	[SerializeField] int _maxNestEggCount = 1;
 	[SerializeField] Vector3 _spawnPosition = new();

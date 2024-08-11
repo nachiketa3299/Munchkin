@@ -159,6 +159,7 @@ public partial class GrabThrowAction : ActionRoutineBase
 	}
 
 	public GrabThrowTarget GrabThrowTarget => _grabThrowTarget;
+	public Rigidbody Rigidbody => _rigidbody;
 
 	Rigidbody _rigidbody;
 	Collider[] _overlapResultCache = new Collider[5];
