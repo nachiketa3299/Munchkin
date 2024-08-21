@@ -3,6 +3,61 @@
 using UnityEditor;
 using UnityEngine;
 
+namespace MC
+{
+
+public partial class NestEggHandler : MonoBehaviour
+{
+	// For drawing nest egg spawn position with egg's physical bounds (what if it collides initially?)
+	[SerializeField] EggPhysicalData _eggPhysicalData;
+
+	[DrawGizmo(GizmoType.NotInSelectionHierarchy | GizmoType.Active)]
+	static void DrawSpawnPosition(NestEggHandler target, GizmoType gizmoType)
+	{
+		Gizmos.color = Color.magenta;
+
+		if (target._eggPhysicalData)
+		{
+			var bounds = target._eggPhysicalData.CombinedPhysicalBounds;
+			var spawnPosition = target.SpawnPosition + bounds.center;
+			Gizmos.DrawWireCube(spawnPosition, bounds.size);
+		}
+		else
+		{
+			var spawnPosition = target.SpawnPosition;
+			Gizmos.DrawWireCube(spawnPosition, Vector3.one);
+		}
+	}
+
+	[DrawGizmo(GizmoType.Selected)]
+	static void DrawNestEggName(NestEggHandler target, GizmoType gizmoType)
+	{
+
+		if (target._eggPool == null)
+		{
+			return;
+		}
+
+		Gizmos.color = Color.magenta;
+
+		foreach(var nestEgg in target._eggPool.NestEggs)
+		{
+			if (nestEgg == null)
+			{
+				continue;
+			}
+
+			Gizmos.DrawLine
+			(
+				target.SpawnPosition,
+				nestEgg.transform.position
+			);
+		}
+	}
+}
+
+}
+
 namespace MC.Editors
 {
 
@@ -17,44 +72,7 @@ internal sealed class NestEggHandlerEditor : Editor
 		serializedObject.Update();
 		base.OnInspectorGUI();
 
-// See `_nestEggs` elements
-
-		EditorGUILayout.LabelField("Nest eggs:");
-		var nestEggBounds = serializedObject.FindProperty("_nestEggs");
-
-		EditorGUI.indentLevel++;
-
-		if (nestEggBounds == null)
-		{
-			EditorGUILayout.LabelField("nestEggBounds is null");
-		}
-		else if (nestEggBounds.arraySize == 0)
-		{
-			EditorGUILayout.LabelField("There is no nest eggs");
-		}
-		else
-		{
-			for (var i = 0; i < nestEggBounds.arraySize; ++i)
-			{
-				var element = nestEggBounds
-					.GetArrayElementAtIndex(i)
-					.objectReferenceValue
-					as EggLifecycleHandler;
-
-				if (element)
-				{
-					EditorGUILayout.LabelField($"{i:D4}: {element.gameObject.name}");
-				}
-				else
-				{
-					EditorGUILayout.LabelField($"{i:D4}: Error");
-				}
-			}
-		}
-
 // Spawn nest egg button
-
-		EditorGUI.indentLevel--;
 
 		GUI.enabled = EditorApplication.isPlaying;
 
@@ -63,7 +81,6 @@ internal sealed class NestEggHandlerEditor : Editor
 		if (GUILayout.Button("Spawn egg in nest"))
 		{
 			var nest = target as NestEggHandler;
-			// nest.SpawnNestEggs(1);
 			nest.SendMessage("SpawnNestEggs", 1);
 		}
 

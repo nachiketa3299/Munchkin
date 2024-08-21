@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 295155762174093414}
   - component: {fileID: 7058818817593519050}
   - component: {fileID: 7459763658976388867}
-  - component: {fileID: 778603907793286246}
+  - component: {fileID: 6326817429707624275}
   m_Layer: 7
   m_Name: P_CharacterObject
   m_TagString: Untagged
@@ -193,10 +193,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6073554c092ed9441bca05146892d745, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _ageEvaluationResolution: 0.1
+  _currentState: 0
+  _resolution: 0.1
   _currentLifespan: 0
-  _maxLifespan: 30
-  _mutationThreshold: 15
+  _maxLifespan: 3
+  _mutationThreshold: 1
 --- !u!114 &295155762174093414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -253,8 +254,8 @@ MonoBehaviour:
     serializedVersion: 2
     m_Bits: 256
   _grabThrowSocket: {fileID: 7887266405746795884}
-  _throwForceHorizontal: 300
-  _throwForceVertical: 600
+  _throwForceHorizontal: 30
+  _throwForceVertical: 30
 --- !u!114 &7459763658976388867
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,7 +271,8 @@ MonoBehaviour:
   _eggActionChargeTimeCurrent: 0
   _eggActionChargeTimeMax: 1
   _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
---- !u!114 &778603907793286246
+  _eggPool: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40, type: 2}
+--- !u!114 &6326817429707624275
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -279,11 +281,13 @@ MonoBehaviour:
   m_GameObject: {fileID: 1334351684667443968}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90221a9c39b593e47a6a45c7c4ea5fb4, type: 3}
+  m_Script: {fileID: 11500000, guid: cd00861d33fc77f4bae50581b2a34c3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _runtimePooledEggData: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40,
-    type: 2}
+  _nestEggHandler: {fileID: 5434518518976066108, guid: dfd789c366d4fc54e940a0fc5b4037b1,
+    type: 3}
+  _moveSpeed: 1
+  _turnSpeed: 10
 --- !u!1 &7887266405746795884
 GameObject:
   m_ObjectHideFlags: 0

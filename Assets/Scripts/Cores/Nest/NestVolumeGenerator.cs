@@ -1,12 +1,5 @@
 using UnityEngine;
 
-#if UNITY_EDITOR
-
-using System.Linq;
-using UnityEditor;
-
-#endif
-
 namespace MC
 {
 
@@ -14,29 +7,36 @@ namespace MC
 /// Nest의 영역을 상하좌우로 둘러싸는 4개의 콜라이더를 지정된 설정에 맞게 런타임에 생성한다.
 /// </summary>
 [DisallowMultipleComponent]
-public class NestVolumeGenerator : MonoBehaviour
+public partial class NestVolumeGenerator : MonoBehaviour
 {
 
 #region UnityCallbacks
 
 	void Awake()
 	{
-		var left = gameObject.AddComponent<BoxCollider>();
+		// make empty game object and attach it as child
+		var childObject = new GameObject("NestEggDeadZone");
+		childObject.transform.SetParent(transform);
+		childObject.transform.localPosition = Vector3.zero;
+		childObject.transform.localRotation = Quaternion.identity;
+
+	  // I know this sucks but ...
+		var left = childObject.AddComponent<BoxCollider>();
 		var leftBounds = LeftBounds();
 		left.center = leftBounds.center;
 		left.size = leftBounds.size;
 
-		var up = gameObject.AddComponent<BoxCollider>();
+		var up = childObject.AddComponent<BoxCollider>();
 		var upBounds = UpBounds();
 		up.center = upBounds.center;
 		up.size = upBounds.size;
 
-		var right = gameObject.AddComponent<BoxCollider>();
+		var right = childObject.AddComponent<BoxCollider>();
 		var rightBounds = RightBounds();
 		right.center = rightBounds.center;
 		right.size = rightBounds.size;
 
-		var down = gameObject.AddComponent<BoxCollider>();
+		var down = childObject.AddComponent<BoxCollider>();
 		var downBounds = DownBounds();
 		down.center = downBounds.center;
 		down.size = downBounds.size;
@@ -44,6 +44,8 @@ public class NestVolumeGenerator : MonoBehaviour
 		left.isTrigger = up.isTrigger = right.isTrigger = down.isTrigger = true;
 
 		_colliders = new BoxCollider[] { left, up, right, down }; // Cache
+
+		childObject.layer = _nestEggDeadZoneLayer;
 	}
 
 #endregion // UnityCallbacks
@@ -103,32 +105,13 @@ public class NestVolumeGenerator : MonoBehaviour
 		};
 	}
 
+	public int NestEggDeadZoneLayer => _nestEggDeadZoneLayer;
+
+	readonly int _nestEggDeadZoneLayer = 10;
 	[SerializeField] Vector3 _seedColliderSize = new(15.0f, 12.0f, 1.0f);
 	[SerializeField] Vector3 _seedColliderCenter = new(0.0f, 0.0f, 0.0f);
 	[SerializeField][HideInInspector] BoxCollider[] _colliders;
 
-#if UNITY_EDITOR
-
-	[DrawGizmo(GizmoType.Selected | GizmoType.InSelectionHierarchy)]
-	static void DrawGeneratedNestVolumeGizmos(NestVolumeGenerator target, GizmoType gizmoType)
-	{
-		var gizmoColor = Color.yellow;
-
-		Gizmos.DrawWireCube(target.transform.position + target._seedColliderCenter, target._seedColliderSize);
-
-		var bounds = new Bounds[] {target.LeftBounds(), target.UpBounds(), target.RightBounds(), target.DownBounds() };
-
-		gizmoColor = Color.green;
-		gizmoColor.a = 0.2f;
-		Gizmos.color = gizmoColor;
-
-		foreach(var bound in bounds)
-		{
-			Gizmos.DrawCube(target.transform.position + bound.center, bound.size);
-		}
-	}
-
-#endif
 }
 
 }

@@ -6,19 +6,26 @@ namespace MC
 {
 
 /// <summary>
-/// 알의 데미지 자극원들로부터 전달된 데미지를 알의 체력에 적용할 지 말 지 판단
+/// 데미지 요인들로부터 전달된 데미지 적용 요청을 적절히 처리하여 적용. <br/>
+/// 생애주기 결정요인 중 하나이다.
 /// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(EggLifecycleHandler))]
-[RequireComponent(typeof(EggImpactDetector))]
 public partial class EggHealthManager : MonoBehaviour
 {
-	public delegate void DamagedEventHandler(in float damage);
+	public delegate void DamagedEventHandler(float damage);
+	public delegate void HealthChangedHandler(float resultHealthRatio);
+
+	/// <summary>
+	/// 데미지를 받을 때 마다 그 값을 전달받고 싶다면, 이것을 구독
+	/// </summary>
 	public event DamagedEventHandler Damaged;
-	public delegate void HealthChangedEventHandler(in float healthRatio);
-	public event HealthChangedEventHandler HealthChanged;
-	public delegate void ShouldDestroyedEventHandler();
-	public event ShouldDestroyedEventHandler ShouldEndLifecycle;
+
+	/// <summary>
+	/// 체력이 변화할 때마다 그 값을 전달받고 싶다면, 이것을 구독
+	/// </summary>
+	public event HealthChangedHandler HealthChanged;
+
 
 #region UnityCallbacks
 
@@ -27,51 +34,36 @@ public partial class EggHealthManager : MonoBehaviour
 		// Cache components
 
 		_eggLifecycleHandler = GetComponent<EggLifecycleHandler>();
-		_impactDetector = GetComponent<EggImpactDetector>();
 
 		// Bind events
 
-		_eggLifecycleHandler.LifecycleStarted += MaxUpHealth;
-		_eggLifecycleHandler.LifecycleStarted += BlockDamageForCreation;
-
-		_impactDetector.ShouldInflictDamage += TryInflictDamage;
-
-		ShouldEndLifecycle += OnHealthIsBelowZero;
-		Damaged += InflictDamage;
+		_eggLifecycleHandler.LifecycleStarted += OnLifecycleStarted;
 	}
 
 	void OnDestroy()
 	{
 		// Unbind events
 
-		_eggLifecycleHandler.LifecycleStarted -= MaxUpHealth;
-		_eggLifecycleHandler.LifecycleStarted -= BlockDamageForCreation;
-
-		_impactDetector.ShouldInflictDamage -= TryInflictDamage;
-
-		ShouldEndLifecycle -= OnHealthIsBelowZero;
-		Damaged -= InflictDamage;
+		_eggLifecycleHandler.LifecycleStarted -= OnLifecycleStarted;
 	}
 
 	#endregion // UnityCallbacks
 
-	void MaxUpHealth()
+	void OnLifecycleStarted()
 	{
 		_currentHealth = _maxHealth;
 		HealthChanged?.Invoke(HealthRatio);
+
+		// Damage blocking timer for creation phase
+		StopAllCoroutines();
+		StartCoroutine(BlockDamageTimerRoutine(_damageTimerMaxTimeForCreated));
 	}
 
-	void BlockDamageForCreation()
-	{
-		if (_currentTimerRoutine != null)
-		{
-			StopCoroutine(_currentTimerRoutine);
-		}
-
-		_currentTimerRoutine = StartCoroutine(BlockDamageTimerRoutine(_damageTimerMaxTimeForCreated));
-	}
-
-	void TryInflictDamage(in float damage)
+	/// <summary>
+	/// 모든 데미지 요인들은 이 함수를 호출하여 데미지 적용 요청을 보낸다. <br/>
+	/// 데미지를 적용할 수 있다면, 데미지를 적용하고 그렇지 않으면 무시한다.
+	/// </summary>
+	public void TryInflictDamage(float damage)
 	{
 		if (!_canBeDamaged)
 		{
@@ -79,46 +71,38 @@ public partial class EggHealthManager : MonoBehaviour
 		}
 
 		Damaged?.Invoke(damage);
-	}
 
-	public void ForceInflictLethalDamage()
-	{
-		_currentHealth -= _currentHealth;
-		HealthChanged?.Invoke(HealthRatio);
-
-		StopAllCoroutines();
-
-		ShouldEndLifecycle?.Invoke();
+		InflictDamage(damage);
 	}
 
 	/// <summary>
 	/// 데미지를 받을 수 있는지의 여부와 관계없이, 데미지를 바로 적용한다.
 	/// </summary>
-	public void InflictDamage(in float damage)
+	public void InflictDamage(float damage)
 	{
+		StopAllCoroutines();
+
 		_currentHealth -= damage;
 
 		HealthChanged?.Invoke(HealthRatio);
 
-		if (_currentTimerRoutine != null)
-		{
-			StopCoroutine(_currentTimerRoutine);
-		}
-
 		if (_currentHealth <= 0.0f)
 		{
-			ShouldEndLifecycle?.Invoke();
+			// Health is below zero, this egg "should be" return to pool
+			_currentHealth = 0.0f;
+			_eggLifecycleHandler.EndLifecycle(spawnBrokenEgg: true, grabber: null);
+
 			return;
 		}
 
-		_currentTimerRoutine = StartCoroutine(BlockDamageTimerRoutine(_damageTimerMaxTime));
+		StartCoroutine(BlockDamageTimerRoutine(_damageTimerMaxTime));
 	}
 
 	IEnumerator BlockDamageTimerRoutine(float duration)
 	{
 		_currentDamageTimerMaxTime = duration;
 
-		// 데미지 차단 시작 (타이머 시작)
+		// Begin blocking damage
 		_damageTimerElapsedTime = 0.0f;
 		_canBeDamaged = false;
 
@@ -128,28 +112,17 @@ public partial class EggHealthManager : MonoBehaviour
 			yield return null;
 		}
 
-		// 데미지 차단 종료 (타이머 종료)
+		// End blocking damage
 		_damageTimerElapsedTime = 0.0f;
 		_canBeDamaged = true;
 
 		_currentDamageTimerMaxTime = 0.0f;
 	}
 
-	void OnHealthIsBelowZero()
-	{
-		_currentHealth = 0.0f;
-
-		if (_currentTimerRoutine != null)
-		{
-			StopCoroutine(_currentTimerRoutine);
-		}
-		_currentTimerRoutine = null;
-	}
-
 	float HealthRatio => Mathf.Clamp01(_currentHealth / _maxHealth);
+	public float MaxHealth => _maxHealth;
 
 	EggLifecycleHandler _eggLifecycleHandler;
-	EggImpactDetector _impactDetector;
 
 	[HideInInspector][SerializeField] bool _canBeDamaged = true;
 	[HideInInspector][SerializeField] float _damageTimerElapsedTime = 0.0f;
@@ -158,11 +131,6 @@ public partial class EggHealthManager : MonoBehaviour
 	[HideInInspector][SerializeField] float _currentDamageTimerMaxTime;
 	[HideInInspector][SerializeField] float _currentHealth;
 	[SerializeField] float _maxHealth = 100.0f;
-	Coroutine _currentTimerRoutine;
 }
 
 }
-
-// NOTE ActionRoutineBase 와 아무런 관련이 없으나, 비슷한 구조임
-// TODO 코루틴을 변수에 할당하는 경우 StopCoroutine 시 null이 되는지, 조사할 필요가 있다.
-// 코루틴 관리가 필요해해해해

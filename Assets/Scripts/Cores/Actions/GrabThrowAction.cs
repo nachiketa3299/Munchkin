@@ -79,6 +79,7 @@ public partial class GrabThrowAction : ActionRoutineBase
 
 		yield break;
 	}
+
 	GrabThrowTarget FindGrabTarget()
 	{
 		var resultCount = Physics.OverlapSphereNonAlloc
@@ -159,7 +160,8 @@ public partial class GrabThrowAction : ActionRoutineBase
 	}
 
 	public GrabThrowTarget GrabThrowTarget => _grabThrowTarget;
-	public Rigidbody Rigidbody => _rigidbody;
+	public Vector3 Velocity => _rigidbody.velocity;
+	public Vector3 AngularVelocity => _rigidbody.angularVelocity;
 
 	Rigidbody _rigidbody;
 	Collider[] _overlapResultCache = new Collider[5];

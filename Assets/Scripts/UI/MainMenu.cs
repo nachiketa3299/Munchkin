@@ -51,6 +51,8 @@ public class MainMenu : MonoBehaviour
 		_ui_mainInteraction.style.display = DisplayStyle.None;
 		_ui_progress.style.display = DisplayStyle.Flex;
 
+		StopAllCoroutines();
+
 		StartCoroutine(InitialGameLoadingRoutine());
 	}
 
@@ -92,7 +94,10 @@ public class MainMenu : MonoBehaviour
 		}
 
 		// unload this scene and destroy all!
-		SceneManager.SetActiveScene(SceneManager.GetSceneByName(_data.PersistentSceneName)); // 안하면 안 됨 (왜 안되는지궁금하면 저에게 질문하세용)
+		var isLoaded = SceneManager.SetActiveScene(SceneManager.GetSceneByName(_data.PersistentSceneName)); // 안하면 안 됨 (왜 안되는지궁금하면 저에게 질문하세용)
+
+		yield return null;
+
 		SceneManager.UnloadSceneAsync(gameObject.scene.name);
 	}
 

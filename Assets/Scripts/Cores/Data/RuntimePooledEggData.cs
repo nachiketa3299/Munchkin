@@ -1,3 +1,6 @@
+using System;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using UnityEngine;
 using UnityEngine.Pool;
 
@@ -7,76 +10,122 @@ namespace MC
 /// <summary>
 /// 게임 전체에서 생성되는 알 인스턴스들의 풀을 관리
 /// </summary>
+/// <remarks>
+/// 이 객체에서는 오직 풀에 관련된 연산만 처리하고, 초기화에 관련된 내용은 <see cref="EggFactory"/>에서 담당한다.
+/// </remarks>
 [CreateAssetMenu(fileName = "RuntimePooledEggData", menuName = "MC/Scriptable Objects/Runtime Pooled Egg Data")]
 public class RuntimePooledEggData : ScriptableObject
 {
+	public Action<EggLifecycleHandler> NestEggEnabled;
+	public Action NestEggDisabled;
+
 	public ObjectPool<EggLifecycleHandler> Pool
 	{
 		get
 		{
 			return _eggPool ??=  new
 			(
-				createFunc: CreateInstance,
-				actionOnGet: TakeFromPool,
-				actionOnRelease: ReturnToPool,
-				actionOnDestroy: DestroyInstance,
+				createFunc: CreateEggInstance,
+				actionOnGet: TakeEggFromPool,
+				actionOnRelease: ReturnEggToPool,
+				actionOnDestroy: DestroyEggInstance,
 				collectionCheck: true,
-				defaultCapacity: _defaultCapacity
+				defaultCapacity: _defaultPoolCapacity,
+				maxSize: _maxPoolSize
 			);
 		}
 	}
 
-	/// <summary>
-	/// CharacterEggPool에 새 인스턴스를 생성할 때 실행되는 로직
-	/// </summary>
-	EggLifecycleHandler CreateInstance()
+#region ObjectPoolCallbacks
+
+	EggLifecycleHandler CreateEggInstance()
 	{
 
-	#if UNITY_EDITOR
+#if UNITY_EDITOR
 		if (!_eggPrefab)
 		{
 			Debug.LogWarning("EggPrefab을 찾을 수 없습니다.");
 		}
-	#endif
+#endif
 
 		var instance = Instantiate(_eggPrefab);
 		return instance;
 	}
 
-	/// <summary>
-	/// Pool에 저장된 인스턴스를 가져올 때 실행되는 로직
-	/// </summary>
-	void TakeFromPool(EggLifecycleHandler egg)
+	void TakeEggFromPool(EggLifecycleHandler egg)
 	{
 		egg.gameObject.SetActive(true);
-		egg.GetComponent<Rigidbody>().isKinematic = false; // TODO 다른 더 적절한 옮겨야 함
 	}
 
-	/// <summary>
-	/// Pool에 모두 사용된 인스턴스를 반납할 때 실행되는 로직
-	/// </summary>
-	void ReturnToPool(EggLifecycleHandler egg)
+	void ReturnEggToPool(EggLifecycleHandler egg)
 	{
-		if (egg.transform.parent != null)
-		{
-			egg.transform.SetParent(null);
-		}
-
 		egg.gameObject.SetActive(false);
-		egg.GetComponent<Rigidbody>().isKinematic = true; // TODO 다른 더 적절한 곳으로 옮겨야 함
 	}
 
-	/// <summary>
-	/// Pool 에서 객체를 파괴할 때 실행되는 로직
-	/// </summary>
-	void DestroyInstance(EggLifecycleHandler egg)
+	void DestroyEggInstance(EggLifecycleHandler egg)
 	{
 		Destroy(egg.gameObject);
 	}
 
+#endregion // ObjectPoolCallbacks
+
+	public EggLifecycleHandler Get(EEggOwner owner)
+	{
+		var egg = Pool.Get();
+
+		// Initialize
+		egg.Initialize(owner);
+
+		AddToContainer(egg);
+		return egg;
+	}
+
+	public void Release(EggLifecycleHandler egg)
+	{
+		RemoveFromContainer(egg);
+		// Deinitialize
+		egg.Deinitialize();
+		Pool.Release(egg);
+
+	}
+
+	void AddToContainer(EggLifecycleHandler egg)
+	{
+		switch(egg.Owner)
+		{
+			case EEggOwner.Character:
+				_characterEggs.Add(egg);
+				break;
+			case EEggOwner.Nest:
+				_nestEggs.Add(egg);
+				break;
+		}
+	}
+
+	void RemoveFromContainer(EggLifecycleHandler egg)
+	{
+		switch(egg.Owner)
+		{
+			case EEggOwner.Character:
+				_characterEggs.Remove(egg);
+				break;
+			case EEggOwner.Nest:
+				_nestEggs.Remove(egg);
+				NestEggDisabled?.Invoke();
+				break;
+		}
+	}
+
+	// Don't fucking modify this outside
+	public ReadOnlyCollection<EggLifecycleHandler> NestEggs => _nestEggs.AsReadOnly();
+
 	ObjectPool<EggLifecycleHandler> _eggPool;
-	[SerializeField] int _defaultCapacity = 5;
+	[SerializeField] int _defaultPoolCapacity = 5;
+	[SerializeField] int _maxPoolSize = 10;
 	[SerializeField] EggLifecycleHandler _eggPrefab;
+	[SerializeField][HideInInspector] List<EggLifecycleHandler> _characterEggs = new();
+	// 여기서 리스트를 택한 이유는 직렬화 때문
+	[SerializeField][HideInInspector] List<EggLifecycleHandler> _nestEggs = new();
 }
 
 }

@@ -9,7 +9,7 @@ namespace MC.Editors
 [CustomEditor(typeof(RuntimeLoadedSceneData))]
 internal sealed class RuntimeLoadedSceneDataEditor : Editor
 {
-	#region UnityCallbacks
+#region UnityCallbacks
 
 	public override bool RequiresConstantRepaint() => true;
 
@@ -47,7 +47,7 @@ internal sealed class RuntimeLoadedSceneDataEditor : Editor
 		serializedObject.ApplyModifiedProperties();
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 }
 
 }

@@ -211,7 +211,7 @@ Transform:
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -5, y: -5.9479446, z: -15}
+  m_LocalPosition: {x: -5, y: -6.140255, z: -15}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -574,7 +574,7 @@ PrefabInstance:
     - target: {fileID: 797648116127380980, guid: ddc1e28ef5721a94790f83d0120647b2,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -5.9479446
+      value: -6.140255
       objectReference: {fileID: 0}
     - target: {fileID: 797648116127380980, guid: ddc1e28ef5721a94790f83d0120647b2,
         type: 3}
@@ -674,7 +674,7 @@ PrefabInstance:
     - target: {fileID: 2260662679189535983, guid: ddc1e28ef5721a94790f83d0120647b2,
         type: 3}
       propertyPath: m_TrackedObjectOffset.y
-      value: 0
+      value: -0.1923099
       objectReference: {fileID: 0}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
@@ -694,6 +694,11 @@ PrefabInstance:
       propertyPath: m_Name
       value: P_CharacterObject
       objectReference: {fileID: 0}
+    - target: {fileID: 6326817429707624275, guid: 430e86359e4ec1b408f9473b4f10c10e,
+        type: 3}
+      propertyPath: _moveSpeed
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 6348100591888285890, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
       propertyPath: _cameraLookAction
@@ -709,6 +714,12 @@ PrefabInstance:
       propertyPath: _throwForceHorizontal
       value: 30
       objectReference: {fileID: 0}
+    - target: {fileID: 7459763658976388867, guid: 430e86359e4ec1b408f9473b4f10c10e,
+        type: 3}
+      propertyPath: _eggPool
+      value: 
+      objectReference: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40,
+        type: 2}
     - target: {fileID: 8901260133182799471, guid: 430e86359e4ec1b408f9473b4f10c10e,
         type: 3}
       propertyPath: m_LocalPosition.x
@@ -759,7 +770,10 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    m_RemovedComponents:
+    - {fileID: 827848486237857187, guid: 430e86359e4ec1b408f9473b4f10c10e, type: 3}
+    - {fileID: 3440305954790582516, guid: 430e86359e4ec1b408f9473b4f10c10e, type: 3}
+    - {fileID: 778603907793286246, guid: 430e86359e4ec1b408f9473b4f10c10e, type: 3}
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
     m_AddedComponents: []

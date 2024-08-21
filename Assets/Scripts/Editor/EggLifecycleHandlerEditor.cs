@@ -33,7 +33,14 @@ internal sealed class EggLifecycleHandlerEditor : Editor
 				var eggLifecycleHandler = target as EggLifecycleHandler;
 				if (eggLifecycleHandler.isActiveAndEnabled)
 				{
-					eggLifecycleHandler.LifecycleShouldEnded();
+					if (eggLifecycleHandler.TryGetComponent<GrabThrowTarget>(out var grabTarget) && grabTarget.IsGrabbed)
+					{
+						eggLifecycleHandler.EndLifecycle(true, grabTarget.Grabber);
+					}
+					else
+					{
+						eggLifecycleHandler.EndLifecycle();
+					}
 				}
 			}
 		}

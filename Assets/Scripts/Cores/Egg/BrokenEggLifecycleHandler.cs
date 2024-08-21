@@ -46,11 +46,17 @@ void Awake()
 // This so sucks..
 // why should I use object pool while I can just Instantiate it..
 
-public void InitializeLifecycle(in FEggPhysicalState lastPhysicalState)
+public void Initialize(EggLastState lastPhysicalState)
 {
 	// Reset transform
 	foreach (var tr in _childTransforms)
 	{
+		// NOTE 현재 Broken Egg와 그냥 Egg의 Rotation이 뒤틀려 있기 때문에, 최상위 로테이션은 보존하는것으로 함
+		if (tr.parent == null)
+		{
+			continue;
+		}
+
 		tr.localPosition = Vector3.zero;
 		tr.localEulerAngles = Vector3.zero;
 	}
@@ -70,6 +76,11 @@ public void InitializeLifecycle(in FEggPhysicalState lastPhysicalState)
 	}
 
 	StartCoroutine(LifecycleTimerRoutine());
+}
+
+public void Deinitialize()
+{
+
 }
 
 IEnumerator LifecycleTimerRoutine()

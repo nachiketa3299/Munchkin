@@ -38,7 +38,7 @@ public class EggColorer : MonoBehaviour
 
 	#endregion // UnityCallbacks
 
-	void ChangeColor(in float healthRatio)
+	void ChangeColor(float healthRatio)
 	{
 		_currentColor = Color.Lerp
 		(
@@ -48,6 +48,8 @@ public class EggColorer : MonoBehaviour
 		);
 
 		_renderer.material.color = _currentColor;
+
+		_renderer.material.SetFloat("_Health", healthRatio);
 	}
 
 	Renderer _renderer;

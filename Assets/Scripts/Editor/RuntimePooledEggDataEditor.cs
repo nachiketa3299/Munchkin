@@ -9,7 +9,8 @@ namespace MC.Editors
 [CustomEditor(typeof(RuntimePooledEggData))]
 internal sealed class RuntimePooledEggDataEditor : Editor
 {
-	#region UnityCallbacks
+
+#region UnityCallbacks
 
 	public override bool RequiresConstantRepaint() => true;
 
@@ -32,10 +33,76 @@ internal sealed class RuntimePooledEggDataEditor : Editor
 			DrawDisabledGroup(data.Pool);
 		}
 
+		EditorGUILayout.Space();
+
+		EditorGUILayout.LabelField("NestEggs:");
+		var nestEggs = serializedObject.FindProperty("_nestEggs");
+
+		EditorGUI.indentLevel++;
+		if (nestEggs == null)
+		{
+			EditorGUILayout.LabelField("null");
+		}
+		else if (nestEggs.arraySize == 0)
+		{
+			EditorGUILayout.LabelField("There is no active nest eggs");
+		}
+		else
+		{
+			for (var i = 0; i < nestEggs.arraySize; ++i)
+			{
+				var element = nestEggs
+					.GetArrayElementAtIndex(i)
+					.objectReferenceValue
+					as EggLifecycleHandler;
+				if (element)
+				{
+					EditorGUILayout.LabelField($"{i:D4}: {element.gameObject.name}");
+				}
+				else
+				{
+					EditorGUILayout.LabelField($"{i:D4} Error");
+				}
+			}
+		}
+		EditorGUI.indentLevel--;
+
+		EditorGUILayout.LabelField("CharacterEggs:");
+		var characterEggs = serializedObject.FindProperty("_characterEggs");
+
+		EditorGUI.indentLevel++;
+		if (characterEggs == null)
+		{
+			EditorGUILayout.LabelField("null");
+		}
+		else if (characterEggs.arraySize == 0)
+		{
+			EditorGUILayout.LabelField("There is no active character eggs");
+		}
+		else
+		{
+			for (var i = 0; i < characterEggs.arraySize; ++i)
+			{
+				var element = characterEggs
+					.GetArrayElementAtIndex(i)
+					.objectReferenceValue
+					as EggLifecycleHandler;
+				if (element)
+				{
+					EditorGUILayout.LabelField($"{i:D4}: {element.gameObject.name}");
+				}
+				else
+				{
+					EditorGUILayout.LabelField($"{i:D4} Error");
+				}
+			}
+		}
+		EditorGUI.indentLevel--;
+
 		serializedObject.ApplyModifiedProperties();
 	}
 
-	#endregion // UnityCallbacks
+#endregion // UnityCallbacks
 
 	void DrawDisabledGroup(ObjectPool<EggLifecycleHandler> pool)
 	{

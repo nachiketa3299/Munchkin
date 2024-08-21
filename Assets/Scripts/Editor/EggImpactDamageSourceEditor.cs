@@ -8,8 +8,8 @@ using UnityEditor;
 namespace MC.Editors
 {
 
-[CustomEditor(typeof(EggImpactDetector))]
-internal sealed class EggImpactDetectorEditor : Editor
+[CustomEditor(typeof(EggImpactDamageSource))]
+internal sealed class EggImpactDamageSourceEditor : Editor
 {
 
 #region UnityCallbacks
@@ -24,7 +24,7 @@ internal sealed class EggImpactDetectorEditor : Editor
 		_dataPointLabelStyle.normal.textColor = Color.white;
 		_dataPointLabelStyle.fontSize = 10;
 
-		_eggImpactDetector = target as EggImpactDetector;
+		_eggImpactDetector = target as EggImpactDamageSource;
 
 		if (!_eggImpactDetector)
 		{
@@ -127,7 +127,7 @@ internal sealed class EggImpactDetectorEditor : Editor
 
 #endregion // UnityCallbacks
 
-	void OnEggImpacted(in Vector3 impact)
+	void OnEggImpacted(in Vector3 impact, in bool _)
 	{
 		var impactMagnitude = impact.magnitude;
 		_impactMagnitudeCache.Add(impactMagnitude);
@@ -138,7 +138,7 @@ internal sealed class EggImpactDetectorEditor : Editor
 		}
 	}
 
-	EggImpactDetector _eggImpactDetector;
+	EggImpactDamageSource _eggImpactDetector;
 	Color _graphBackgroundColor = new(0.15f, 0.15f, 0.15f, 1.0f);
 	GUIStyle _thresholdLabelStyle = new();
 	Color _thresholdColor = Color.yellow;

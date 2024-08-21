@@ -95,7 +95,8 @@ internal sealed class EggHealthManagerEditor : Editor
 				}
 				else
 				{
-					eggHealthManager.InflictDamage(Mathf.Abs(_damageToForceInflict));
+					// eggHealthManager.InflictDamage(Mathf.Abs(_damageToForceInflict));
+					eggHealthManager.SendMessage("InflictDamage", Mathf.Abs(_damageToForceInflict));
 				}
 			}
 		}

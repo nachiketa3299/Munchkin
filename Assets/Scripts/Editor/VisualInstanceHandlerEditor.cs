@@ -5,8 +5,8 @@ using UnityEditor;
 namespace MC.Editors
 {
 
-[CustomEditor(typeof(MutationHandler))]
-internal sealed class MutationHandlerEditor : Editor
+[CustomEditor(typeof(VisualInstanceHandler))]
+internal sealed class VisualInstanceHandlerEditor : Editor
 {
 		#region UnityCallbacks
 

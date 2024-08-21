@@ -11,7 +11,7 @@ namespace MC
 /// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(LifespanHandler))]
-public class MutationHandler : MonoBehaviour
+public class VisualInstanceHandler : MonoBehaviour
 {
 	public delegate void MutatedHandler(ECharacterType characterType);
 	public event MutatedHandler Mutated;
@@ -31,6 +31,13 @@ public class MutationHandler : MonoBehaviour
 		}
 #endif
 
+		// Bind events
+
+		_lifespanHandler.Started += ChangeVisualInstanceToHen;
+		_lifespanHandler.ReachedMutationThreshold += ChangeVisualInstanceToChicken;
+		_lifespanHandler.Changed += ChangeVisualInstanceColor;
+		_lifespanHandler.Ended += ChangeVisualInstanceToSoul;
+
 		// Instantiate visual instances
 
 		foreach (ECharacterType type in ECharacterType.GetValues(typeof(ECharacterType)))
@@ -39,35 +46,37 @@ public class MutationHandler : MonoBehaviour
 		}
 	}
 
-	void OnEnable()
-	{
-		_lifespanHandler.Started += InitializeVisualInstance;
-		_lifespanHandler.ReachedMutationThreshold += Mutate;
-		_lifespanHandler.Changed += ChangeVisualInstanceColor;
-		_lifespanHandler.Ended += OnLifespanEnded;
-	}
-
 	void OnDestroy()
 	{
-		_lifespanHandler.Started -= InitializeVisualInstance;
-		_lifespanHandler.ReachedMutationThreshold -= Mutate;
+		// Unbind events
+
+		_lifespanHandler.Started -= ChangeVisualInstanceToHen;
+		_lifespanHandler.ReachedMutationThreshold -= ChangeVisualInstanceToChicken;
 		_lifespanHandler.Changed -= ChangeVisualInstanceColor;
-		_lifespanHandler.Ended -= OnLifespanEnded;
+		_lifespanHandler.Ended -= ChangeVisualInstanceToSoul;
 	}
 
 #endregion // UnityCallbacks
 
-	void InitializeVisualInstance()
+	void ChangeVisualInstanceToHen()
 	{
+		if (_currentVisualInstance != null)
+		{
+			_currentVisualInstance.SetActive(false);
+		}
+
 		_currentVisualInstance = _allCharactersData.GetVisualInstance(ECharacterType.Chick);
 
 		_currentVisualInstance.SetActive(true);
 		_currentCharacterType = ECharacterType.Chick;
 	}
 
-	void Mutate()
+	void ChangeVisualInstanceToChicken()
 	{
-		_currentVisualInstance.SetActive(false);
+		if (_currentVisualInstance != null)
+		{
+			_currentVisualInstance.SetActive(false);
+		}
 
 		// Hen 으로 변이
 		if (UnityEngine.Random.Range(0f, 1f) < _roosterMutationChance)
@@ -95,13 +104,21 @@ public class MutationHandler : MonoBehaviour
 		_allCharactersData.GetVisualRenderer(_currentCharacterType).material.color = agingColor;
 	}
 
-	void OnLifespanEnded()
+	void ChangeVisualInstanceToSoul()
 	{
-		// TODO 영혼이 되었을 때의 로직을 여기서 작성
-		_currentVisualInstance.SetActive(false);
+		if (_currentVisualInstance != null)
+		{
+			_currentVisualInstance.SetActive(false);
+		}
+
+		_currentVisualInstance = _allCharactersData.GetVisualInstance(ECharacterType.Soul);
+		_currentVisualInstance.SetActive(true);
+		_currentCharacterType = ECharacterType.Soul;
+
 	}
 
 	LifespanHandler _lifespanHandler;
+
 	[SerializeField][HideInInspector] GameObject _currentVisualInstance = null;
 	[SerializeField][HideInInspector] ECharacterType _currentCharacterType;
 	[SerializeField] AllCharactersData _allCharactersData;

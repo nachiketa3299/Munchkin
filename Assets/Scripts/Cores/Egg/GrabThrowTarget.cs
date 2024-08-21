@@ -32,14 +32,18 @@ public class GrabThrowTarget : MonoBehaviour
 
 	public void BeginGrabState()
 	{
+		_isGrabbed = true;
+
 		_rigidbody.isKinematic = true;
-		_rigidbody.detectCollisions = false; // TODO Collision을 아예 꺼버리는 것이 아니라, 레이어를 바꾸는 것이 나을 것
+		// _rigidbody.detectCollisions = false; // TODO Collision을 아예 꺼버리는 것이 아니라, 레이어를 바꾸는 것이 나을 것
 	}
 
 	public void EndGrabState()
 	{
+		_isGrabbed = false;
+
 		_rigidbody.isKinematic = false;
-		_rigidbody.detectCollisions = true;
+		// _rigidbody.detectCollisions = true;
 	}
 
 	public void AddForce(in Vector3 force)
@@ -48,8 +52,12 @@ public class GrabThrowTarget : MonoBehaviour
 	}
 
 	public Rigidbody Rigidbody => _rigidbody;
+	public bool IsGrabbed => _isGrabbed;
+	public GrabThrowAction Grabber => transform.root.GetComponent<GrabThrowAction>();
 
 	Rigidbody _rigidbody;
+
+	bool _isGrabbed = false;
 }
 
 }

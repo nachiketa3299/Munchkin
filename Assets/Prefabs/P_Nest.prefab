@@ -10,7 +10,6 @@ GameObject:
   m_Component:
   - component: {fileID: 2874194492744323937}
   - component: {fileID: 5434518518976066108}
-  - component: {fileID: 6907355657646095817}
   - component: {fileID: 2953053612707389190}
   m_Layer: 0
   m_Name: P_Nest
@@ -46,25 +45,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ed8eecdbe7da8944c9b0d86bf071b131, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _currentNestEgg: {fileID: 0}
-  _nestEggBounds: []
-  _maxNestEggCount: 1
+  _nestEggs: []
   _spawnPosition: {x: 0, y: 4.5, z: 0}
+  _eggPool: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40, type: 2}
   _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
---- !u!114 &6907355657646095817
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4937790989048267566}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 90221a9c39b593e47a6a45c7c4ea5fb4, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _runtimePooledEggData: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40,
-    type: 2}
 --- !u!114 &2953053612707389190
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -80,4 +64,3 @@ MonoBehaviour:
   _seedColliderSize: {x: 15, y: 12, z: 1}
   _seedColliderCenter: {x: 0, y: 0, z: 0}
   _colliders: []
-  _thickness: 1

@@ -9,29 +9,28 @@ public class BrokenEggFactory : MonoBehaviour
 
 #region UnityCallbacks
 
+#if UNITY_EDITOR
 	void Awake()
 	{
 
-// Check Data
+		// Check Data
 
-#if UNITY_EDITOR
 		if (!_runtimePooledBrokenEggData)
 		{
 			Debug.LogWarning("RuntimePooledBrokenEggData를 찾을 수 없습니다.");
 		}
-#endif
-
 	}
+#endif
 
 #endregion // UnityCallbacks
 
-	public void SpawnInitializedBrokenEggFromPool(in FEggPhysicalState lastEggPhysicalState)
+	public void TakeFromPool(EggLastState lastEggPhysicalState)
 	{
 		var brokenEgg = _runtimePooledBrokenEggData.Pool.Get();
-		brokenEgg.InitializeLifecycle(lastEggPhysicalState);
+		brokenEgg.Initialize(lastEggPhysicalState);
 	}
 
-	public void ReturnBrokenEggToPool(BrokenEggLifecycleHandler brokenEgg)
+	public void ReturnToPool(BrokenEggLifecycleHandler brokenEgg)
 	{
 		// Do additional deinitialize in here
 

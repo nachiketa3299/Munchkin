@@ -13,5 +13,5 @@ MonoBehaviour:
   m_Name: RuntimePooledEggData
   m_EditorClassIdentifier: 
   _defaultCapacity: 5
-  _eggPrefab: {fileID: 4795528761876154479, guid: aa126d51179092a479b09b8ac2275253,
+  _eggPrefab: {fileID: 7082514871237939378, guid: e34f92e7ec637584590dd3687d046893,
     type: 3}

@@ -1,33 +1,22 @@
 using UnityEngine;
 
-#if UNITY_EDITOR
-
-using UnityEditor;
-
-#endif
-
 namespace MC
 {
 
 /// <summary>
-/// Egg의 생성(활성화)과 소멸(비활성화)에 관련된 이벤트를 관리한다.
+/// Egg의 생성(활성화)과 소멸(비활성화)에 관련된 이벤트를 관리한다. <br/>
+/// Egg와 관련되어 가장 중요하고, 대표자로서 사용되는 클래스이다.
 /// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(EggFactory))]
 [RequireComponent(typeof(BrokenEggFactory))]
-[RequireComponent(typeof(EggHealthManager))]
-public class EggLifecycleHandler : MonoBehaviour
+public partial class EggLifecycleHandler : MonoBehaviour
 {
 	public delegate void LifecycleStartedHandler();
-
-	/// <remarks>
-	/// 생애주기를 종료할 때, 이 알의 운동 정보가 그대로 깨진 알의 운동 정보에 복사되어야 하므로, 함께 전달되어야 한다.
-	/// </remarks>
-	public delegate void LifecycleEndedHandler(in FEggPhysicalState lastPhysicalState);
 	public event LifecycleStartedHandler LifecycleStarted;
+
+	public delegate void LifecycleEndedHandler(EggLifecycleHandler endingEgg);
 	public event LifecycleEndedHandler LifecycleEnded;
-	public LifecycleEndedHandler LifecycleEndedByTriggerEvent;
 
 #region UnityCallbacks
 
@@ -36,121 +25,67 @@ public class EggLifecycleHandler : MonoBehaviour
 		// Cache components
 
 		_rigidbody = GetComponent<Rigidbody>();
-
-		_factory = GetComponent<EggFactory>();
 		_brokenEggFactory = GetComponent<BrokenEggFactory>();
-		_healthManager = GetComponent<EggHealthManager>();
 
-		// Bind events
-
-		LifecycleEnded += OnLifecycleEnded;
-		LifecycleEndedByTriggerEvent += OnLifecycleEndedByTriggerEvent;
-		_healthManager.ShouldEndLifecycle += LifecycleShouldEnded;
-	}
-
-	void OnDestroy()
-	{
-		// Unbind events
-
-		LifecycleEnded -= OnLifecycleEnded;
-		LifecycleEndedByTriggerEvent -= OnLifecycleEndedByTriggerEvent;
-		_healthManager.ShouldEndLifecycle -= LifecycleShouldEnded;
-	}
-
-	void Update()
-	{
-		if (!_alreadyEndedLifecycleByTrigger)
+#if UNITY_EDITOR
+		if (!_eggPool)
 		{
-			return;
+			Debug.LogWarning("EggLifecycleHandler에 RuntimePooledEggData가 설정되지 않았습니다.");
 		}
-
-		LifecycleEnded?.Invoke(_cachedEggPhysicalState);
+#endif
 	}
 
 #endregion // UnityCallbacks
 
-	/// <remarks>
-	/// Egg가 풀에서 꺼내질 때, <see cref="EggFactory"/>에 의해 명시적으로 호출된다.
-	/// </remarks>
-	public void InitializeLifecycle(in EEggOwner owner)
+	public void Initialize(EEggOwner owner)
 	{
 		_owner = owner;
-		_alreadyEndedLifecycleByTrigger = false;
 
 #if UNITY_EDITOR
 		gameObject.name = MakeInstanceName(owner);
 #endif
 
+		_rigidbody.isKinematic = false;
+
 		LifecycleStarted?.Invoke();
 	}
 
-	/// <remark>
-	/// Egg가 복합 콜라이더인 경우, 한 물리 프레임 내에 OnTrigger 이벤트가 여러 번 호출될 수 있음. <br/>
-	/// 따라서 물리 트리거에 의해 파괴가 결정된 경우, 다음 비물리 프레임 업데이트에서 파괴를 처리하는 것으로
-	/// </remark>
-	public void OnLifecycleEndedByTriggerEvent(in FEggPhysicalState lastEggPhysicalState)
+	public void Deinitialize()
 	{
-		if (_alreadyEndedLifecycleByTrigger)
+		if (transform.parent != null)
 		{
-			return;
+			transform.SetParent(null);
 		}
 
-		_alreadyEndedLifecycleByTrigger = true;
-		_cachedEggPhysicalState = lastEggPhysicalState;
+		_rigidbody.isKinematic = true;
 	}
-
-	public void OnLifecycleEnded(in FEggPhysicalState lastEggPhysicalState)
-	{
-		_alreadyEndedLifecycleByTrigger = true;
-
-		_brokenEggFactory.SpawnInitializedBrokenEggFromPool(lastEggPhysicalState);
-		_factory.ReturnEggToPool(this);
-	}
-
-	public void LifecycleShouldEnded()
-	{
-		LifecycleEnded?.Invoke(LastPhysicalState);
-		_factory.ReturnEggToPool(this);
-	}
-
-	public EEggOwner Owner => _owner;
-	public FEggPhysicalState LastPhysicalState => new (this);
-	public Rigidbody Rigidbody => _rigidbody;
-
-	Rigidbody _rigidbody;
-	EggFactory _factory;
-	BrokenEggFactory _brokenEggFactory;
-	EggHealthManager _healthManager;
-	[SerializeField][HideInInspector] EEggOwner _owner;
-	bool _alreadyEndedLifecycleByTrigger = false;
-	FEggPhysicalState _cachedEggPhysicalState;
-
-#if UNITY_EDITOR
 
 	/// <summary>
-	/// <paramref name="owner"/>가 매 생애주기 마다 바뀌므로, 팩토리나 풀이 아닌, 여기에서 주기가 시작될 때마다 이름을 재설정 해주어야 함.
+	/// 모든 생애주기 종료 요인들은 이 함수를 호출하여 생애주기 종료 요청을 보낸다. <br/>
 	/// </summary>
-	string MakeInstanceName(in EEggOwner owner) => $"{owner}Egg ({gameObject.GetInstanceID()})";
-
-	[DrawGizmo(GizmoType.Active | GizmoType.NonSelected)]
-	static void DrawUniqueNameOfEgg(EggLifecycleHandler target, GizmoType gizmoType)
+	public void EndLifecycle(bool spawnBrokenEgg = true, GrabThrowAction grabber = null)
 	{
-		var style = new GUIStyle();
+		LifecycleEnded?.Invoke(this);
+
+		if (spawnBrokenEgg)
 		{
-			style.normal.textColor = Color.yellow;
-			style.alignment = TextAnchor.MiddleCenter;
+			_brokenEggFactory.TakeFromPool(new EggLastState(egg: this, grabber: null));
 		}
 
-		Handles.Label
-		(
-			position: target.transform.position,
-			text: target.gameObject.name,
-			style: style
-		);
+		_eggPool.Release(this);
 	}
 
-#endif
+	public bool IsCharacterEgg => _owner == EEggOwner.Character;
+	public bool IsNestEgg => _owner == EEggOwner.Nest;
+	public EEggOwner Owner => _owner;
+	public Vector3 Velocity => _rigidbody.velocity;
+	public Vector3 AngularVelocity => _rigidbody.angularVelocity;
 
+	Rigidbody _rigidbody;
+	BrokenEggFactory _brokenEggFactory;
+
+	[SerializeField][HideInInspector] EEggOwner _owner;
+	[SerializeField] RuntimePooledEggData _eggPool;
 }
 
 }
