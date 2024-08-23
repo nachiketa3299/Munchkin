@@ -1,3 +1,5 @@
+using System;
+
 using UnityEngine;
 
 namespace MC
@@ -9,14 +11,10 @@ namespace MC
 /// </summary>
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody))]
-[RequireComponent(typeof(BrokenEggFactory))]
 public partial class EggLifecycleHandler : MonoBehaviour
 {
-	public delegate void LifecycleStartedHandler();
-	public event LifecycleStartedHandler LifecycleStarted;
-
-	public delegate void LifecycleEndedHandler(EggLifecycleHandler endingEgg);
-	public event LifecycleEndedHandler LifecycleEnded;
+	public event Action LifecycleStarted;
+	public event Action<EggLifecycleHandler> LifecycleEnded;
 
 #region UnityCallbacks
 
@@ -25,25 +23,22 @@ public partial class EggLifecycleHandler : MonoBehaviour
 		// Cache components
 
 		_rigidbody = GetComponent<Rigidbody>();
-		_brokenEggFactory = GetComponent<BrokenEggFactory>();
-
-#if UNITY_EDITOR
-		if (!_eggPool)
-		{
-			Debug.LogWarning("EggLifecycleHandler에 RuntimePooledEggData가 설정되지 않았습니다.");
-		}
-#endif
 	}
 
 #endregion // UnityCallbacks
 
+// Pool => Initialize => LifecycleStart => LifecycleEnd => Deinitialize => Pool
+
+	/// <summary>
+	/// <paramref name="owner"/>가 매 생애주기 마다 바뀌므로, 팩토리나 풀이 아닌, 여기에서 주기가 시작될 때마다 이름을 재설정 해주어야 함.
+	/// </summary>
+	string MakeInstanceName(in EEggOwner owner) => $"{owner}Egg ({gameObject.GetInstanceID()})";
+
 	public void Initialize(EEggOwner owner)
 	{
-		_owner = owner;
-
-#if UNITY_EDITOR
 		gameObject.name = MakeInstanceName(owner);
-#endif
+
+		_owner = owner;
 
 		_rigidbody.isKinematic = false;
 
@@ -69,10 +64,10 @@ public partial class EggLifecycleHandler : MonoBehaviour
 
 		if (spawnBrokenEgg)
 		{
-			_brokenEggFactory.TakeFromPool(new EggLastState(egg: this, grabber: null));
+			BrokenEggPool.Instance.GetBrokenEggInstance(new EggLastState(egg: this, grabber: null));
 		}
 
-		_eggPool.Release(this);
+		EggPool.Instance.ReleaseEggInstance(this);
 	}
 
 	public bool IsCharacterEgg => _owner == EEggOwner.Character;
@@ -82,10 +77,8 @@ public partial class EggLifecycleHandler : MonoBehaviour
 	public Vector3 AngularVelocity => _rigidbody.angularVelocity;
 
 	Rigidbody _rigidbody;
-	BrokenEggFactory _brokenEggFactory;
 
 	[SerializeField][HideInInspector] EEggOwner _owner;
-	[SerializeField] RuntimePooledEggData _eggPool;
 }
 
 }

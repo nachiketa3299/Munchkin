@@ -3,8 +3,6 @@ using System.Collections;
 using Cinemachine;
 
 using UnityEngine;
-using UnityEngine.Assertions;
-
 
 namespace MC
 {
@@ -23,6 +21,8 @@ public class CameraLookAction : ActionRoutineBase
 
 	void Awake()
 	{
+		Instance = this;
+
 		_virtualCamera = GetComponent<CinemachineVirtualCamera>();
 		_framingTransposer = _virtualCamera?.GetCinemachineComponent<CinemachineFramingTransposer>();
 
@@ -39,6 +39,8 @@ public class CameraLookAction : ActionRoutineBase
 	}
 
 #endregion // UnityCallbacks
+
+	public static CameraLookAction Instance { get; private set; }
 
 	/// <summary>
 	/// 현재 실행 중인 카메라 시야 관련 코루틴을 모두 정지하고,

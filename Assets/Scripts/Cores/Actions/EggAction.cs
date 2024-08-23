@@ -21,12 +21,12 @@ public partial class EggAction : MonoBehaviour
 
 		_rigidbody = GetComponent<Rigidbody>();
 
-#if UNITY_EDITOR
-		if (_eggPool == null)
-		{
-			Debug.Log("EggAction에 RuntimePooledEggData가 설정되지 않았습니다.");
-		}
-#endif
+// #if UNITY_EDITOR
+// 		if (_eggPool == null)
+// 		{
+// 			Debug.Log("EggAction에 RuntimePooledEggData가 설정되지 않았습니다.");
+// 		}
+// #endif
 
 	}
 
@@ -80,7 +80,7 @@ public partial class EggAction : MonoBehaviour
 	void PerformEggAction()
 	{
 		var spawnPosition = FindEggSpawnPosition();
-		var layedEgg = _eggPool.Get(EEggOwner.Character);
+		var layedEgg = EggPool.Instance.GetEggInstance(EEggOwner.Character);
 		layedEgg.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
 
 		// 이 시점 이후에서야 알이 활성화되고, 위치가 특정된다.
@@ -164,7 +164,7 @@ public partial class EggAction : MonoBehaviour
 	[SerializeField] EggPhysicalData _eggPhysicalData;
 	readonly int _eggPreparingLayer = 9;
 	readonly int _eggNormalLayer = 8;
-	[SerializeField] RuntimePooledEggData _eggPool;
+	// [SerializeField] EggPoolManager _eggPool;
 }
 
 }

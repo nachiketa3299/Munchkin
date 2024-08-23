@@ -5,53 +5,26 @@ using UnityEngine;
 
 namespace MC
 {
-
 public partial class NestEggHandler : MonoBehaviour
 {
-	// For drawing nest egg spawn position with egg's physical bounds (what if it collides initially?)
-	[SerializeField] EggPhysicalData _eggPhysicalData;
-
-	[DrawGizmo(GizmoType.NotInSelectionHierarchy | GizmoType.Active)]
-	static void DrawSpawnPosition(NestEggHandler target, GizmoType gizmoType)
+	// 아직은 에디터에서만 호출됨
+	void SpawnNestEgg()
 	{
-		Gizmos.color = Color.magenta;
+		var instance = EggPool.Instance.GetEggInstance(EEggOwner.Nest);
+		instance.transform.SetPositionAndRotation(SpawnPosition, Quaternion.identity);
 
-		if (target._eggPhysicalData)
+		var delta = _nestEggCountToMainTain - EggPool.Instance.NestEggs.Count;
+
+		if (delta > 0)
 		{
-			var bounds = target._eggPhysicalData.CombinedPhysicalBounds;
-			var spawnPosition = target.SpawnPosition + bounds.center;
-			Gizmos.DrawWireCube(spawnPosition, bounds.size);
+
 		}
-		else
+		else if (delta < 0)
 		{
-			var spawnPosition = target.SpawnPosition;
-			Gizmos.DrawWireCube(spawnPosition, Vector3.one);
-		}
-	}
-
-	[DrawGizmo(GizmoType.Selected)]
-	static void DrawNestEggName(NestEggHandler target, GizmoType gizmoType)
-	{
-
-		if (target._eggPool == null)
-		{
-			return;
-		}
-
-		Gizmos.color = Color.magenta;
-
-		foreach(var nestEgg in target._eggPool.NestEggs)
-		{
-			if (nestEgg == null)
+			for (var i = 0; i < Mathf.Abs(delta); ++i)
 			{
-				continue;
+				EggPool.Instance.NestEggs[i].GetComponent<EggDamageSourceBase>().ForceInflictLethalDamage();
 			}
-
-			Gizmos.DrawLine
-			(
-				target.SpawnPosition,
-				nestEgg.transform.position
-			);
 		}
 	}
 }
@@ -81,7 +54,7 @@ internal sealed class NestEggHandlerEditor : Editor
 		if (GUILayout.Button("Spawn egg in nest"))
 		{
 			var nest = target as NestEggHandler;
-			nest.SendMessage("SpawnNestEggs", 1);
+			nest.SendMessage("SpawnNestEgg");
 		}
 
 		GUI.enabled = true;

@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1 &4937790989048267566
+--- !u!1 &8372640936351368550
 GameObject:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -8,23 +8,23 @@ GameObject:
   m_PrefabAsset: {fileID: 0}
   serializedVersion: 6
   m_Component:
-  - component: {fileID: 2874194492744323937}
-  - component: {fileID: 5434518518976066108}
-  - component: {fileID: 2953053612707389190}
+  - component: {fileID: 3118651634591203494}
+  - component: {fileID: 1336989082601124478}
+  - component: {fileID: 6339239239781896069}
   m_Layer: 0
-  m_Name: P_Nest
+  m_Name: P_EggManager
   m_TagString: Untagged
-  m_Icon: {fileID: 0}
+  m_Icon: {fileID: -964228994112308473, guid: 0000000000000000d000000000000000, type: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
   m_IsActive: 1
---- !u!4 &2874194492744323937
+--- !u!4 &3118651634591203494
 Transform:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4937790989048267566}
+  m_GameObject: {fileID: 8372640936351368550}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: 0, y: 0, z: 0}
@@ -33,35 +33,36 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!114 &5434518518976066108
+--- !u!114 &1336989082601124478
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4937790989048267566}
+  m_GameObject: {fileID: 8372640936351368550}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: ed8eecdbe7da8944c9b0d86bf071b131, type: 3}
+  m_Script: {fileID: 11500000, guid: 814dd8b1c1aec9c4c8da193d5ae6e777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nestEggCountToMainTain: 2
-  _spawnPosition: {x: 0, y: 4.5, z: 0}
-  _eggPool: {fileID: 1336989082601124478, guid: 46e9fbed8c815b04b97ec187365af632,
-    type: 3}
-  _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
---- !u!114 &2953053612707389190
+  _prefab: {fileID: 7082514871237939378, guid: e34f92e7ec637584590dd3687d046893, type: 3}
+  _defaultPoolCapacity: 5
+  _maxPoolSize: 10
+  _characterEggs: []
+  _nestEggs: []
+--- !u!114 &6339239239781896069
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4937790989048267566}
+  m_GameObject: {fileID: 8372640936351368550}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 2096a7623a09e33448cd77199b1d7e2e, type: 3}
+  m_Script: {fileID: 11500000, guid: 42424b889a4d1ee4cad57a82173e0d51, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _seedColliderSize: {x: 15, y: 12, z: 1}
-  _seedColliderCenter: {x: 0, y: 0, z: 0}
-  _colliders: []
+  _prefab: {fileID: 9055204960708448292, guid: 310b0d042ce783a478119278585f3b08, type: 3}
+  _defaultPoolCapacity: 5
+  _maxPoolSize: 10
+  _brokenEggs: []

@@ -164,7 +164,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30a9af9229de09043b2b13b0682935b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraLookAction: {fileID: 0}
+  _cameraLookAction: {fileID: 2657633196233877938, guid: ddc1e28ef5721a94790f83d0120647b2,
+    type: 3}
 --- !u!114 &7669265829548699004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -196,8 +197,8 @@ MonoBehaviour:
   _currentState: 0
   _resolution: 0.1
   _currentLifespan: 0
-  _maxLifespan: 3
-  _mutationThreshold: 1
+  _maxLifespan: 360
+  _mutationThreshold: 60
 --- !u!114 &295155762174093414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -270,8 +271,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   _eggActionChargeTimeCurrent: 0
   _eggActionChargeTimeMax: 1
+  _eggActionRecoil: 10
   _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
-  _eggPool: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40, type: 2}
 --- !u!114 &6326817429707624275
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -32,6 +32,10 @@ Material:
         m_Texture: {fileID: 2800000, guid: 36bd101a421bd6641978334c60fcc31d, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _BrokenAlbdo:
+        m_Texture: {fileID: 2800000, guid: ee1e254993c819f4bb3b8fc40ef15e0f, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _BumpMap:
         m_Texture: {fileID: 2800000, guid: b8b547139fc3ab24fbe581ad6cea512e, type: 3}
         m_Scale: {x: 1, y: 1}

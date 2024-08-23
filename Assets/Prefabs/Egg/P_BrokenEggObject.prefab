@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 7846591636459975356}
   - component: {fileID: 6713186205456579603}
   m_Layer: 8
-  m_Name: P_EggBrokenObject
+  m_Name: P_BrokenEggObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

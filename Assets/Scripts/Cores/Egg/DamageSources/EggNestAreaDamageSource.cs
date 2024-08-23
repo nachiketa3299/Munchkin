@@ -1,6 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using Codice.Client.BaseCommands.Merge.Restorer;
 using UnityEngine;
 
 namespace MC
@@ -51,7 +48,6 @@ public class EggNestAreaDamageSource : EggDamageSourceBase
 
 	EggLifecycleHandler _eggLifecycleHandler;
 	readonly int _nestEggDeadZoneLayer = 10;
-	Collider _triggeringCollider = null;
 
 }
 

@@ -15,7 +15,6 @@ GameObject:
   - component: {fileID: 1656571070939299211}
   - component: {fileID: 98132478111336439}
   - component: {fileID: 1364398559746103450}
-  - component: {fileID: 6234029702670447106}
   - component: {fileID: 6539758319614907959}
   - component: {fileID: -7806067560938597979}
   m_Layer: 8
@@ -140,20 +139,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 2b54fe50163c0de4f9ebd28d9d93954a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!114 &6234029702670447106
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 919104451463852522}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6f5dd7911803a9b4e8e6c13cba5fe042, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _runtimePooledBrokenEggData: {fileID: 11400000, guid: 08f1331b4706b5d4da09504501b0ff79,
-    type: 2}
 --- !u!114 &6539758319614907959
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -167,7 +152,6 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _owner: 0
-  _eggPool: {fileID: 11400000, guid: fe7ee85d87eb0e241854695e2d905c40, type: 2}
 --- !u!114 &-7806067560938597979
 MonoBehaviour:
   m_ObjectHideFlags: 0
