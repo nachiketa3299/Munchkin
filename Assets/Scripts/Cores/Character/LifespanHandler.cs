@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 
 using UnityEngine;
@@ -19,25 +20,22 @@ public class LifespanHandler : MonoBehaviour
 		Ended
 	}
 
-	public delegate void LifespanEventHandler();
-	public delegate void LifespanChangedHandler(in float totalRatio, in float currentRatio);
-
-	public event LifespanEventHandler Started;
+	public event Action Started;
 
 	/// <summary>
 	/// 외부에서 캐릭터의 수명과 노화의 변화율을 알고 싶으면 이것을 구독한다.
 	/// </summary>
-	public event LifespanChangedHandler Changed;
+	public event Action<float, float> Changed;
 
 	/// <summary>
 	/// 외부에서 캐릭터가 변이 한계에 도달한 시점을 알고 싶으면 이것을 구독한다.
 	/// </summary>
-	public event LifespanEventHandler ReachedMutationThreshold;
+	public event Action ReachedMutationThreshold;
 
 	/// <summary>
 	/// 외부에서 캐릭터의 수명이 끝난 시점을 알고 싶으면 이것을 구독한다.
 	/// </summary>
-	public event LifespanEventHandler Ended;
+	public event Action Ended;
 
 #region UnityCallbacks
 
@@ -161,7 +159,6 @@ public class LifespanHandler : MonoBehaviour
 	public float AgingRatio => !_mutatedCalled
 		? Mathf.Clamp01(_currentLifespan / _mutationThreshold)
 		: Mathf.Clamp01((_currentLifespan - _mutationThreshold) / (_maxLifespan - _mutationThreshold));
-
 
 	bool _startedCalled = false;
 	bool _mutatedCalled = false;

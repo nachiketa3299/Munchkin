@@ -8,7 +8,7 @@ namespace MC
 
 public partial class BrokenEggLifecycleHandler : MonoBehaviour
 {
-	[DrawGizmo(GizmoType.Active | GizmoType.NonSelected)]
+	[DrawGizmo(GizmoType.Active | GizmoType.Selected)]
 	static void DrawBrokenEggGizmos(BrokenEggLifecycleHandler target, GizmoType gizmoType)
 	{
 		if (target._childTransforms == null)

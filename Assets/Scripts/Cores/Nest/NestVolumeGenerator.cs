@@ -1,3 +1,6 @@
+using System.Linq;
+using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace MC
@@ -15,35 +18,49 @@ public partial class NestVolumeGenerator : MonoBehaviour
 	void Awake()
 	{
 		// make empty game object and attach it as child
-		var childObject = new GameObject("NestEggDeadZone");
-		childObject.transform.SetParent(transform);
-		childObject.transform.localPosition = Vector3.zero;
-		childObject.transform.localRotation = Quaternion.identity;
+		var childObject = new GameObject("NestEggDeadZones");
+			childObject.transform.SetParent(transform);
+			childObject.transform.localPosition = Vector3.zero;
+			childObject.transform.localRotation = Quaternion.identity;
 
 	  // I know this sucks but ...
-		var left = childObject.AddComponent<BoxCollider>();
-		var leftBounds = LeftBounds();
-		left.center = leftBounds.center;
-		left.size = leftBounds.size;
+		if (_left)
+		{
+			var left = childObject.AddComponent<BoxCollider>();
+			var leftBounds = LeftBounds();
+			left.center = leftBounds.center;
+			left.size = leftBounds.size;
+			_colliders.Add(left);
+		}
 
-		var up = childObject.AddComponent<BoxCollider>();
-		var upBounds = UpBounds();
-		up.center = upBounds.center;
-		up.size = upBounds.size;
+		if (_up)
+		{
+			var up = childObject.AddComponent<BoxCollider>();
+			var upBounds = UpBounds();
+			up.center = upBounds.center;
+			up.size = upBounds.size;
+			_colliders.Add(up);
+		}
 
-		var right = childObject.AddComponent<BoxCollider>();
-		var rightBounds = RightBounds();
-		right.center = rightBounds.center;
-		right.size = rightBounds.size;
+		if (_right)
+		{
+			var right = childObject.AddComponent<BoxCollider>();
+			var rightBounds = RightBounds();
+			right.center = rightBounds.center;
+			right.size = rightBounds.size;
+			_colliders.Add(right);
+		}
 
-		var down = childObject.AddComponent<BoxCollider>();
-		var downBounds = DownBounds();
-		down.center = downBounds.center;
-		down.size = downBounds.size;
+		if (_down)
+		{
+			var down = childObject.AddComponent<BoxCollider>();
+			var downBounds = DownBounds();
+			down.center = downBounds.center;
+			down.size = downBounds.size;
+			_colliders.Add(down);
+		}
 
-		left.isTrigger = up.isTrigger = right.isTrigger = down.isTrigger = true;
-
-		_colliders = new BoxCollider[] { left, up, right, down }; // Cache
+		_colliders.ForEach(collider => collider.isTrigger = true);
 
 		childObject.layer = _nestEggDeadZoneLayer;
 	}
@@ -110,7 +127,11 @@ public partial class NestVolumeGenerator : MonoBehaviour
 	readonly int _nestEggDeadZoneLayer = 10;
 	[SerializeField] Vector3 _seedColliderSize = new(15.0f, 12.0f, 1.0f);
 	[SerializeField] Vector3 _seedColliderCenter = new(0.0f, 0.0f, 0.0f);
-	[SerializeField][HideInInspector] BoxCollider[] _colliders;
+	[SerializeField][HideInInspector] List<Collider> _colliders = new();
+	[SerializeField] bool _up = true;
+	[SerializeField] bool _down = false;
+	[SerializeField] bool _left = true;
+	[SerializeField] bool _right = true;
 
 }
 

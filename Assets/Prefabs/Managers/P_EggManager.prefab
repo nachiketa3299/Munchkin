@@ -45,7 +45,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 814dd8b1c1aec9c4c8da193d5ae6e777, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _prefab: {fileID: 7082514871237939378, guid: e34f92e7ec637584590dd3687d046893, type: 3}
+  _prefab: {fileID: 3030908366912143087, guid: e34f92e7ec637584590dd3687d046893, type: 3}
   _defaultPoolCapacity: 5
   _maxPoolSize: 10
   _characterEggs: []

@@ -1,5 +1,7 @@
+using System.Linq;
 using System.Collections;
 using System.Collections.Generic;
+
 using UnityEngine;
 
 namespace MC
@@ -8,8 +10,7 @@ namespace MC
 [DisallowMultipleComponent]
 [RequireComponent(typeof(Rigidbody))]
 [RequireComponent(typeof(LifespanHandler))]
-[RequireComponent(typeof(EggAction))]
-public class SoulMovementHandler : MonoBehaviour
+public partial class SoulMovementHandler : MonoBehaviour
 {
 
 #region UnityCallbacks
@@ -21,115 +22,136 @@ public class SoulMovementHandler : MonoBehaviour
 		_rigidbody = GetComponent<Rigidbody>();
 
 		_lifespanHandler = GetComponent<LifespanHandler>();
-		_eggAction = GetComponent<EggAction>();
-
-#if UNITY_EDITOR
-		if (!_nestEggHandler)
-		{
-			Debug.LogWarning("Nest Egg Handler가 할당되지 않았습니다.");
-		}
-#endif
 
 		// Bind events
 
-		_lifespanHandler.Started += OnLifespanStarted;
-		_lifespanHandler.Ended += OnLifespanEnded;
+		_lifespanHandler.Ended += StartSoulMovementState;
+	}
+
+	void Start()
+	{
+		EggPool.Instance.InstanceEnabled += OnEggInstanceEnabled;
+		EggPool.Instance.InstanceDisabled += OnEggInstanceDisabled;
 	}
 
 	void OnDestroy()
 	{
 		// Unbind events
 
-		_lifespanHandler.Started -= OnLifespanStarted;
-		_lifespanHandler.Ended -= OnLifespanEnded;
+		_lifespanHandler.Ended -= StartSoulMovementState;
+
+		EggPool.Instance.InstanceEnabled -= OnEggInstanceEnabled;
+		EggPool.Instance.InstanceDisabled -= OnEggInstanceDisabled;
 	}
 
 #endregion // UnityCallbacks
+
+	void OnEggInstanceEnabled(EggLifecycleHandler _)
+	{
+		if (_isInSoulState)
+		{
+			FindOptimalEgg();
+		}
+	}
+
+	void OnEggInstanceDisabled()
+	{
+		if (_isInSoulState)
+		{
+			FindOptimalEgg();
+		}
+	}
 
 #region UnityCollision
 
 // Egg 에 닿은 경우, Egg 를 소멸시키고, 생애주기를 다시 시작해야함
 void OnTriggerEnter(Collider collider)
 {
-	var rootGo = collider.transform.root.gameObject;
-
-	// COLLISION GUARD STARTS
-	if (_collidingObjects.Contains(rootGo))
+	if (collider.gameObject.layer != _eggNormalLayer)
 	{
 		return;
 	}
 
-	_collidingObjects.Add(rootGo);
+	_reachedDestination = true;
+	StopAllCoroutines();
+	EndSoulMovementState();
 
-	// Here logics //
-
-	// 만일 Egg이고, OptimalEgg인 경우,
-	if (rootGo.TryGetComponent<EggLifecycleHandler>(out var incomingEgg) && incomingEgg.Equals(_optimalEgg))
-	{
-		StopAllCoroutines();
-		EndSoulState();
-
-		incomingEgg.EndLifecycle();
-	}
-
-	// COLLISION GUARD ENDS
-	StartCoroutine(Reset(rootGo));
-
-}
-
-IEnumerator Reset(GameObject collidingObject)
-{
-	yield return new WaitForEndOfFrame();
-	_collidingObjects.Remove(collidingObject);
+	var collidedEgg = collider.transform.root.GetComponent<EggLifecycleHandler>();
+	collidedEgg.EndLifecycle();
 }
 
 #endregion // UnityCollision
 
-void OnLifespanStarted()
+void StartSoulMovementState()
 {
-	EndSoulState();
-}
+	_isInSoulState = true;
 
-void OnLifespanEnded()
-{
-	BeginSoulState();
-}
+	_reachedDestination = false;
 
-void TryFindOptimalEgg()
-{
-	// 여기에 달걀을 찾는 로직을 작성해야함
-	// 아마도 여기에다가 작성하는 것이 옳을 것 같음
-}
-
-void BeginSoulState()
-{
+	// Rigidbody settings
 	_rigidbody.useGravity = false;
 	_rigidbody.isKinematic = true;
+
+	// Find Optimal egg
+	_optimalEgg = FindOptimalEgg();
 
 	StartCoroutine(SoulMovementRoutine());
 }
 
-void EndSoulState()
+void EndSoulMovementState()
 {
+	_isInSoulState = false;
+
+	// Rigidbody settings
 	_rigidbody.useGravity = true;
 	_rigidbody.isKinematic = false;
 
 	_lifespanHandler.RestartLifespan();
 }
 
+/// <summary>
+///  반드시 성공해야함
+/// </summary>
+EggLifecycleHandler FindOptimalEgg()
+{
+	EggLifecycleHandler optimalEgg = null;
+
+	// 1. 캐릭터 알이 있다면, 그 알 중 가장 캐릭터와 거리가 가까운 것
+
+	if (EggPool.Instance.CharacterEggs.Count != 0)
+	{
+		optimalEgg = FindClosestEgg(EggPool.Instance.CharacterEggs);
+	}
+
+	// 2. 캐릭터 알이 없다면, 둥지 알 중 가장 캐릭터와 거리가 가까운 것
+
+	else if (EggPool.Instance.NestEggs.Count != 0)
+	{
+		optimalEgg = FindClosestEgg(EggPool.Instance.NestEggs);
+	}
+
+	// 캐릭터 알과 둥지 알이 어떤 이유에서든 없다면, 둥지의 스폰 포지션으로
+	else
+	{
+		Debug.LogError("Something went truly fucking wrong...");
+	}
+
+	return optimalEgg;
+}
+
+EggLifecycleHandler FindClosestEgg(IList<EggLifecycleHandler> eggList) => eggList.OrderBy(egg => (egg.transform.position - transform.position).sqrMagnitude).FirstOrDefault();
+
 IEnumerator SoulMovementRoutine()
 {
-	// 이거 그냥 모션을 움직이는 것으로
 	while (!_reachedDestination)
 	{
-		_rigidbody.AddForce(transform.forward * _moveSpeed, ForceMode.VelocityChange);
+		if (!_optimalEgg.isActiveAndEnabled)
+		{
+			_optimalEgg = FindOptimalEgg();
+		}
 
-		_spawnPosition = _optimalEgg != null ? _optimalEgg.transform.position : _nestEggHandler.SpawnPosition;
-
-		var direction = _spawnPosition - transform.position;
-		var rotation = Quaternion.LookRotation(direction);
-
-		_rigidbody.MoveRotation(Quaternion.RotateTowards(transform.rotation, rotation, _turnSpeed));
+		var newPosition = Vector3.Lerp(_rigidbody.position, _optimalEgg.transform.position, _moveSpeed * Time.fixedDeltaTime);
+		_rigidbody.MovePosition(newPosition);
 
 		yield return new WaitForFixedUpdate();
 	}
@@ -137,20 +159,14 @@ IEnumerator SoulMovementRoutine()
 
 Rigidbody _rigidbody;
 LifespanHandler _lifespanHandler;
-Vector3 _spawnPosition;
-
-[SerializeField] NestEggHandler _nestEggHandler;
-EggAction _eggAction;
 
 EggLifecycleHandler _optimalEgg = null;
+[SerializeField] float _moveSpeed = 3f;
 
-List<EggLifecycleHandler> _nestEggs;
-List<EggLifecycleHandler> _characterEggs;
+bool _isInSoulState = false;
 
-HashSet<GameObject> _collidingObjects = new();
 bool _reachedDestination = false;
-[SerializeField] float _moveSpeed = 10f;
-[SerializeField] float _turnSpeed = 10f;
+readonly int _eggNormalLayer = 8;
 
 }
 

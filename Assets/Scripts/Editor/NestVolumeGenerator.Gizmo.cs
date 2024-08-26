@@ -21,9 +21,30 @@ public partial class NestVolumeGenerator : MonoBehaviour
 		gizmoColor.a = 0.2f;
 		Gizmos.color = gizmoColor;
 
-		foreach(var bound in bounds)
+		var pivot = target.transform.position;
+
+		if (target._up)
 		{
-			Gizmos.DrawCube(target.transform.position + bound.center, bound.size);
+			var up = target.UpBounds();
+			Gizmos.DrawCube(pivot+ up.center, up.size);
+		}
+
+		if (target._left)
+		{
+			var left = target.LeftBounds();
+			Gizmos.DrawCube(pivot+ left.center, left.size);
+		}
+
+		if (target._right)
+		{
+			var right = target.RightBounds();
+			Gizmos.DrawCube(pivot+ right.center, right.size);
+		}
+
+		if (target._down)
+		{
+			var down = target.DownBounds();
+			Gizmos.DrawCube(pivot+ down.center, down.size);
 		}
 	}
 }

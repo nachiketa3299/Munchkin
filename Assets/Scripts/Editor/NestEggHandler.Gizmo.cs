@@ -10,7 +10,7 @@ public partial class NestEggHandler : MonoBehaviour
 	// For drawing nest egg spawn position with egg's physical bounds (what if it collides initially?)
 	[SerializeField] EggPhysicalData _eggPhysicalData;
 
-	[DrawGizmo(GizmoType.NotInSelectionHierarchy | GizmoType.Active)]
+	[DrawGizmo(GizmoType.Active | GizmoType.Selected)]
 	static void DrawSpawnPosition(NestEggHandler target, GizmoType gizmoType)
 	{
 		Gizmos.color = Color.magenta;

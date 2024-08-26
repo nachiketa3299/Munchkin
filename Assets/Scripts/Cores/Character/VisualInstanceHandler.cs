@@ -96,7 +96,7 @@ public class VisualInstanceHandler : MonoBehaviour
 		_currentVisualInstance.SetActive(true);
 	}
 
-	void ChangeVisualInstanceColor(in float totalRatio, in float currentRatio)
+	void ChangeVisualInstanceColor(float totalRatio, float currentRatio)
 	{
 		var colorPalette = _allCharactersData[_currentCharacterType].agingColors;
 		var agingColor = Color.Lerp(colorPalette.start, colorPalette.end, currentRatio);

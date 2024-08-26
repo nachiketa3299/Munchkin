@@ -8,7 +8,7 @@ namespace MC
 	public partial class EggLifecycleHandler : MonoBehaviour
 	{
 
-		[DrawGizmo(GizmoType.Active | GizmoType.NonSelected)]
+		[DrawGizmo(GizmoType.Active | GizmoType.Selected)]
 		static void DrawUniqueNameOfEgg(EggLifecycleHandler target, GizmoType gizmoType)
 		{
 			var style = new GUIStyle();

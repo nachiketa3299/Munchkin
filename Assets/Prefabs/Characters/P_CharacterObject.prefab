@@ -20,7 +20,7 @@ GameObject:
   - component: {fileID: 295155762174093414}
   - component: {fileID: 7058818817593519050}
   - component: {fileID: 7459763658976388867}
-  - component: {fileID: 6326817429707624275}
+  - component: {fileID: 4275175184218382680}
   m_Layer: 7
   m_Name: P_CharacterObject
   m_TagString: Untagged
@@ -110,9 +110,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 82cbe629854ebc041b6f43983c7c89b5, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _runtimeLoadedSceneData: {fileID: 11400000, guid: 7ff7ea889f9470f4f80b30734320eb96,
-    type: 2}
-  _depthToLoad: 3
+  _depthToLoad: 2
+  _sceneNamesToMaintain: []
 --- !u!114 &8428375837134010128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -164,8 +163,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 30a9af9229de09043b2b13b0682935b0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _cameraLookAction: {fileID: 2657633196233877938, guid: ddc1e28ef5721a94790f83d0120647b2,
-    type: 3}
 --- !u!114 &7669265829548699004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -197,8 +194,8 @@ MonoBehaviour:
   _currentState: 0
   _resolution: 0.1
   _currentLifespan: 0
-  _maxLifespan: 360
-  _mutationThreshold: 60
+  _maxLifespan: 5
+  _mutationThreshold: 2
 --- !u!114 &295155762174093414
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -273,7 +270,7 @@ MonoBehaviour:
   _eggActionChargeTimeMax: 1
   _eggActionRecoil: 10
   _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
---- !u!114 &6326817429707624275
+--- !u!114 &4275175184218382680
 MonoBehaviour:
   m_ObjectHideFlags: 0
   m_CorrespondingSourceObject: {fileID: 0}
@@ -285,10 +282,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: cd00861d33fc77f4bae50581b2a34c3f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _nestEggHandler: {fileID: 5434518518976066108, guid: dfd789c366d4fc54e940a0fc5b4037b1,
-    type: 3}
-  _moveSpeed: 1
-  _turnSpeed: 10
+  _moveSpeed: 2
 --- !u!1 &7887266405746795884
 GameObject:
   m_ObjectHideFlags: 0

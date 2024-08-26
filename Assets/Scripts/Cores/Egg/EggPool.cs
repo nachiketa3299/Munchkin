@@ -70,6 +70,7 @@ public class EggPool : PoolBase<EggLifecycleHandler>
 	}
 
 	public ReadOnlyCollection<EggLifecycleHandler> NestEggs => _nestEggs.AsReadOnly();
+	public ReadOnlyCollection<EggLifecycleHandler> CharacterEggs => _characterEggs.AsReadOnly();
 
 	// 여기서 리스트를 택한 이유는 직렬화 때문
 	[SerializeField][HideInInspector] List<EggLifecycleHandler> _characterEggs = new();

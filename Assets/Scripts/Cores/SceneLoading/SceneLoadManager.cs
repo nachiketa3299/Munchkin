@@ -1,4 +1,4 @@
-using System.Collections;
+using System.Linq;
 using System.Collections.Generic;
 
 using UnityEngine;
@@ -14,183 +14,90 @@ namespace MC
 public class SceneLoadManager : MonoBehaviour
 {
 
-	#region UnityCallbacks
+#region UnityCallbacks
 
-	void Awake()
+	void Awake() => Instance = this;
+
+	void Update()
 	{
-
-#if UNITY_EDITOR
-		if (!_runtimeLoadedSceneData)
+		if (!_isDirty)
 		{
-			Debug.LogWarning("RuntimeLoadedSceneData를 찾을 수 없습니다.");
+			return;
 		}
-#endif
 
-		// Bind events
+		// 최종적으로 로드 / 언로드 되어야 할 씬 계산
 
-		_runtimeLoadedSceneData.SceneOperationNeeded += OnSceneOperationNeeded;
+		var allRequestedScenes = _loadedScenesByGameObjects.Values.SelectMany(_ => _).ToHashSet();
+		var allCurrentScenes = MC.Utility.SceneUtility.RetrieveAllLoadedSceneNames(_sceneDependencyData.PersistentSceneName);
+
+		var toLoadScenesQueue = allRequestedScenes
+			.Except(allCurrentScenes)
+			.Except(_loadingScenes)
+			.ToHashSet();
+
+		var toUnloadScenesQueue = allCurrentScenes
+			.Except(allRequestedScenes)
+			.Except(_unloadingScenes)
+			.ToHashSet();
+
+		foreach (var toLoad in toLoadScenesQueue)
+		{
+			_loadingScenes.Add(toLoad);
+
+			SceneManager.LoadSceneAsync(toLoad, LoadSceneMode.Additive).completed += (AsyncOperation _) => { OnSceneLoadingComplete(toLoad); };
+		}
+
+		foreach (var toUnload in toUnloadScenesQueue)
+		{
+			_unloadingScenes.Add(toUnload);
+
+			// 이게 *가끔* Null이 되는 경우가 있는데 왜 그런지 모르겠음
+			SceneManager.UnloadSceneAsync(toUnload).completed += (AsyncOperation _) => { OnSceneUnloadingComplete(toUnload); };
+		}
+
+		_isDirty = false;
 	}
 
-	void OnDestroy()
-	{
-		// Unbind events
 
-		_runtimeLoadedSceneData.SceneOperationNeeded -= OnSceneOperationNeeded;
-	}
+#endregion // UnityCallbacks
 
-	void FixedUpdate()
-	{
-		_runtimeLoadedSceneData.TryProcessChanges();
-	}
+	public static SceneLoadManager Instance { get; private set; }
 
-	#endregion // UnityCallbacks
+	void OnSceneLoadingComplete(string name) => _loadingScenes.Remove(name);
+
+	void OnSceneUnloadingComplete(string name) => _unloadingScenes.Remove(name);
 
 	/// <summary>
-	/// 어떤 씬들의 연산이 필요성이 수신되었을때 실행되는 로직
+	/// <see cref="SceneLoadTrigger"/>를 가진 물체가 씬의 로딩 박스에 인접했을 때 호출
 	/// </summary>
-	void OnSceneOperationNeeded(HashSet<string> uniqueSceneNamesToLoad, HashSet<string> uniqueSceneNamesToUnload)
+	public void Entered(SceneLoadTrigger entering, string sceneName, int depthToLoad)
 	{
+		var toAdd = RetrieveNearSceneNames(sceneName, depthToLoad).ToHashSet();
 
-#if UNITY_EDITOR
-		if (_logOnSceneOperation)
+		if (!_loadedScenesByGameObjects.ContainsKey(entering))
 		{
-			var toLoadSceneNames = string.Join(", ", uniqueSceneNamesToLoad);
-			var toUnloadSceneNames = string.Join(", ", uniqueSceneNamesToUnload);
-
-			Debug.Log
-			(
-$@"Scene operations needed:
-To load: <color=green>{toLoadSceneNames}</color>
-To unload: <color=red>{toUnloadSceneNames}</color>"
-			);
+			_loadedScenesByGameObjects.Add(entering, toAdd);
 		}
-#endif
+		else
+		{
+			_loadedScenesByGameObjects[entering] = toAdd;
+		}
 
-		StartCoroutine(ProcessSceneOperationsRoutine(uniqueSceneNamesToLoad, uniqueSceneNamesToUnload));
+		_isDirty = true;
 	}
-
-	/// <remarks>
-	/// 어떤 씬들의 연산이 필요하다고 바로 그 연산이 수행되는 것이 아님. 해당 씬에 대한 연산이 이미 진행 중이라면, 무시한다.
-	/// </remarks>
-	IEnumerator ProcessSceneOperationsRoutine(HashSet<string> uniqueSceneNamesToLoad, HashSet<string> uniqueSceneNamesToUnload)
-	{
-		// 언로딩 연산에 대한 처리
-
-		foreach (var sceneName in uniqueSceneNamesToUnload)
-		{
-			if (IsAlreadyUnloading(sceneName))
-			{
-
-#if UNITY_EDITOR
-				if (_logOnSceneOperation)
-				{
-					Debug.Log($"<color=yellow>Scene {sceneName} is already in loading process, so ignored load request.</color>");
-				}
-#endif
-
-				continue;
-			}
-
-			_unloadingSceneNames.Add(sceneName);
-
-			yield return StartCoroutine(UnloadSceneRoutine(sceneName));
-		}
-
-		// 로딩 연산에 대한 처리
-
-		foreach (var sceneName in uniqueSceneNamesToLoad)
-		{
-			if (IsAlreadyLoading(sceneName))
-			{
-
-#if UNITY_EDITOR
-				if (_logOnSceneOperation)
-				{
-					Debug.Log($"<color=yellow>Scene {sceneName} is already in unloading process, so ignored load request.</color>");
-				}
-#endif
-				continue;
-			}
-
-			_loadingSceneNames.Add(sceneName);
-
-			yield return StartCoroutine(LoadSceneRoutine(sceneName));
-		}
-	}
-
-	IEnumerator UnloadSceneRoutine(string sceneName)
-	{
-
-#if UNITY_EDITOR
-		if (_logOnSceneOperation)
-		{
-			Debug.Log($"Start loading scene {sceneName}");
-		}
-#endif
-
-		var operation = SceneManager.UnloadSceneAsync(sceneName);
-
-		while (!operation.isDone)
-		{
-			yield return operation;
-		}
-
-		_unloadingSceneNames.Remove(sceneName);
-
-#if UNITY_EDITOR
-		if (_logOnSceneOperation)
-		{
-			Debug.Log($"End Unloading {sceneName}");
-		}
-#endif
-
-	}
-
-	IEnumerator LoadSceneRoutine(string sceneName)
-	{
-
-#if UNITY_EDITOR
-		if (_logOnSceneOperation)
-		{
-			Debug.Log($"Start unloading scene {sceneName}");
-		}
-#endif
-		var operation = SceneManager.LoadSceneAsync(sceneName, LoadSceneMode.Additive);
-
-		while (!operation.isDone)
-		{
-			yield return operation;
-		}
-
-		_loadingSceneNames.Remove(sceneName);
-
-#if UNITY_EDITOR
-		if (_logOnSceneOperation)
-		{
-			Debug.Log($"End unloading scene {sceneName}");
-		}
-#endif
-	}
-
-	bool IsAlreadyUnloading(string sceneName) => _unloadingSceneNames.Contains(sceneName);
-
-	bool IsAlreadyLoading(string sceneName) => _loadingSceneNames.Contains(sceneName);
 
 	/// <summary>
-	/// 현재 로드되는 중인 씬들의 이름
+	/// <see cref="SceneLoadTrigger"/>를 가진 물체가 어떤 이유에서든 비활성화 되었을 때 호출
 	/// </summary>
-	HashSet<string> _loadingSceneNames = new();
+	public void Disabled(SceneLoadTrigger dd) => _isDirty = _loadedScenesByGameObjects.Remove(dd);
+	public IReadOnlyCollection<string> RetrieveNearSceneNames(string pivotSceneName, int depthToLoad) => _sceneDependencyData.RetrieveNearSceneUniqueNames(pivotSceneName, depthToLoad);
 
-	/// <summary>
-	/// 현재 언로드되는 중인 씬들의 이름
-	/// </summary>
-	HashSet<string> _unloadingSceneNames = new();
+	bool _isDirty = false;
+	HashSet<string> _loadingScenes = new();
+	HashSet<string> _unloadingScenes = new();
+	Dictionary<SceneLoadTrigger, HashSet<string>> _loadedScenesByGameObjects = new();
+	[SerializeField] SceneDependencyData _sceneDependencyData;
 
-	[SerializeField] RuntimeLoadedSceneData _runtimeLoadedSceneData;
-
-#if UNITY_EDITOR
-	[SerializeField] bool _logOnSceneOperation = false;
-#endif
 }
 
 }

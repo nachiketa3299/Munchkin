@@ -20,14 +20,6 @@ public partial class EggAction : MonoBehaviour
 		// Cache components
 
 		_rigidbody = GetComponent<Rigidbody>();
-
-// #if UNITY_EDITOR
-// 		if (_eggPool == null)
-// 		{
-// 			Debug.Log("EggAction에 RuntimePooledEggData가 설정되지 않았습니다.");
-// 		}
-// #endif
-
 	}
 
 #endregion // UnityCallbacks
@@ -82,52 +74,6 @@ public partial class EggAction : MonoBehaviour
 		var spawnPosition = FindEggSpawnPosition();
 		var layedEgg = EggPool.Instance.GetEggInstance(EEggOwner.Character);
 		layedEgg.transform.SetPositionAndRotation(spawnPosition, Quaternion.identity);
-
-		// 이 시점 이후에서야 알이 활성화되고, 위치가 특정된다.
-		// 만일 생성 시점에 알이 캐릭터와 클리핑하고 있으면
-		// 더 이상 클리핑 하지 않을 때까지 알과 캐릭터의 충돌을 무시한다.
-
-		if (!IsOverlappingWithCharacter(layedEgg))
-		{
-			return;
-		}
-
-		LayerUtility.SetLayerRecursive(layedEgg.gameObject, _eggPreparingLayer);
-
-		// 아래는 다수의 Egg에 대해서 알아서 작동해야 하므로 코루틴을 캐싱할 필요가 없다. (각 Egg마다 코루틴 생성)
-		StartCoroutine(CheckIsOverlappingRoutine(layedEgg));
-	}
-
-	// I can't remember wtf this means but now ..., I don't even care
-	bool IsOverlappingWithCharacter(EggLifecycleHandler layedEgg)
-	{
-		var targetPhysicalColliders = GetComponentsInChildren<Collider>()
-			.Where(collider => !collider.isTrigger)
-			.ToArray();
-
-		var targetBounds = targetPhysicalColliders[0].bounds;
-		for (var i = 1; i < targetPhysicalColliders.Length; ++i)
-		{
-			targetBounds.Encapsulate(targetPhysicalColliders[i].bounds);
-		}
-
-		return Physics.CheckBox
-		(
-			center: layedEgg.transform.position,
-			halfExtents: targetBounds.extents,
-			orientation: layedEgg.transform.rotation,
-			layerMask: 1 << gameObject.layer
-		);
-	}
-
-	IEnumerator CheckIsOverlappingRoutine(EggLifecycleHandler layedEgg)
-	{
-		while (IsOverlappingWithCharacter(layedEgg))
-		{
-			yield return new WaitForFixedUpdate();
-		}
-
-		LayerUtility.SetLayerRecursive(layedEgg.gameObject, _eggNormalLayer);
 	}
 
 	/// <summary>
@@ -155,6 +101,7 @@ public partial class EggAction : MonoBehaviour
 	}
 
 	Rigidbody _rigidbody;
+
 	Coroutine _eggActionRoutine;
 	bool _alreadyLayed = false;
 	[SerializeField][HideInInspector] float _eggActionChargeTimeCurrent = 0.0f;
@@ -162,9 +109,6 @@ public partial class EggAction : MonoBehaviour
 	[SerializeField] float _eggActionRecoil = 10.0f;
 	float _rayCastMaxDistance = 10.0f;
 	[SerializeField] EggPhysicalData _eggPhysicalData;
-	readonly int _eggPreparingLayer = 9;
-	readonly int _eggNormalLayer = 8;
-	// [SerializeField] EggPoolManager _eggPool;
 }
 
 }

@@ -12,9 +12,6 @@ EditorBuildSettings:
     path: Assets/Scenes/SC_PersistentGameplay.unity
     guid: ca54696bf5c8a894f910e4b4c59da621
   - enabled: 1
-    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_00.unity
-    guid: 20fdfcaf9991e2844a9bf76573c48802
-  - enabled: 1
     path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_10.unity
     guid: 148e4900f116ae4488e7281bfdad2446
   - enabled: 1
@@ -56,4 +53,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_43.unity
     guid: bdfcbdf7385203a4885bde4443991336
+  - enabled: 1
+    path: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_00.unity
+    guid: 20fdfcaf9991e2844a9bf76573c48802
   m_configObjects: {}

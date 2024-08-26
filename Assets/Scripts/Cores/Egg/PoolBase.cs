@@ -19,6 +19,7 @@ public abstract class PoolBase<T> : MonoBehaviour where T : MonoBehaviour
 
 	protected virtual void Awake()
 	{
+
 #if UNITY_EDITOR
 		if (!_prefab)
 		{

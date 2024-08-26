@@ -5,8 +5,8 @@ using UnityEditor;
 namespace MC.Editors
 {
 
-[CustomEditor(typeof(SoulMovementHandler))]
-internal sealed class SoulMovementHandlerEditor : Editor
+[CustomEditor(typeof(SceneDependencyData))]
+internal sealed class SceneDependencyDataEditor : Editor
 {
 
 #region UnityCallbacks
@@ -15,9 +15,6 @@ internal sealed class SoulMovementHandlerEditor : Editor
 	{
 		serializedObject.Update();
 		base.OnInspectorGUI();
-		var soulMovementHandler = target as SoulMovementHandler;
-
-		serializedObject.ApplyModifiedProperties();
 	}
 
 #endregion // UnityCallbacks

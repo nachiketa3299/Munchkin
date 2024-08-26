@@ -178,16 +178,15 @@ MonoBehaviour:
     - _sceneAsset: {fileID: 102900000, guid: d88187dfa93f39740b245c4fe68e66ba, type: 3}
       _isDirty: 0
       _scenePath: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_42.unity
-  _initialSceneRef:
+  _initialSceneReference:
     _sceneAsset: {fileID: 102900000, guid: 20fdfcaf9991e2844a9bf76573c48802, type: 3}
     _isDirty: 0
     _scenePath: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_Stage_00.unity
-  _persistentSceneRef:
+  _persistentSceneReference:
     _sceneAsset: {fileID: 102900000, guid: ca54696bf5c8a894f910e4b4c59da621, type: 3}
     _isDirty: 0
-    _scenePath: Assets/Scenes/SceneLoadingTest/SceneGraph/SC_PersistentGameplay.unity
-  _mainMenuSceneRef:
+    _scenePath: Assets/Scenes/SC_PersistentGameplay.unity
+  _mainMenuSceneReference:
     _sceneAsset: {fileID: 102900000, guid: a6f866e6531f3e249b3fb25cbad8fa30, type: 3}
     _isDirty: 0
     _scenePath: Assets/Scenes/SC_MainMenu.unity
-  _logBuildingProcess: 0

@@ -10,7 +10,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7846591636459975356}
   - component: {fileID: 6713186205456579603}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: P_BrokenEggObject
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -45,8 +45,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 59f20cfa2bbc17e45b07aa83d9499202, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _runtimePooledBrokenEggData: {fileID: 11400000, guid: 08f1331b4706b5d4da09504501b0ff79,
-    type: 2}
+  _maxLifespan: 3
+  _currentLifespan: 0
 --- !u!1 &6130805561417258239
 GameObject:
   m_ObjectHideFlags: 0
@@ -56,7 +56,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3461912479723291570}
-  m_Layer: 8
+  m_Layer: 11
   m_Name: Parts
   m_TagString: Untagged
   m_Icon: {fileID: 0}
