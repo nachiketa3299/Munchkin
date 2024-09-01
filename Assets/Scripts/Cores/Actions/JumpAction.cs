@@ -60,6 +60,7 @@ public class JumpAction : ActionRoutineBase
 	}
 
 	Rigidbody _rigidbody;
+
 	float CurrentJumpChargeRatio => Mathf.Clamp01(_currentJumpChargeSeconds / _maxJumpChargeSeconds);
 	float _currentJumpChargeSeconds;
 	[SerializeField] float _maxJumpChargeSeconds = 1.0f;

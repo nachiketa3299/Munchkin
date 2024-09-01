@@ -11,5 +11,6 @@ namespace MC
 			set => _combinedPhysicalBounds = value;
 		}
 		[HideInInspector] [SerializeField] Bounds _combinedPhysicalBounds;
+		[SerializeField] EggLifecycleHandler _eggPrefab;
 	}
 }
