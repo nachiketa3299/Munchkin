@@ -10,16 +10,16 @@ GameObject:
   m_Component:
   - component: {fileID: 8901260133182799471}
   - component: {fileID: 967120724380038576}
+  - component: {fileID: 2392624450790882300}
   - component: {fileID: 5493054646849083223}
   - component: {fileID: 8659322001051897222}
-  - component: {fileID: 2392624450790882300}
   - component: {fileID: 8428375837134010128}
   - component: {fileID: 6348100591888285890}
+  - component: {fileID: 7058818817593519050}
+  - component: {fileID: 7459763658976388867}
   - component: {fileID: 7669265829548699004}
   - component: {fileID: 6989088779861184092}
   - component: {fileID: 295155762174093414}
-  - component: {fileID: 7058818817593519050}
-  - component: {fileID: 7459763658976388867}
   - component: {fileID: 4275175184218382680}
   m_Layer: 7
   m_Name: P_CharacterObject
@@ -71,6 +71,20 @@ Rigidbody:
   m_Interpolate: 2
   m_Constraints: 120
   m_CollisionDetection: 0
+--- !u!114 &2392624450790882300
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334351684667443968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 82cbe629854ebc041b6f43983c7c89b5, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _depthToLoad: 1
+  _sceneNamesToMaintain: []
 --- !u!114 &5493054646849083223
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -98,20 +112,6 @@ MonoBehaviour:
   _maxHorizontalSpeed: 10
   _accelerationMagnitude: 10
   _decelerationMagnitude: 10
---- !u!114 &2392624450790882300
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334351684667443968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 82cbe629854ebc041b6f43983c7c89b5, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _depthToLoad: 1
-  _sceneNamesToMaintain: []
 --- !u!114 &8428375837134010128
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -192,6 +192,40 @@ MonoBehaviour:
     m_PreInfinity: 2
     m_PostInfinity: 2
     m_RotationOrder: 4
+--- !u!114 &7058818817593519050
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334351684667443968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 5e626860caa20a340a8de272ffb196b9, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _grabThrowObjectMask:
+    serializedVersion: 2
+    m_Bits: 256
+  _grabThrowSocket: {fileID: 7887266405746795884}
+  _throwForceHorizontal: 30
+  _throwForceVertical: 30
+--- !u!114 &7459763658976388867
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1334351684667443968}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 24071aa2484c23546a22df4febd29f86, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _eggActionChargeTimeCurrent: 0
+  _eggActionChargeTimeMax: 1
+  _eggActionRecoil: 10
+  _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
 --- !u!114 &7669265829548699004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -265,40 +299,6 @@ MonoBehaviour:
     m_PostInfinity: 2
     m_RotationOrder: 4
   _directionChangeHorizontalVelocityThreshold: 0.5
---- !u!114 &7058818817593519050
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334351684667443968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 5e626860caa20a340a8de272ffb196b9, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _grabThrowObjectMask:
-    serializedVersion: 2
-    m_Bits: 256
-  _grabThrowSocket: {fileID: 7887266405746795884}
-  _throwForceHorizontal: 30
-  _throwForceVertical: 30
---- !u!114 &7459763658976388867
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1334351684667443968}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 24071aa2484c23546a22df4febd29f86, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  _eggActionChargeTimeCurrent: 0
-  _eggActionChargeTimeMax: 1
-  _eggActionRecoil: 10
-  _eggPhysicalData: {fileID: 11400000, guid: fbdba0449be90bb4ab2a55662e753cc3, type: 2}
 --- !u!114 &4275175184218382680
 MonoBehaviour:
   m_ObjectHideFlags: 0

@@ -133,7 +133,7 @@ EggLifecycleHandler FindOptimalEgg()
 	// 캐릭터 알과 둥지 알이 어떤 이유에서든 없다면, 둥지의 스폰 포지션으로
 	else
 	{
-		Debug.LogError("Something went truly fucking wrong...");
+		Debug.LogError("Something went truly wrong...");
 	}
 
 	return optimalEgg;

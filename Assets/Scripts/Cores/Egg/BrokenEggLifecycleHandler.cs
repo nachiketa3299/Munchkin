@@ -28,8 +28,7 @@ public partial class BrokenEggLifecycleHandler : MonoBehaviour
 
 #endregion // UnityCallbacks
 
-	// This so sucks..
-	// why should I use object pool while I can just Instantiate it..
+	// why should I use object pool while I can just Instantiate it.. ?
 
 	string MakeInstanceName() => $"BrokenEgg ({gameObject.GetInstanceID()})";
 
